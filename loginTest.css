@@ -1,0 +1,72 @@
+@import url('base.css');
+  
+  
+.container {
+    background-color: white;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 2em auto;
+    flex-grow: 1;
+}
+  
+h2 {
+    text-align: center;
+    color: #4CAF50;
+    margin-bottom: 1em;
+}
+  
+.form-group {
+    margin-bottom: 1.5em;
+}
+  
+label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: #333;
+}
+  
+input {
+    width: 100%;
+    padding: 0.75em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+  
+input:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+  
+button[type="submit"], #signupButton {
+    width: 100%;
+    padding: 0.75em;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+  
+button[type="submit"]:hover, #signupButton:hover {
+    background-color: #45a049;
+}
+  
+#signupButton {
+    background-color: #2196F3;
+    margin-top: 1em;
+}
+  
+#signupButton:hover {
+    background-color: #1976D2;
+}
+  
+
+  
+
+  
