@@ -3,24 +3,26 @@ CREATE DATABASE voting_system;
 USE voting_system;
 
 CREATE TABLE users (
-	user_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(20) NOT NULL,
-    last_name VARCHAR(20) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    hash_password VARCHAR(255) NOT NULL,
-    salt VARCHAR(255) NOT NULL,
-    iterations INT NOT NULL,
+	user_id INT AUTO_INCREMENT PRIMARY KEY, --Unique User Identifier
+    first_name VARBINARY(50) NOT NULL, --Columns with VARBINARY inside is used to store encrypted AES binary
+    middle_name VARBINARY(50) NOT NULL,
+    last_name VARBINARY(50) NOT NULL,
+    email VARBINARY(255) NOT NULL UNIQUE,
+    hash_password VARBINARY(255) NOT NULL,
+    salt VARBINARY(255) NOT NULL,
+    iterations INT NOT NULL, --Number of Iterations for PBKDF2
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     
 CREATE TABLE administration (
 	admin_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(20) NOT NULL,
-    last_name VARCHAR(20) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    hash_password VARCHAR(255) NOT NULL,
-    salt VARCHAR(255) NOT NULL,
-    iterations INT NOT NULL,
+    first_name VARBINARY(50) NOT NULL, --Columns with VARBINARY inside is used to store encrypted AES binary
+    middle_name VARBINARY(50) NOT NULL,
+    last_name VARBINARY(50) NOT NULL,
+    email VARBINARY(255) NOT NULL UNIQUE,
+    hash_password VARBINARY(255) NOT NULL,
+    salt VARBINARY(255) NOT NULL,
+    iterations INT NOT NULL, --Number of Iterations for PBKDF2
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
