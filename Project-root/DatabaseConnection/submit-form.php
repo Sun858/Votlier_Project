@@ -17,6 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
         exit();
     }
 
+    // Name verification (A-Z Only)
+    if (invalidName($firstName, $lastName) !== false) {
+        header("location: ../pages/signup.html?error=invalidname");
+        exit();
+    }
+
+
     // Email verification (valid)
     if (invalidEmail($email) !== false) {
         header("location: ../pages/signup.html?error=invalidemail");
