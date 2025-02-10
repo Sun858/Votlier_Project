@@ -1,5 +1,5 @@
 <?php
-require 'config.php'; // This is the database connection including the authentication details
+require '../DatabaseConnection/config.php'; // This is the database connection including the authentication details
 require 'functions.sn.php'; // This has most of the functions that are called within this file
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERSALLY 'Post' then this will happen:
@@ -13,32 +13,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
 
     // Input Validation
     if (emptyInputSignup($firstName, $lastName, $email, $password, $confirmPassword) !== false) {
-        header("location: ../pages/signup.html?error=emptyinput");
+        header("location: ../pages/signup.php?error=emptyinput");
         exit();
     }
 
     // Name verification (A-Z Only)
     if (invalidName($firstName, $lastName) !== false) {
-        header("location: ../pages/signup.html?error=invalidname");
+        header("location: ../pages/signup.php?error=invalidname");
         exit();
     }
 
 
     // Email verification (valid)
     if (invalidEmail($email) !== false) {
-        header("location: ../pages/signup.html?error=invalidemail");
+        header("location: ../pages/signup.php?error=invalidemail");
         exit();
     }
 
     // Password Verification
     if (pwdMatch($password, $confirmPassword) !== false) {
-        header("location: ../pages/signup.html?error=passwordsdontmatch");
+        header("location: ../pages/signup.php?error=passwordsdontmatch");
         exit();
     }
 
     // This function will check the database if the email already exists and stop the user from creating a duplicate
     if (emailExists($conn, $email) !== false) {
-        header("location: ../pages/signup.html?error=userexists");
+        header("location: ../pages/signup.php?error=userexists");
         exit();
     }
     

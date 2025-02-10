@@ -54,7 +54,7 @@ function emailExists($conn, $email) {
    $sql = "SELECT * FROM users WHERE email = ?;";
    $stmt = mysqli_stmt_init($conn);
    if (!mysqli_stmt_prepare($stmt, $sql)) {
-    header("location: ../pages/signup.html?error=stmtfailed");
+    header("location: ../pages/signup.php?error=stmtfailed");
         exit();
    }
 
@@ -82,7 +82,7 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
                         VALUES (?, ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
-        header("location: ../pages/signup.html?error=stmtfailed");
+        header("location: ../pages/signup.php?error=stmtfailed");
             exit();
        }
 
@@ -104,7 +104,47 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
        mysqli_stmt_execute($stmt);
        mysqli_stmt_close($stmt);
 
-       header("location: ../pages/signup.html?error=none");
+       header("location: ../pages/signup.php?error=none");
        exit();
 
 } 
+
+
+// --------------------------------------------------------- 
+// Functions for the login.php FILE!
+
+function emptyInputLogin($email, $pwd) {
+    $result;
+    if (empty($email) || empty($password)) {
+        $result = true;
+    }
+    else {
+        $result = false;
+    }
+    return $result;
+}
+
+function loginUser($conn, $email, $pwd) {
+    $emailExists = emailExists($conn, $email);
+
+    if ($emailExists === false) {
+        header("location: ../pages/login.php?error=wronglogin");
+        exit();
+    }
+
+
+    $pwdHashed = $emailExists["usersPwd"];
+    $checkPwd = password_verify($pwd, $pwdHashed); // MAKE SURE THAT THESE BOTH WORK WHEN LOGGING IN!
+
+    if ($checkHash === false) {
+        header("location: ../pages/login.php?error=wronglogin");
+        exit();
+    }
+    else if ($checkPwd === true) {
+        session_start();
+        $_SESSION["user_id"] = $emailExists["user_id"]; // REMEMBER TO SEARCH THIS ONE UP AND MAKE SURE IT IS APPLICABLE IN DATABASE!!!
+        header("location: ../index.html"); 
+        exit();
+    }
+}
+
