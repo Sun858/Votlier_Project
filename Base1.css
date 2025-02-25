@@ -128,7 +128,7 @@ body {
 .sidebar-footer a {
     display: flex;
     align-items: center;
-    color: white;
+    color: rgb(92, 8, 8);
     text-decoration: none;
     transition: background-color var(--transition-duration), transform var(--transition-duration);
     border-radius: 4px;
