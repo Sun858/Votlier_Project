@@ -19,9 +19,66 @@
     <a href="../pages/contact.html"><i class="fa fa-phone"></i> Contact </a>
   </nav>
   <main>
-    <h2>Contact Us page</h2>
-    <p>Main content goes here.</p>
+    <div class ="top-section">
+      <h1>Here to Help</h1>
+      <p>Support when you need it, we make it easy for any inquiry-tailored to your Needs.</p>
+    </div>
+
+    <div class="contact-container">
+      <section class="contact-info">
+        <h2>Contact Details</h2>
+        <p><i class="fas fa-envelope"></i><strong> Email:</strong> <a href="mailto:sanjaysapkota000@gmail.com" class="pulse-link">sanjaysapkota000@gmail</a></p>
+        <p><i class="fas fa-phone"></i><strong> Phone:</strong> <a href="tel:+11234567890" class="pulse-link">+67 0450029991</a></p>
+        <p><i class="fas fa-sms"></i><strong> Text:</strong> +67 0450029991</p>
+        <p><i class="fas fa-clock"></i><strong> Hours:</strong> 24/7</p>
+        <p><i class="fas fa-map-marker-alt"></i><strong> Address:</strong> 70/104 Ballarat Rd, Footscray VIC 3011</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3152.84211242946!2d144.8959421757356!3d-37.793739771980505!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d945b7f17f1%3A0xcb2f3b55f454d91d!2sVictoria%20University%20-%20Footscray%20Park%20Campus!5e0!3m2!1sen!2sau!4v1740448652345!5m2!1sen!2sau"
+         width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <p><em>Urgent? Connect instantly—responses in under 60 minutes.</em></p>
+      </section>
+
+      <section class="contact-form" id="form-section">
+        <h2>Send a Message</h2>
+        <form id="contact-form" action="/submit-contact" method="POST" aria-label="Contact Support Form">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required aria-required="true" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required aria-required="true" placeholder="your.email@domain.com">
+          </div>
+          <div class="form-group">
+            <label for="voter-id">Voter ID (Optional)</label>
+            <input type="text" id="voter-id" name="voter-id" placeholder="e.g., V123456">
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject" required aria-required="true">
+              <option value="">-- Select a topic --</option>
+              <option value="account">Account Issues</option>
+              <option value="voting">Voting Help</option>
+              <option value="accessibility">Accessibility Support</option>
+              <option value="general">General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="6" required aria-required="true" placeholder="Your message..."></textarea>
+          </div>
+          <div id="quantum-progress"><div id="quantum-progress-bar"></div></div>
+          <div class="form-group">
+            <button type="submit" aria-label="Submit your message">Send Message</button>
+            <div id="form-spinner" class="spinner" style="display: none; margin: 20px auto;"></div>
+          </div>
+        </form>
+        <div id="form-alert" class="alert"></div>
+        <p><small>Your data is encrypted end-to-end.. View our <a href="/privacy" class="pulse-link">Privacy Policy</a>.</small></p>
+      </section>
+
+    </div>
   </main>
+
   <footer>
     <div class="social-links">
       <a href="" target="_blank" aria-label="Twitter Cosmic Link"><i class="fab fa-twitter"></i></a>
@@ -30,5 +87,6 @@
         <p>&copy; 2025 My Website. All rights reserved.</p>
     </div>
   </footer>
+
 </body>
 </html>
