@@ -3,56 +3,71 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column; /* Stacks content vertically */
 }
 
 header {
-  background: linear-gradient(45deg, #20c997, #51cf66);
+  background: linear-gradient(120deg, #59ee61, #20c997, #51cf66); /* New rainbow colors */
   color: white;
-  padding: 1em;
+  padding: 0.1em; /* Bigger space inside */
   text-align: center;
-  height: 40px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: gradient 15s ease infinite;
-  background-size: 300% 300%;
+  height: 50px; /* Taller roof */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Bigger, softer shadow */
+  animation: rainbowSlide 5s ease-in-out infinite; /* Faster, bouncy rainbow */
+  background-size: 200% 200%; /* Smoother color dance */
+  border-bottom: 3px solid rgba(255, 255, 255, 0.5); /* Shiny edge */
 }
 
 header h1 {
-  text-align: center;
-  line-height: 10px;
-  font-size: 2em;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Montserrat', sans-serif; 
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  animation: stageLight 3s infinite;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
+  animation: slideIn 1s ease-out;
 }
 
+/* Navigation - Glassmorphism Effect */
 nav {
   text-align: center;
-  margin: 1em 0;
+  padding: 1rem 0;
+  background: rgba(255, 255, 255, 0.2); /* Glassy transparency */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  max-width: 600px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 nav a {
-  margin: 0 1em;
-  color: #4CAF50;
+  margin: 0 2rem;
+  color: #fff;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 nav a:hover {
-  color: #2e7d32;
+  color: #ff7675; 
+  transform: scale(1.1); 
 }
 
 main {
   padding: 2em;
   text-align: center;
+  flex: 1; /* Allows main to grow and push footer down */
 }
 
 footer {
   background: linear-gradient(45deg, #20c997, #51cf66);
   color: white;
   text-align: center;
-  position: fixed;
   bottom: 0;
   width: 100%;
   padding: 1em 0;
@@ -60,4 +75,40 @@ footer {
   font-family: 'Roboto', sans-serif;
   font-size: 0.8em;
   letter-spacing: 0.5px;
+  
+}
+
+.social-links a {
+  margin: 0 30px;
+  color: #FFFFFF;
+  font-size: 1.8em;
+  text-decoration: none;
+  transition: color 0.5s ease, transform 0.5s ease, text-shadow 0.5s ease;
+}
+
+.social-links a:hover {
+  color: #FF00FF;
+  transform: scale(1.4) rotate(10deg);
+  text-shadow: 0 0 25px rgba(255, 0, 255, 1);
+  animation: cosmicPulseEffect 1.5s infinite alternate;
+}
+
+/* Header Rainbow Animation */
+@keyframes rainbowSlide {
+  0% { background-position: 0% 50%; } /* Start at the left */
+  50% { background-position: 100% 50%; } /* Slide to the right */
+  100% { background-position: 0% 50%; } /* Back to the start */
+}
+
+/* Original Header Title Animation (unchanged) */
+@keyframes stageLight {
+  0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+  50% { text-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+  100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+}
+
+/* Animations for Appeal */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
