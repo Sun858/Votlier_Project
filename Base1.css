@@ -1,12 +1,12 @@
-/* Color variables for easy theme management (pseudo class selector)*/
-:root {
+ /* Color variables for easy theme management (pseudo class selector)*/
+ :root {
     --primary-color: #4CAF50;
     --primary-dark-color: #388e3c;
     --primary-light-color: #66bb6a;
     --background-color: #f0f0f0;
     --text-color: #333;
     --sidebar-width: 60px;
-    --sidebar-expanded-width: 250px;
+    --sidebar-expanded-width: 200px;
     --transition-duration: 0.3s;
     --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -59,6 +59,8 @@ body {
     margin-left: 10px;
     font-size: 18px;
     transition: opacity var(--transition-duration);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: stageLight 3s infinite;
 }
 
 /* Sidebar top bar icon styling */
@@ -92,8 +94,10 @@ body {
     color: white;
     text-decoration: none;
     padding: 10px 0;
-    transition: background-color var(--transition-duration), transform var(--transition-duration);
+    transition: background-color var(--transition-duration),
+     transform var(--transition-duration);
     border-radius: 4px;
+   
 }
 
 /* Sidebar navigation links text styling */
@@ -113,6 +117,7 @@ body {
     background-color: rgba(255, 255, 255, 0.1); /* Change background color on hover */
     transform: translateX(10px); /* Slightly move the link to the right on hover */
     box-shadow: var(--box-shadow);
+    color:#388e3c;
 }
 
 /* Sidebar footer styling */
@@ -124,11 +129,12 @@ body {
     box-shadow: var(--box-shadow);
 }
 
+
 /* Sidebar footer links styling */
 .sidebar-footer a {
     display: flex;
     align-items: center;
-    color: rgb(92, 8, 8);
+    color: white;
     text-decoration: none;
     transition: background-color var(--transition-duration), transform var(--transition-duration);
     border-radius: 4px;
@@ -147,10 +153,12 @@ body {
     opacity: 1;
 }
 
+
 .sidebar-footer a:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateX(10px); /* Slightly move the link to the right on hover */
     box-shadow: var(--box-shadow);
+    color:yellow
 }
 
 /* Content area styling */
@@ -161,4 +169,7 @@ body {
     box-shadow: var(--box-shadow);
 }
 
- 
+.sidebar:hover ~ .content,
+.sidebar.active ~ .content {
+    margin-left: var(--sidebar-expanded-width);
+}
