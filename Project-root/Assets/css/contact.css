@@ -2,8 +2,8 @@
 
 /* Top Section */
 .top-section {
-  padding: 20px 30px;
-  border-radius: 25px;
+  padding: 5px;
+  border-radius: 28px;
   box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   backdrop-filter: blur(15px);
@@ -13,21 +13,10 @@
 }
 
 .top-section:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 80px rgba(0, 255, 0, 0.3);
-  background: rgba(27, 38, 59, 0.95);
-}
-
-.top-section::before {
-  content: '';
-  position: absolute;
-  top: -10%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  transform: translateY(-6px); /* Smaller lift for subtlety (unchanged from your design) */
+  box-shadow: 0 25px 100px rgba(5, 7, 5, 0.6);
   background: radial-gradient(circle, rgba(0, 255, 251, 0.15), transparent 60%);
-  animation: orbit 12s infinite ease-in-out;
-  z-index: -1;
+
 }
 
 .top-section h1 {
@@ -40,14 +29,19 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   text-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
+  margin-bottom: -0.5%;
+  margin-top:0.1%;
 }
 
-/* Animation Keyframes */
-@keyframes orbit {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+.top-section p {
+  font-size: 1.2em;
+  color: #101010;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 600; /* Slightly bold text for emphasis */
+  margin-bottom: -0.2%;
 
+}
 /*Contact Info Section*/
 .contact-container {
     display: grid;
@@ -96,6 +90,8 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align: center;
+    font-size: 35px;
+    margin-top:-2%;
   }
   
   .contact-info p {
@@ -114,13 +110,14 @@
   }
 
   /*Send a Message Section*/
-
 .contact-form h2 {
     background: linear-gradient(to right, #4CAF50, #2c5282);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     text-align:center;
+    font-size: 35px;
+    margin-top:-2%;
   }
   
 
@@ -131,6 +128,7 @@
     display: block;
     font-size: 1.1em;
     text-shadow: 0 0 5px rgba(224,224,224,0.3);
+    margin-left:-3%;
   }
   
   input, select, textarea {
@@ -143,8 +141,13 @@
     color: #e0e0e0;
     transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
     margin-bottom: 15px;
+    margin-left:-3%;
   }
-
+  select option {
+    background: #1E1E1E; /* Deep, neutral charcoal base */
+    color: #ffffff; /* White text for options */
+    padding: 0.5em; /* Optional: Add padding for better readability */
+  }
 .contact-form select {
   width: 108%;
 }

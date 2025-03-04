@@ -6,7 +6,7 @@ body {
   display: flex;
   flex-direction: column; /* Stacks content vertically */
 }
-
+/*Header section */
 header {
   background: linear-gradient(120deg, #59ee61, #20c997, #51cf66); /* New rainbow colors */
   color: white;
@@ -17,6 +17,7 @@ header {
   animation: rainbowSlide 5s ease-in-out infinite; /* Faster, bouncy rainbow */
   background-size: 200% 200%; /* Smoother color dance */
   border-bottom: 3px solid rgba(255, 255, 255, 0.5); /* Shiny edge */
+  border-radius: 0 0 125px 125px;
 }
 
 header h1 {
@@ -27,70 +28,139 @@ header h1 {
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
-  animation: slideIn 1s ease-out;
+  animation: slideIn 1s ease-out,stageLight 3s infinite;;
 }
 
-/* Navigation - Glassmorphism Effect */
 nav {
   text-align: center;
-  padding: 1rem 0;
-  background: rgba(255, 255, 255, 0.2); /* Glassy transparency */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
-  backdrop-filter: blur(10px); /* Frosted glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
+  padding: 0.5rem 0;
   margin: 1.5rem auto;
-  max-width: 600px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-width: 620px;
+  background: linear-gradient(135deg, rgba(15, 15, 15, 0.12), rgba(15, 15, 25, 0.8));
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(14, 22, 22, 0.15);
+    border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15);
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shimmering glass effect */
+nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05));
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+}
+
+nav:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.2);
 }
 
 nav a {
-  margin: 0 2rem;
-  color: #fff;
+  margin: 0 3rem;
+  color: #e5e7eb;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 1.2rem;
-  transition: color 0.3s ease, transform 0.3s ease;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* Elegant underline with glow */
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #13101c, #492e62, #7e22ce);
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(16, 15, 19, 0.6);
 }
 
 nav a:hover {
-  color: #ff7675; 
-  transform: scale(1.1); 
+  color: #a78bfa;
+  transform: translateY(-4px);
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.8), 0 0 40px rgba(147, 51, 234, 0.6);
 }
 
+nav a:hover::after {
+  width: 130%;
+  height: 4px;
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.8), 0 0 40px rgba(147, 51, 234, 0.6);
+}
+
+/*Main section */
 main {
   padding: 2em;
   text-align: center;
   flex: 1; /* Allows main to grow and push footer down */
 }
 
+/* Footer section */
 footer {
   background: linear-gradient(45deg, #20c997, #51cf66);
   color: white;
-  text-align: center;
-  bottom: 0;
   width: 100%;
   padding: 1em 0;
-  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
   font-family: 'Roboto', sans-serif;
   font-size: 0.8em;
   letter-spacing: 0.5px;
-  
+  border-radius: 38%;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),                /* External soft shadow for depth */
+    inset 0 15px 30px -15px rgba(255, 255, 255, 0.6), /* Top bevel highlight */
+    inset 0 -15px 30px -15px rgba(0, 0, 0, 0.6);
+}
+
+.social-links {
+  text-align: center;
 }
 
 .social-links a {
-  margin: 0 30px;
+  margin: 0 10px;
   color: #FFFFFF;
-  font-size: 1.8em;
+  font-size: 1.2em;
   text-decoration: none;
-  transition: color 0.5s ease, transform 0.5s ease, text-shadow 0.5s ease;
+  transition: color 0.5s ease, transform 0.5s ease, text-shadow 0.5s ease, background-color 0.5s ease;
+  /* Add circle styling */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px; /* Adjust size of the circle */
+  height: 25px; /* Adjust size of the circle */
+  border-radius: 40%; /* Makes it circular */
+  border: 1.5px solid #FFFFFF; 
 }
 
 .social-links a:hover {
   color: #FF00FF;
   transform: scale(1.4) rotate(10deg);
   text-shadow: 0 0 25px rgba(255, 0, 255, 1);
-  animation: cosmicPulseEffect 1.5s infinite alternate;
+  /* Optional: change border or background on hover */
+  border-color: #FF00FF; /* Matches hover color */
+}
+
+.footer-text {
+text-align: center;
 }
 
 /* Header Rainbow Animation */
