@@ -51,3 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
     createUser($conn, $firstName, $middleName, $lastName, $email, $password, $confirmPassword);
 
 }
+else {
+    header("location: ../pages/signup.php");
+    exit();
+}
