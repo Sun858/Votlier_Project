@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     hash_password VARBINARY(255) NOT NULL,
     salt VARBINARY(255) NOT NULL,
     iterations INT NOT NULL,
+    encryption_key VARBINARY(255) NOT NULL,
+    iv VARBINARY(255) NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

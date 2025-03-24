@@ -77,37 +77,39 @@ function emailExists($conn, $email) {
 
 
 // Create the USER into the database USER
-function createUser($conn, $firstName, $middleName, $lastName, $email, $password, $confirmPassword) {
-    $sql = "INSERT INTO users (first_name, middle_name, last_name, email, hash_password, salt, iterations)
-                        VALUES (?, ?, ?, ?, ?, ?, ?);";
+function createUser($conn, $firstName, $middleName, $lastName, $email, $password) {
+    $sql = "INSERT INTO users (first_name, middle_name, last_name, email, hash_password, salt, iterations, encryption_key, iv)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../pages/signup.php?error=stmtfailed");
-            exit();
-       }
+        exit();
+    }
 
-       $salt = random_bytes(16); // 16 bytes = 128 bits
-       $iterations = 100000;
-       $hash = hash_pbkdf2("sha256", $password, $salt, $iterations, 32, true); // 32 bytes = 256 bits
-   
-       // Encrypt PII (names and email)
-       $encryptionKey = random_bytes(32); // Generate a 256-bit encryption key
-       $cipher = "aes-256-cbc";
-       $iv = random_bytes(openssl_cipher_iv_length($cipher));
-   
-       $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, 0, $iv);
-       $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, 0, $iv);
-       $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, 0, $iv);
-       $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, 0, $iv);
+    $salt = random_bytes(16);
+    $iterations = 100000;
+    $hash = hash_pbkdf2("sha256", $password, $salt, $iterations, 32, true);
 
-       mysqli_stmt_bind_param($stmt, "ssssssi", $encryptedFirstName, $encryptedMiddleName, $encryptedlastName, $encryptedEmail, $hash, $salt, $iterations);
-       mysqli_stmt_execute($stmt);
-       mysqli_stmt_close($stmt);
+    $encryptionKey = random_bytes(32);
+    $cipher = "aes-256-cbc";
+    $iv = random_bytes(openssl_cipher_iv_length($cipher));
 
-       header("location: ../pages/signup.php?error=none");
-       exit();
+    $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, 0, $iv);
+    $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, 0, $iv);
+    $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, 0, $iv);
+    $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, 0, $iv);
 
-} 
+    mysqli_stmt_bind_param($stmt, "sssssssss", $encryptedFirstName, $encryptedMiddleName, $encryptedLastName, $encryptedEmail, $hash, $salt, $iterations, $encryptionKey, $iv);
+    if(!mysqli_stmt_execute($stmt)){
+        header("location: ../pages/signup.php?error=stmtfailed");
+        exit();
+    }
+
+    mysqli_stmt_close($stmt);
+
+    header("location: ../pages/signup.php?error=none");
+    exit();
+}
 
 
 // --------------------------------------------------------- 
@@ -132,6 +134,20 @@ function loginUser($conn, $email, $pwd) {
         exit();
     }
 
+    $pwdHashed = $emailExists["hash_password"];
+    $checkPwd = password_verify($pwd, $pwdHashed);
+
+    if ($checkPwd === false) {
+        header("location: ../pages/login.php?error=wronglogin");
+        exit();
+    } else if ($checkPwd === true) {
+        session_start();
+        $_SESSION["user_id"] = $emailExists["email"];
+        header("location: ../index.html");
+        exit();
+    }
+}
+
 
     $pwdHashed = $emailExists["usersPwd"];
     $checkPwd = password_verify($pwd, $pwdHashed); // MAKE SURE THAT THESE BOTH WORK WHEN LOGGING IN!
@@ -146,5 +162,5 @@ function loginUser($conn, $email, $pwd) {
         header("location: ../index.html"); 
         exit();
     }
-}
+
 

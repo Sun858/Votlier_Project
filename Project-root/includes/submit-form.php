@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require '../DatabaseConnection/config.php'; // This is the database connection including the authentication details
 require 'functions.sn.php'; // This has most of the functions that are called within this file
 
