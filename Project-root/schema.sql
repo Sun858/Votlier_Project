@@ -7,28 +7,30 @@ USE voting_system;
 -- Users Table --
 CREATE TABLE IF NOT EXISTS `users` (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARBINARY(50) NOT NULL,
-    middle_name VARBINARY(50) NOT NULL,
-    last_name VARBINARY(50) NOT NULL,
-    email VARBINARY(255) NOT NULL UNIQUE,
-    hash_password VARBINARY(255) NOT NULL,
-    salt VARBINARY(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hash_password BLOB NOT NULL,
+    salt BLOB NOT NULL,
     iterations INT NOT NULL,
-    encryption_key VARBINARY(255) NOT NULL,
-    iv VARBINARY(255) NOT NULL,
+    encryption_key BLOB NOT NULL,
+    iv BLOB NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Administration Table --
 CREATE TABLE IF NOT EXISTS `administration` (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARBINARY(50) NOT NULL,
-    middle_name VARBINARY(50) NOT NULL,
-    last_name VARBINARY(50) NOT NULL,
-    email VARBINARY(255) NOT NULL UNIQUE,
-    hash_password VARBINARY(255) NOT NULL,
-    salt VARBINARY(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hash_password BLOB NOT NULL,
+    salt BLOB NOT NULL,
     iterations INT NOT NULL,
+    encryption_key BLOB NOT NULL,
+    iv BLOB NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
