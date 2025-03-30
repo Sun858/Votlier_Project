@@ -9,6 +9,8 @@ services:
     depends_on:
       - db
     restart: always
+    environment:
+      - DOCKER_ENV=true # Set environment variable for Docker detection
 
   db:
     image: mysql:8
