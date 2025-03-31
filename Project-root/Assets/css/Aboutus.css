@@ -11,6 +11,7 @@ main {
   width: 90%;
 }
 
+/* --------Discover More About Us Discover More About Us-------*/ 
 /* Additional content styles */
 .additional-content {
   padding: 60px 20px;
@@ -35,40 +36,6 @@ main {
   line-height: 1.6;
   color: #4b5563;
   margin-bottom: 40px;
-}
-
-/* Glowing Divider Styles */
-.glowing-divider {
-  height: 1px;
-  width: 80%;
-  margin: 60px auto;
-  position: relative;
-  background: rgba(99, 102, 241, 0.2);
-}
-
-.glowing-divider::after {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(99, 102, 241, 0.8),
-    transparent);
-  animation: glow 3s ease infinite;
-}
-
-@keyframes glow {
-  0%, 100% { 
-    opacity: 0.3; 
-    width: 40%; 
-  }
-  50% { 
-    opacity: 1; 
-    width: 60%; 
-  }
 }
 
 /* Glowing Divider Styles inside Additional Content */
@@ -102,7 +69,40 @@ main {
   animation: glow 3s ease infinite;
 }
 
-/* For Mission, Vision, and Values */
+.glowing-divider {
+  height: 1px;
+  width: 80%;
+  margin: 60px auto;
+  position: relative;
+  background: rgba(99, 102, 241, 0.2);
+}
+
+.glowing-divider::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(99, 102, 241, 0.8),
+    transparent);
+  animation: glow 3s ease infinite;
+}
+
+@keyframes glow {
+  0%, 100% { 
+    opacity: 0.3; 
+    width: 40%; 
+  }
+  50% { 
+    opacity: 1; 
+    width: 60%; 
+  }
+} 
+
+/*--------- For Mission, Vision, and About Us -----------*/
 /* Outer box styling */
 .box {
   width: 90%;
@@ -138,6 +138,7 @@ main {
 .Gradient-text {
   font-size: 2rem;
   font-weight: bold;
+  color: transparent;
   background: linear-gradient(
     to right,
     #4285f4,
@@ -147,9 +148,9 @@ main {
   );
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
   display: inline-block;
   text-align: left;
+  margin-right: 35px;
 }
 
 .About-us p, .Mission p, .Vision p {
@@ -164,10 +165,9 @@ main {
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
-  display: block;
 }
 
-/* Values Section - Fixed Version */
+/* ---------Our Core Values Section --------- */
 .Values {
   padding: 40px 0;
   position: relative;

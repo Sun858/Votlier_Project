@@ -6,7 +6,7 @@ body {
   display: flex;
   flex-direction: column; /* Stacks content vertically */
 }
-/*Header section */
+/*-------Header section ---------------*/
 header {
   background: linear-gradient(120deg, #59ee61, #20c997, #51cf66); /* New rainbow colors */
   color: white;
@@ -31,7 +31,7 @@ header h1 {
   animation: slideIn 1s ease-out,stageLight 3s infinite;;
 }
 
-/*Navigation Section*/
+/*---------Navigation Section--------------*/
 nav {
   text-align: center;
   padding: 0.5rem 0;
@@ -109,14 +109,14 @@ nav a:hover::after {
   box-shadow: 0 0 20px rgba(167, 139, 250, 0.8), 0 0 40px rgba(147, 51, 234, 0.6);
 }
 
-/*Main section */
+/*---------------Main section ---------------*/
 main {
   padding: 2em;
   text-align: center;
   flex: 1; /* Allows main to grow and push footer down */
 }
 
-/* Footer section */
+/*-------------Footer section -----------------*/
 footer {
   position: relative;
   background: linear-gradient(135deg, #363b3b, #2d343a);
@@ -325,18 +325,6 @@ footer {
 }
 
 
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .footer-container {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
-  
-  .footer-newsletter {
-    grid-column: span 1;
-  }
-}
-
 /* Animations */
 @keyframes shine {
   0% { transform: translateX(-100%); }
@@ -353,39 +341,6 @@ footer {
   50% { transform: scale(1.1); }
 }
 
-@media (max-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .footer-bottom {
-    flex-direction: column;
-    text-align: center;
-    gap: 20px;
-  }
-  
-  .footer-legal {
-    justify-content: center;
-  }
-  
-  .footer-copyright {
-    padding: 8px 15px; /* Slightly smaller padding */
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .newsletter-form {
-    flex-direction: column;
-  }
-  
-  .footer-copyright {
-    font-size: 0.85rem; /* Adjust font size for smaller screens */
-  }
-}
 
 /* Header Rainbow Animation */
 @keyframes rainbowSlide {
