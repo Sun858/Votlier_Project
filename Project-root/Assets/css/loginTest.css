@@ -3,10 +3,10 @@
 
 .container {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    padding: 2.5em;
+    padding: 60px;
     border-radius: 25%;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    max-width: 500px;
+    max-width: 600px;
     margin: 2em auto;
     flex-grow: 1;
     transform: translateY(0);
@@ -29,11 +29,18 @@ h2 {
     -webkit-text-fill-color: transparent;
 }
 
+.Container {
+    color: gray;
+    font-size: 1rem;
+    margin-top:-10px;
+}
+
 .form-group {
     margin-bottom: 1.8em;
     position: relative;
     transform: translateY(0);
     transition: transform 0.3s ease;
+    margin-left:-25px;
 }
 
 .form-group:focus-within {
@@ -45,23 +52,46 @@ label {
     font-weight: bold;
     color: #120101;
     margin-left: -5%;
+    margin
 }
 
 input {
     width: 100%;
-    padding: 0.85em;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-size: 1em;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.9);
     margin-left:-5%;
+
+    padding: 0.85rem 0.85rem 0.85rem 2.2rem;
+}
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
 }
 
 input:focus {
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* ========== Password Toggle ========== */
+.password-toggle {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+    cursor: pointer;
 }
 
 button {
