@@ -115,7 +115,7 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
 // --------------------------------------------------------- 
 // Functions for the login.php FILE!
 
-function emptyInputLogin($email, $pwd) {
+function emptyInputLogin($email, $password) {
     $result;
     if (empty($email) || empty($password)) {
         $result = true;
@@ -126,7 +126,7 @@ function emptyInputLogin($email, $pwd) {
     return $result;
 }
 
-function loginUser($conn, $email, $pwd) {
+function loginUser($conn, $email, $password) {
     $emailExists = emailExists($conn, $email);
 
     if ($emailExists === false) {
@@ -135,7 +135,7 @@ function loginUser($conn, $email, $pwd) {
     }
 
     $pwdHashed = $emailExists["hash_password"];
-    $checkPwd = password_verify($pwd, $pwdHashed);
+    $checkPwd = password_verify($password, $pwdHashed);
 
     if ($checkPwd === false) {
         header("location: ../pages/login.php?error=wronglogin");
@@ -150,9 +150,9 @@ function loginUser($conn, $email, $pwd) {
 
 
     $pwdHashed = $emailExists["usersPwd"];
-    $checkPwd = password_verify($pwd, $pwdHashed); // MAKE SURE THAT THESE BOTH WORK WHEN LOGGING IN!
+    $checkPwd = password_verify($password, $pwdHashed); // MAKE SURE THAT THESE BOTH WORK WHEN LOGGING IN!
 
-    if ($checkHash === false) {
+    if ($checkPwd === false) {
         header("location: ../pages/login.php?error=wronglogin");
         exit();
     }
