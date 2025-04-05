@@ -17,4 +17,3 @@ if (!$conn) {
     die("Failed to connect to Database: " . mysqli_connect_error());
 }
 ?>
-
