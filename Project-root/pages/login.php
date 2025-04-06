@@ -47,7 +47,16 @@
     <a href="../pages/signup.php" id="signupButton">Don't have an account? Sign Up</a>
 
   </div>
-
+  <?php
+    if (isset($_GET["error"])) {
+      if ($_GET["error"] == "emptyinput") {
+        echo "<p>Fill all fields in!</p>";
+      }
+      else if ($_GET["error"] == "emailnotfound") {
+        echo "<p>Incorrect login information!</p>";
+      }
+    }
+  ?>
   <footer>
     <p>&copy; 2025 My Website. All rights reserved.</p>
   </footer>
