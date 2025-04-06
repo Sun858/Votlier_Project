@@ -17,21 +17,31 @@ function pwdMatch($password, $confirmPassword) {
 }
 
 function emailExists($conn, $email) {
-    $sql = "SELECT * FROM users WHERE email = ?;";
+    $sql = "SELECT * FROM users;";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         header("location: ../pages/signup.php?error=stmtfailed");
         exit();
     }
 
-    mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
-
     $resultstmt = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($resultstmt);
-    mysqli_stmt_close($stmt);
 
-    return $row ? $row : false;
+    while ($row = mysqli_fetch_assoc($resultstmt)) {
+        $encryptionKey = $row["encryption_key"];
+        $iv = $row["iv"];
+        $cipher = "aes-256-cbc";
+
+        $decryptedEmail = openssl_decrypt($row["email"], $cipher, $encryptionKey, 0, $iv);
+
+        if ($decryptedEmail === $email) {
+            mysqli_stmt_close($stmt);
+            return $row;
+        }
+    }
+
+    mysqli_stmt_close($stmt);
+    return false;
 }
 
 function createUser($conn, $firstName, $middleName, $lastName, $email, $password) {
@@ -76,25 +86,29 @@ function loginUser($conn, $email, $password) {
     $emailExists = emailExists($conn, $email);
 
     if ($emailExists === false) {
-        header("location: ../pages/login.php?error=wronglogin");
+        error_log("Login failed: Email not found for $email");
+        header("location: ../pages/login.php?error=emailnotfound");
         exit();
     }
 
     $pwdHashed = $emailExists["hash_password"];
-
-    // Using hash_pbkdf2 instead of password_verify since you hash with PBKDF2
-    // But since you are using openssl_encrypt for names, you likely want this too:
     $salt = $emailExists["salt"];
     $iterations = $emailExists["iterations"];
     $inputHash = hash_pbkdf2("sha256", $password, $salt, $iterations, 32, true);
 
     if (!hash_equals($pwdHashed, $inputHash)) {
-        header("location: ../pages/login.php?error=wronglogin");
+        error_log("Login failed: Incorrect password for $email");
+        header("location: ../pages/login.php?error=incorrectpassword");
         exit();
     }
 
+    $encryptionKey = $emailExists["encryption_key"];
+    $iv = $emailExists["iv"];
+    $cipher = "aes-256-cbc";
+    $decryptedEmail = openssl_decrypt($emailExists["email"], $cipher, $encryptionKey, 0, $iv);
+
     session_start();
-    $_SESSION["user_id"] = $emailExists["email"];
+    $_SESSION["user_id"] = $decryptedEmail;
     header("location: ../index.html");
     exit();
 }
