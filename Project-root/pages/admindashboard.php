@@ -1,4 +1,3 @@
-<!-- User login page with Show/Hide Hoover SideBar-->
 <?php
 session_start();
 if (!isset($_SESSION["user_id"])) {
@@ -7,7 +6,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 ?>
 
-
+<!-- User login page with Show/Hide Hoover SideBar-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
