@@ -56,6 +56,9 @@
       } else if ($_GET["error"] == "incorrectpassword") {
           echo "<p>Incorrect password!</p>";
       }
+      else {
+        echo "<p>An unexpected error occurred. Please try again.</p>";
+    }
   }
   ?>
   <footer>
