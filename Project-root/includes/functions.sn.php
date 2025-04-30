@@ -109,6 +109,6 @@ function loginUser($conn, $email, $password) {
 
     session_start();
     $_SESSION["user_id"] = $decryptedEmail;
-    header("location: ../index.html");
+    header("location: ../pages/userdashboard.php");
     exit();
 }
