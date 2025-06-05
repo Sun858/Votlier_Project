@@ -7,14 +7,14 @@ USE voting_system;
 -- Users Table --
 CREATE TABLE IF NOT EXISTS `users` (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    middle_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name BLOB NOT NULL,
+    middle_name BLOB NOT NULL,
+    last_name BLOB NOT NULL,
+    email BLOB NOT NULL UNIQUE,
+    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique, to make the lookup during login phase much more efficient.
     hash_password BLOB NOT NULL,
     salt BLOB NOT NULL,
     iterations INT NOT NULL,
-    encryption_key BLOB NOT NULL,
     iv BLOB NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -22,14 +22,14 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Administration Table --
 CREATE TABLE IF NOT EXISTS `administration` (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    middle_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name BLOB NOT NULL,
+    middle_name BLOB NOT NULL,
+    last_name BLOB NOT NULL,
+    email BLOB NOT NULL UNIQUE,
+    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique, to make the lookup during login phase much more efficient.
     hash_password BLOB NOT NULL,
     salt BLOB NOT NULL,
     iterations INT NOT NULL,
-    encryption_key BLOB NOT NULL,
     iv BLOB NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

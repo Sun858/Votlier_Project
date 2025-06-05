@@ -32,7 +32,7 @@ function emailExists($conn, $email) {
         $iv = $row["iv"];
         $cipher = "aes-256-cbc";
 
-        $decryptedEmail = openssl_decrypt($row["email"], $cipher, $encryptionKey, 0, $iv);
+        $decryptedEmail = openssl_decrypt($row["email"], $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
 
         if ($decryptedEmail === $email) {
             mysqli_stmt_close($stmt);
@@ -61,10 +61,10 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
     $cipher = "aes-256-cbc";
     $iv = random_bytes(openssl_cipher_iv_length($cipher));
 
-    $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, 0, $iv);
-    $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, 0, $iv);
-    $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, 0, $iv);
-    $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, 0, $iv);
+    $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
+    $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
+    $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
+    $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
 
     mysqli_stmt_bind_param($stmt, "sssssssss", $encryptedFirstName, $encryptedMiddleName, $encryptedLastName, $encryptedEmail, $hash, $salt, $iterations, $encryptionKey, $iv);
     
@@ -105,7 +105,7 @@ function loginUser($conn, $email, $password) {
     $encryptionKey = $emailExists["encryption_key"];
     $iv = $emailExists["iv"];
     $cipher = "aes-256-cbc";
-    $decryptedEmail = openssl_decrypt($emailExists["email"], $cipher, $encryptionKey, 0, $iv);
+    $decryptedEmail = openssl_decrypt($emailExists["email"], $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
 
     // Removed session_start line here because of redundancy, don't want to overwrite the session data.
     $_SESSION["user_id"] = $decryptedEmail;
