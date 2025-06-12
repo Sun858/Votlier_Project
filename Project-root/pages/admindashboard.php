@@ -34,7 +34,7 @@ if (!isset($_SESSION["user_id"])) {
         </div>
 
         <div class="sidebar-footer">
-            <a href="#"><ion-icon name="close-circle-sharp"></ion-icon><span> Sign Out </span></a>
+            <a href="../includes/logout.php"><ion-icon name="close-circle-sharp"></ion-icon><span> Sign Out </span></a>
  
             </div>
         </div>
