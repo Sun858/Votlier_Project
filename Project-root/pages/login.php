@@ -37,7 +37,7 @@
         <input type="password" id="loginPassword" name="loginPassword" required>
       </div>
 
-      <button type="submit">Login</button>
+      <button type="submit" name="submit">Login</button>
       
       <a href="../pages/forgot_password.html" class="forgot-password-link">Forgot Password?</a>
 
@@ -50,12 +50,16 @@
   <?php
     if (isset($_GET["error"])) {
       if ($_GET["error"] == "emptyinput") {
-        echo "<p>Fill all fields in!</p>";
+          echo "<p>Fill all fields in!</p>";
+      } else if ($_GET["error"] == "emailnotfound") {
+          echo "<p>Incorrect login information!</p>";
+      } else if ($_GET["error"] == "incorrectpassword") {
+          echo "<p>Incorrect password!</p>";
       }
-      else if ($_GET["error"] == "emailnotfound") {
-        echo "<p>Incorrect login information!</p>";
-      }
+      else {
+        echo "<p>An unexpected error occurred. Please try again.</p>";
     }
+  }
   ?>
   <footer>
     <p>&copy; 2025 My Website. All rights reserved.</p>

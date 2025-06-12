@@ -107,8 +107,8 @@ function loginUser($conn, $email, $password) {
     $cipher = "aes-256-cbc";
     $decryptedEmail = openssl_decrypt($emailExists["email"], $cipher, $encryptionKey, 0, $iv);
 
-    session_start();
+    // Removed session_start line here because of redundancy, don't want to overwrite the session data.
     $_SESSION["user_id"] = $decryptedEmail;
-    header("location: ../index.html");
+    header("location: ../pages/userdashboard.php");
     exit();
 }

@@ -1,9 +1,11 @@
 <?php
 
+session_start();
+
 if (isset($_POST["submit"])) {
 
-    $email = $_POST["uid"];
-    $pwd = $_POST["pwd"];
+    $email = $_POST["loginEmail"];
+    $pwd = $_POST["loginPassword"];
 
     require_once '../DatabaseConnection/config.php';
     require_once 'functions.sn.php';

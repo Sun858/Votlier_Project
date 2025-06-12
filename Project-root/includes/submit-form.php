@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
 
 
     // Store all the PII (ENCRYPTED) and hashed password into the database
-    createUser($conn, $firstName, $middleName, $lastName, $email, $password, $confirmPassword);
+    createUser($conn, $firstName, $middleName, $lastName, $email, $password);
 
 }
 else {
