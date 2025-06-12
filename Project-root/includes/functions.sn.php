@@ -1,5 +1,26 @@
 <?php
 
+// This is the SECURE KEY MANAGEMENT SECTION - Where we load the encryption keys from an environmental variable
+if (!defined('TRUE_MASTER_EMAIL_ENCRYPTION_KEY')) {
+    $mek_base64 = getenv('MASTER_EMAIL_ENCRYPTION_KEY');
+    if (!$mek_base64) {
+        error_log("MASTER_EMAIL_ENCRYPTION_KEY not found in .env");
+        die("Error Ocurred"); // Kill processes if encryption key isn't found.
+    } define ('TRUE_MASTER_EMAIL_ENCRYPTION_KEY', base64_decode($mek_base64));
+}
+
+if (!defined('TRUE_BLIND_INDEX_SECRET_KEY')) {
+    $bisk_base64 = getenv('BLIND_INDEX_SECRET_KEY');
+    if (!$bisk_base64) {
+        error_log("BLIND_INDEX_SECRET_KEY not found in .env");
+        die("Error Ocurred"); // Kill processes if encryption key isn't found.
+    } define ('TRUE_MASTER_EMAIL_ENCRYPTION_KEY', base64_decode($bisk_base64));
+}
+
+// This entire segment above would grab the key from the .env and decode it to be used as the encryption key for functions below.
+
+
+
 function emptyInputSignup($firstName, $lastName, $email, $password, $confirmPassword) {
     return empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($confirmPassword);
 }
