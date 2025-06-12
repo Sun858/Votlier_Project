@@ -4,6 +4,7 @@ if (!isset($_SESSION["user_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
+include 'election_functions.php';
 ?>
 
 <!-- User login page with Show/Hide Hoover SideBar-->
