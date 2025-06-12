@@ -43,6 +43,12 @@ If you need to make changes to the docker files or for whatever reason need to r
 ```
 docker-compose down -v
 ```
+
+## Administrator Login:
+Email: bigadmin@live.com.au
+Password: administrator
+
+```
        ______
                   \     \.
                   |`\_____\

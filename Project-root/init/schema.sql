@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS `users` (
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating an index for the email_blind_index section for faster lookup times.
+CREATE INDEX usr_email_blind_index ON users (email_blind_index);
+
 -- Administration Table --
 CREATE TABLE IF NOT EXISTS `administration` (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,6 +36,8 @@ CREATE TABLE IF NOT EXISTS `administration` (
     iv BLOB NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Creating an index for the email_blind_index section for faster lookup times.
+CREATE INDEX admn_email_blind_index ON administration (email_blind_index);
 
 -- Election Table --
 CREATE TABLE IF NOT EXISTS `election` (
