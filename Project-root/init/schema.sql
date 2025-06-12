@@ -5,39 +5,42 @@ USE voting_system;
 -- Table Structure --
 
 -- Users Table --
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name BLOB NOT NULL,
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
-    email BLOB NOT NULL UNIQUE,
-    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique, to make the lookup during login phase much more efficient.
+    email BLOB NOT NULL,
+    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique
     hash_password BLOB NOT NULL,
     salt BLOB NOT NULL,
     iterations INT NOT NULL,
     iv BLOB NOT NULL,
-    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_email (email(255)) -- This works because it specifies a length
 );
 
 -- Creating an index for the email_blind_index section for faster lookup times.
-CREATE INDEX usr_email_blind_index ON users (email_blind_index);
+CREATE INDEX usr_email_blind_index ON users (email_blind_index(32));
 
 -- Administration Table --
-CREATE TABLE IF NOT EXISTS `administration` (
+CREATE TABLE IF NOT EXISTS administration (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name BLOB NOT NULL,
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
-    email BLOB NOT NULL UNIQUE,
-    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique, to make the lookup during login phase much more efficient.
+    email BLOB NOT NULL,
+    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique
     hash_password BLOB NOT NULL,
     salt BLOB NOT NULL,
     iterations INT NOT NULL,
     iv BLOB NOT NULL,
-    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_email (email(255)) -- This works because it specifies a length
 );
 -- Creating an index for the email_blind_index section for faster lookup times.
-CREATE INDEX admn_email_blind_index ON administration (email_blind_index);
+CREATE INDEX admn_email_blind_index ON administration (email_blind_index(32));
+
 
 -- Election Table --
 CREATE TABLE IF NOT EXISTS `election` (
