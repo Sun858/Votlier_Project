@@ -14,7 +14,7 @@ if (!defined('TRUE_BLIND_INDEX_SECRET_KEY')) {
     if (!$bisk_base64) {
         error_log("BLIND_INDEX_SECRET_KEY not found in .env");
         die("Error Ocurred"); // Kill processes if encryption key isn't found.
-    } define ('TRUE_MASTER_EMAIL_ENCRYPTION_KEY', base64_decode($bisk_base64));
+    } define ('TRUE_BLIND_INDEX_SECRET_KEY', base64_decode($bisk_base64));
 }
 
 // This entire segment above would grab the key from the .env and decode it to be used as the encryption key for functions below.
@@ -66,7 +66,8 @@ function emailExists($conn, $email) {
 }
 
 function createUser($conn, $firstName, $middleName, $lastName, $email, $password) {
-    $sql = "INSERT INTO users (first_name, middle_name, last_name, email, hash_password, salt, iterations, encryption_key, iv)
+    // Insert into the database is below. NGL the structure of my code isn't the greatest lmao this should be lower I reckon.
+    $sql = "INSERT INTO users (first_name, middle_name, last_name, email, email_blind_index, hash_password, salt, iterations, iv)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -74,20 +75,26 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
         exit();
     }
 
-    $salt = random_bytes(16);
-    $iterations = 100000;
+    $salt = random_bytes(16); // This is a unique salt for password hashing
+    $iterations = 100000; // Iteration count for PBKDF2 hashing method
     $hash = hash_pbkdf2("sha256", $password, $salt, $iterations, 32, true);
 
-    $encryptionKey = random_bytes(32);
-    $cipher = "aes-256-cbc";
+    $encryptionKey = TRUE_MASTER_ENCRYPTION_KEY; // This would be loaded from the .env
+    $cipher = "aes-256-cbc"; // Very self explanatory
     $iv = random_bytes(openssl_cipher_iv_length($cipher));
 
-    $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
-    $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
-    $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
-    $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, OPENSSL_RAW_DATA, 0, $iv);
+    // Encrypt the fields with the protocol, the key, the OPTION (openssl_raw_data) and IV
+    $encryptedFirstName = openssl_encrypt($firstName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, $iv);
+    $encryptedMiddleName = openssl_encrypt($middleName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, $iv);
+    $encryptedLastName = openssl_encrypt($lastName, $cipher, $encryptionKey, OPENSSL_RAW_DATA, $iv);
+    $encryptedEmail = openssl_encrypt($email, $cipher, $encryptionKey, OPENSSL_RAW_DATA, $iv);
 
-    mysqli_stmt_bind_param($stmt, "sssssssss", $encryptedFirstName, $encryptedMiddleName, $encryptedLastName, $encryptedEmail, $hash, $salt, $iterations, $encryptionKey, $iv);
+    // Now a blind index for the email for lookup later. This is added here because this function is first needed to enable the function loop.
+    $blindIndexSecretKey = TRUE_BLIND_INDEX_SECRET_KEY; // Loaded from the .env
+    $emailBlindIndex = hash_hmac('sha256', $email, $blindIndexSecretKey, true);
+
+    // Binding all parameters for insertion
+    mysqli_stmt_bind_param($stmt, "sssssssss", $encryptedFirstName, $encryptedMiddleName, $encryptedLastName, $encryptedEmail, $emailBlindIndex, $hash, $salt, $iterations, $iv);
     
     if (!mysqli_stmt_execute($stmt)) {
         header("location: ../pages/signup.php?error=stmtfailed");
