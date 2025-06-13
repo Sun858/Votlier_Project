@@ -9,8 +9,6 @@ services:
     depends_on:
       - db
     restart: always
-    env_file:
-      - ./.env
     environment:
       - DOCKER_ENV=true # Set environment variable for Docker detection
 
