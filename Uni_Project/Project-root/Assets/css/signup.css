@@ -1,0 +1,98 @@
+
+body {
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    background: linear-gradient(to right, #4CAF50, #2c5282);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    font-size: 1.8em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #120101;
+}
+
+input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+button {
+    margin-left: 29%; 
+    width: 35%; 
+    padding: 10px; 
+    background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+    color: white;
+    border: none;
+    border-radius: 15px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    line-height: 1; /* Ensure line height matches text size to avoid extra gap */
+    font-weight: bold; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+button:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+
+.back-to-login-link {
+    display: inline; /* Make sure the link is inline */
+    color: #419b44;
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+    text-align: center;
+    margin-bottom: 2px;
+    position: relative;
+    padding: 4px ;
+}
+
+.back-to-login-link::after {
+    content: '';
+    display: inline; /* Make sure the line is inline */
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #419b44;
+    transition: width 0.3s ease;
+}
+
+.back-to-login-link:hover::after {
+    width: 100%;
+}
