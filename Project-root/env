@@ -1,0 +1,4 @@
+MYSQL_ROOT_PASSWORD=rootpassword
+MYSQL_DATABASE=voting_system
+MYSQL_USER=admin
+MYSQL_PASSWORD=adminpassword
