@@ -11,17 +11,14 @@ CREATE TABLE IF NOT EXISTS users (
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
     email BLOB NOT NULL,
-    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique
-    hash_password BLOB NOT NULL,
-    salt BLOB NOT NULL,
+    email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
+    hash_password VARBINARY(32) NOT NULL,
+    salt VARBINARY(16) NOT NULL,
     iterations INT NOT NULL,
-    iv BLOB NOT NULL,
+    iv VARBINARY(16) NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_email (email(255)) -- This works because it specifies a length
+    UNIQUE KEY unique_email_blind_index (email_blind_index)
 );
-
--- Creating an index for the email_blind_index section for faster lookup times.
-CREATE INDEX usr_email_blind_index ON users (email_blind_index(32));
 
 -- Administration Table --
 CREATE TABLE IF NOT EXISTS administration (
@@ -30,16 +27,15 @@ CREATE TABLE IF NOT EXISTS administration (
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
     email BLOB NOT NULL,
-    email_blind_index BLOB NOT NULL, -- This is for the Blind Indexing Technique
-    hash_password BLOB NOT NULL,
-    salt BLOB NOT NULL,
+    email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
+    hash_password VARBINARY(32) NOT NULL,
+    salt VARBINARY(16) NOT NULL,
     iterations INT NOT NULL,
-    iv BLOB NOT NULL,
+    iv VARBINARY(16) NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_email (email(255)) -- This works because it specifies a length
+    UNIQUE KEY unique_admin_email_blind_index (email_blind_index)
 );
--- Creating an index for the email_blind_index section for faster lookup times.
-CREATE INDEX admn_email_blind_index ON administration (email_blind_index(32));
+
 
 
 -- Election Table --
