@@ -57,7 +57,7 @@
           echo "<p>Incorrect password!</p>";
       }
       else {
-        echo "<p>An unexpected error occurred. Please try again.</p>";
+        echo "<p>Incorrect details or an unexpected error has occurred.</p>";
     }
   }
   ?>

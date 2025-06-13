@@ -39,10 +39,23 @@ Then all you need to do is build from the docker-compose.yml file (Ensure you ar
 docker-compose up --build
 ```
 If you need to make changes to the docker files or for whatever reason need to rebuild the docker due to any changes, use this:
-- Keep in mind that this deletes the volume including all database data (The user's you have created as well as Elections and Candidates)
+- Keep in mind that this deletes the containers, networks and images created by the docker-compose.yml file.
+```
+docker-compose down 
+```
+- If you wanted to also remove the database data you can use either of these commands.
 ```
 docker-compose down -v
 ```
+Or find the data volume with this:
+```
+docker volume ls
+```
+And delete it with:
+```
+docker volume rm [volume_name]
+``` 
+- Dont actually input the [ ] tag, only the plaintext.
 
 ## Administrator Login:
 Email: bigadmin@live.com.au

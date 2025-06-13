@@ -104,19 +104,19 @@ INSERT INTO administration (
   middle_name,
   last_name,
   email,
+  email_blind_index,
   hash_password,
   salt,
   iterations,
-  encryption_key,
   iv
 ) VALUES (
   'k9vU8U1pbQ72q8j+M8BGOA==',  -- Encrypted 'Lorem'
   '',                          -- No middle name
   'Q+WTpsCzkF9eHdNOEXu+Tg==',  -- Encrypted 'Ipsum'
   'M11TwJKc9zPRBoRNGIqK3z91XjMsmoSrUSeFea6Cgrs=', -- Encrypted email
+  UNHEX('82A975DEB76D05F6DF98BA9168C9F66C5EAF76B387C5C62EF5565081E138301B'), -- Blind index (32 bytes)
   UNHEX('F4A9BDA59343DA85D8E7D992F4D78D5C25E23D0BB4CB3471ED51429D8356A878'),
   UNHEX('17F2B61BBADC09D1E1517A1C85A9D136'),
   100000,
-  UNHEX('9336D7D95C773D4CA42D91A87C6E933BB396A43ABF8C123B2FC4460FD9853D82'),
   UNHEX('8AEAB398431163C1202381B4D6762B76')
 );
