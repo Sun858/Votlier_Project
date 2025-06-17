@@ -43,9 +43,6 @@
 
     </form>
 
-     <!-- Signup Link -->
-    <a href="../pages/signup.php" id="signupButton">Don't have an account? Sign Up</a>
-
   </div>
   <?php
     if (isset($_GET["error"])) {
