@@ -99,25 +99,28 @@ This is able to be done cause the votes are already compiled within the tally ta
     
 
 -- Dummy administrator user to be inserted into the database is below, because our project doesn't allow the creation of an Administrator in the user interface for security reasons.
-INSERT INTO administration (
-    first_name,
-    middle_name,
-    last_name,
-    email,
-    email_blind_index,
-    hash_password,
-    salt,
-    iterations,
-    iv
+INSERT INTO `administration` (
+  `admin_id`,
+  `first_name`,
+  `middle_name`,
+  `last_name`,
+  `email`,
+  `email_blind_index`,
+  `hash_password`,
+  `salt`,
+  `iterations`,
+  `iv`,
+  `date_created`
 ) VALUES (
-    UNHEX('c7dad363fcda1abe8f978451cd16543d'),
-    UNHEX('fb80a8a0c6bc3f6905da75a3fcfaec28'),
-    UNHEX('f4a1018975b4379c81f5e6426cdfd5d5'),
-    UNHEX('2eb3cdf168ef74192ce213549b5a33c48671732cbadc50bd7b9fd5bcc9315924'),
-    UNHEX('239f9378fcfc60e3fb0f5bb7e63cb502c24983d4cb633c6d634c16b1c511a16e'),
-    UNHEX('f8caac4f11a2070f43d24f347aaf0a613812eda3fa25ab8e7cfa5d72ab8f52e8'),
-    UNHEX('881369f2a56b87121095fdd689cdd25e'),
-    100000,
-    UNHEX('569d45a747f24a2d064cfab0e3f8a500')
+  1,
+  0xd9045473871485880d2b1ba04a28822c,
+  0x83d06e757ff57e640127770e7b20b9ca,
+  0x8544aa4941152796a54b57e9fdaada1a,
+  0x2c49a4f966291c2619cf27f7e9b4a3ac5cac7c2bd7ee0b2110619feecd200636,
+  0x7e13ad2689d6467d9322717e70e5f4f013790380165eb14f9526ddf7513fca5d,
+  0xcbe495402bcf497e3df8096d34ca7158bf460ecd440dad98940c0dc15d707af6,
+  0xae0545a33a9e2fe7edeafcad391074fe,
+  100000,
+  0x667e14898b4a35b0698d272fead0cace,
+  '2025-06-17 12:17:17'
 );
-

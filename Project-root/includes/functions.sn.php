@@ -100,6 +100,50 @@ function emailExists($conn, $email) {
     return false; // Email not found or decrypted email didn't match
 }
 
+
+function adminEmailExists($conn, $email) {
+    $blindIndexSecretKey = TRUE_BLIND_INDEX_SECRET_KEY;
+    $cipher = "aes-256-cbc";
+    $encryptionKey = TRUE_MASTER_EMAIL_ENCRYPTION_KEY;
+
+    $inputEmailBlindIndex = hash_hmac('sha256', $email, $blindIndexSecretKey, true);
+
+    $sql = "SELECT admin_id, first_name, middle_name, last_name, email, hash_password, salt, iterations, iv FROM administration WHERE email_blind_index = ? LIMIT 1;";
+    $stmt = mysqli_stmt_init($conn);
+
+    if (!mysqli_stmt_prepare($stmt, $sql)) {
+        error_log("adminEmailExists prepare failed: " . mysqli_stmt_error($stmt));
+        return false;
+    }
+
+    mysqli_stmt_bind_param($stmt, "s", $inputEmailBlindIndex);
+    mysqli_stmt_execute($stmt);
+    $resultstmt = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($resultstmt);
+    mysqli_stmt_close($stmt);
+
+    if ($row) {
+        $storedEncryptedEmail = $row["email"];
+        $storedIv = $row["iv"];
+        $decryptedEmail = openssl_decrypt($storedEncryptedEmail, $cipher, $encryptionKey, OPENSSL_RAW_DATA, $storedIv);
+
+        if ($decryptedEmail === $email) {
+            $row['first_name'] = openssl_decrypt($row['first_name'], $cipher, $encryptionKey, OPENSSL_RAW_DATA, $storedIv);
+            $row['middle_name'] = openssl_decrypt($row['middle_name'], $cipher, $encryptionKey, OPENSSL_RAW_DATA, $storedIv);
+            $row['last_name'] = openssl_decrypt($row['last_name'], $cipher, $encryptionKey, OPENSSL_RAW_DATA, $storedIv);
+
+            unset($row["email"]);
+            unset($row["iv"]);
+            unset($row["email_blind_index"]);
+
+            return $row;
+        }
+    }
+
+    return false;
+}
+
+
 function createUser($conn, $firstName, $middleName, $lastName, $email, $password) {
     // Check for duplicate email BEFORE preparing the SQL INSERT statement.
     if (emailExists($conn, $email) !== false) {
@@ -208,5 +252,35 @@ function loginUser($conn, $email, $password) {
 
     // Redirect to the user dashboard.
     header("location: ../pages/userdashboard.php");
+    exit();
+}
+
+function loginAdmin($conn, $email, $password) {
+    $adminData = adminEmailExists($conn, $email);
+
+    if ($adminData === false) {
+        header("location: ../pages/stafflogin.php?error=invalidcredentials");
+        exit();
+    }
+
+    $pwdHashed = $adminData["hash_password"];
+    $salt = $adminData["salt"];
+    $iterations = $adminData["iterations"];
+    $inputHash = hash_pbkdf2("sha256", $password, $salt, $iterations, 32, true);
+
+    if (!hash_equals($pwdHashed, $inputHash)) {
+        header("location: ../pages/stafflogin.php?error=invalidcredentials");
+        exit();
+    }
+
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $_SESSION["admin_id"] = $adminData["admin_id"];
+    $_SESSION["adminfirstname"] = $adminData["first_name"];
+    $_SESSION["adminlastname"] = $adminData["last_name"];
+
+    header("location: ../pages/admindashboard.php");
     exit();
 }
