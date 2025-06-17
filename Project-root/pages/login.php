@@ -18,8 +18,9 @@
   <nav>
     <a href="../index.html"><i class="fas fa-home"></i> Home</a>
     <a href="../pages/login.php"><i class="fas fa-user"></i> Login</a>
-    <a href="../pages/contact.html"><i class="fa fa-phone"></i> Contact </a>
     <a href="../pages/stafflogin.php"><i class="fa fa-user"></i> Staff Login </a>
+    <a href="../pages/contact.html"><i class="fa fa-phone"></i> Contact </a>
+    
   </nav>
 
   <div class="container">
