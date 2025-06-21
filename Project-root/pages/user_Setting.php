@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION["admin_id"])) {
+if (!isset($_SESSION["user_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
@@ -12,8 +12,8 @@ if (!isset($_SESSION["admin_id"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login Page</title>
-    <link rel="stylesheet" href="../assets/css/admindashboard.css">
+    <title>User Login Page </title>
+    <link rel="stylesheet" href="../Assets/css/userdashboard.css">
 </head>
 
 <body>
@@ -26,11 +26,11 @@ if (!isset($_SESSION["admin_id"])) {
         </div>
 
         <div class="sidebar-Navigation">
-            <a href="admindashboard.php"><ion-icon name="home"></ion-icon> <span> Home</span></a>
-            <a href="admin_Profile.php"><ion-icon name="people"></ion-icon> <span> Profile</span></a>
-            <a href="admin_Election.php"><ion-icon name="checkmark-done-circle"></ion-icon> <span> Election</span></a>
-            <a href="admin_Result.php"><ion-icon name="eye"></ion-icon> <span> Result</span></a>
-            <a href="admin_Setting.php"><ion-icon name="cog-sharp"></ion-icon> <span> Setting </span></a>
+            <a href="userdashboard.php"><ion-icon name="home"></ion-icon> <span> Home</span></a>
+            <a href="user_Profile.php"><ion-icon name="people"></ion-icon> <span> Profile</span></a>
+            <a href="user_Election.php"><ion-icon name="checkmark-done-circle"></ion-icon> <span> Election</span></a>
+            <a href="user_Result.php"><ion-icon name="eye"></ion-icon> <span> Result</span></a>
+            <a href="user_Setting.php"><ion-icon name="cog-sharp"></ion-icon> <span> Setting </span></a>
         </div>
 
         <div class="sidebar-footer">
@@ -41,7 +41,7 @@ if (!isset($_SESSION["admin_id"])) {
     </div>
     
     <div class="content">
-        <h1>Welcome to Admin Login Page</h1>
+        <h1>Welcome to User Login Page -- Setting Page --</h1>
         <p>Hover over the sidebar to see the menu items.</p>
     </div>
     

@@ -41,7 +41,7 @@ if (!isset($_SESSION["admin_id"])) {
     </div>
     
     <div class="content">
-        <h1>Welcome to Admin Login Page</h1>
+        <h1>Welcome to Admin Login Page -- Election Page -- </h1>
         <p>Hover over the sidebar to see the menu items.</p>
     </div>
     
