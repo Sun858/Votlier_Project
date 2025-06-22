@@ -26,11 +26,11 @@ if (!isset($_SESSION["admin_id"])) {
         </div>
 
         <div class="sidebar-Navigation">
-            <a href="admindashboard.php"><ion-icon name="home"></ion-icon> <span> Home</span></a>
-            <a href="admin_Profile.php"><ion-icon name="people"></ion-icon> <span> Profile</span></a>
-            <a href="admin_Election.php"><ion-icon name="checkmark-done-circle"></ion-icon> <span> Election</span></a>
-            <a href="admin_Result.php"><ion-icon name="eye"></ion-icon> <span> Result</span></a>
-            <a href="admin_Setting.php"><ion-icon name="cog-sharp"></ion-icon> <span> Setting </span></a>
+            <a href="Userlogin.html"><ion-icon name="home"></ion-icon> <span> Home</span></a>
+            <a href="#"><ion-icon name="people"></ion-icon> <span> Profile</span></a>
+            <a href="#"><ion-icon name="checkmark-done-circle"></ion-icon> <span> Election</span></a>
+            <a href="#"><ion-icon name="eye"></ion-icon> <span> Result</span></a>
+            <a href="#"><ion-icon name="cog-sharp"></ion-icon> <span> Setting </span></a>
         </div>
 
         <div class="sidebar-footer">
