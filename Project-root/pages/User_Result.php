@@ -1,5 +1,9 @@
 <?php
 session_start();
+// This is the security page for rate limiting and timeout. 15Min is currently set
+require_once '../includes/security.sn.php';
+checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
+
 if (!isset($_SESSION["user_id"])) {
     header("location: ../pages/login.php");
     exit();

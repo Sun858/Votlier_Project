@@ -36,6 +36,24 @@ CREATE TABLE IF NOT EXISTS administration (
     UNIQUE KEY unique_admin_email_blind_index (email_blind_index)
 );
 
+CREATE TABLE IF NOT EXISTS login_attempts (
+    ip_address VARCHAR(45) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    attempt_time DATETIME NOT NULL,
+    INDEX (ip_address),
+    INDEX (resource),
+    INDEX (attempt_time)
+);
+
+CREATE TABLE IF NOT EXISTS admin_audit_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    details TEXT,
+    event_time DATETIME NOT NULL,
+    ip_address VARCHAR(45),
+    FOREIGN KEY (admin_id) REFERENCES administration(admin_id) ON DELETE CASCADE
+);
 
 
 -- Election Table --
