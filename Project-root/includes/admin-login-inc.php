@@ -9,8 +9,8 @@ require_once 'functions.sn.php';
 $ip = $_SERVER['REMOTE_ADDR'];
 $resource = 'admin_login';
 
-if (isRateLimitedDB($conn, $ip, $resource, 5, 900)) {
-    header("location: ../pages/login.php?error=ratelimited");
+if (isRateLimitedDB($conn, $ip, $resource, 4, 900)) {
+    header("location: ../pages/stafflogin.php?error=ratelimited");
     exit();
 }
 

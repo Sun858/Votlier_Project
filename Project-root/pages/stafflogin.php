@@ -52,10 +52,12 @@
           echo "<p>Incorrect login information!</p>";
       } else if ($_GET["error"] == "incorrectpassword") {
           echo "<p>Incorrect password!</p>";
-      }
+      } else if ($_GET["error"] == "ratelimited") {
+        echo "<p>Too many login attempts. Try again later</p>";
+      }    
       else {
         echo "<p>Incorrect details or an unexpected error has occurred.</p>";
-    }
+    } 
   }
   ?>
   <footer>
