@@ -10,7 +10,8 @@ $ip = $_SERVER['REMOTE_ADDR'];
 $resource = 'admin_login';
 
 if (isRateLimitedDB($conn, $ip, $resource, 5, 900)) {
-    die("Too many login attempts. Try again later.");
+    header("location: ../pages/login.php?error=ratelimited");
+    exit();
 }
 
 // Once again logs the attempt so they cant just refresh the page, or the DB loses track of the attempts.

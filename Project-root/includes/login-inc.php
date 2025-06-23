@@ -9,8 +9,9 @@ require_once 'functions.sn.php';
 $ip = $_SERVER['REMOTE_ADDR'];
 $resource = 'user_login';
 
-if (isRateLimitedDB($conn, $ip, $resource, 10, 600)) {
-    die("Too many login attempts. Try again later.");
+if (isRateLimitedDB($conn, $ip, $resource, 5, 600)) {
+    header("location: ../pages/login.php?error=ratelimited");
+    exit();
 }
 
 // Logs the attempt, so they cant just refresh the page or something.
