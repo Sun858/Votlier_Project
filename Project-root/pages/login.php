@@ -99,17 +99,22 @@ if (isset($_GET["error"])) {
     echo '<div class="error-popup" id="errorPopup">
             <button class="close-btn" onclick="closePopup()">×</button>';
     // This code here is a manual check of the url, which checks if any of the keywords are present. If they are, the echo is performed and transformed by the styling.
-    if ($_GET["error"] == "emptyinput") {
+    switch ($_GET["error"]) {
+    case "emptyinput":
         echo '<p>⚠️ Fill all fields in!</p>';
-    } else if ($_GET["error"] == "emailnotfound") {
+        break;
+    case "emailnotfound":
         echo '<p>⚠️ Incorrect login information!</p>';
-    } else if ($_GET["error"] == "incorrectpassword") {
+        break;
+    case "incorrectpassword":
         echo '<p>⚠️ Incorrect password!</p>';
-    } else if ($_GET["error"] == "ratelimited") {
+        break;
+    case "ratelimited":
         echo '<p>⚠️ You have run out of chances, try again later!</p>';
-    }
-    else {
+        break;
+    default: // This covers the original 'else' condition
         echo '<p>⚠️ Incorrect details or an unexpected error has occurred.</p>';
+        break;
     }
     echo '</div>';
 

@@ -33,38 +33,127 @@
     </form>
     <a href="../pages/login.php" class="back-to-login-link">Back to Login</a>
 
-<?php 
-// This code is the error handling that works from the functions.sn.php functions with a header. It reads the header in the url, and if any match, the error is displayed.
-    if (isset($_GET["error"])) {
-        if ($_GET["error"] == "emptyinput") {
-            echo "<p> Fill in all required fields.</p>";
+<?php
+// This code handles displaying error or success messages based on URL parameters,
+// utilizing a styled popup with auto-close and manual close functionality.
+if (isset($_GET["error"])) {
+    // Inline CSS for Error-Message styling. This defines the look and feel of the popup.
+    echo '
+    <style>
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #d32f2f;
+            padding: 20px 40px 20px 30px; /* Extra right padding for close button */
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+            /* Added for success message styling */
+            box-sizing: border-box; /* Include padding and border in the element\'s total width and height */
         }
-        else if ($_GET["error"] == "invalidname") {
-            echo "<p>Invalid first or last name!</p>";
+        .error-popup.success {
+            background-color: #e8f5e9; /* Light green for success */
+            border-left-color: #4CAF50; /* Green border for success */
+            color: #2E7D32; /* Darker green text for success */
         }
-        else if ($_GET["error"] == "invalidemail") {
-            echo "<p>Invalid email!</p>";
+        .error-popup p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 18px;
         }
-        else if ($_GET["error"] == "passwordsdontmatch") {
-            echo "<p>Passwords dont match!</p>";
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #d32f2f; /* Error close button color */
+            background: none;
+            border: none;
+            padding: 0 5px;
         }
-        else if ($_GET["error"] == "userexists") {
-            echo "<p>User already exists!</p>";
+        .error-popup.success .close-btn {
+            color: #2E7D32; /* Success close button color */
         }
-        else if ($_GET["error"] == "stmtfailed") {
-            echo "<p>Something went wrong, try again later!</p>";
+        .close-btn:hover {
+            color: #9a0007; /* Error hover color */
         }
-        else if ($_GET["error"] == "none") {
-            echo "<p>You have signed up!</p>";
+        .error-popup.success .close-btn:hover {
+            color: #1B5E20; /* Success hover color */
         }
-        else if ($_GET["error"] == "weakpassword") {
-            echo "<p>Password must be at least 8 characters long, include at least one uppercase letter and one number.</p>";
-        }
+    </style>
+    ';
+
+    
+    // Display the error/success popup with a close button for a better user experience.
+    echo '<div class="error-popup" id="errorPopup">
+            <button class="close-btn" onclick="closePopup()">×</button>';
+
+    /**  This code here is a manual check of the url, which checks if any of the keywords are present.
+    *If they are, the echo message is displayed.
+    */
+    switch ($_GET["error"]) {
+        case "emptyinput":
+            echo '<p>⚠️ Fill in all required fields.</p>';
+            break;
+        case "invalidname":
+            echo '<p>⚠️ Invalid first or last name!</p>';
+            break;
+        case "invalidemail":
+            echo '<p>⚠️ Invalid email!</p>';
+            break;
+        case "passwordsdontmatch":
+            echo '<p>⚠️ Passwords don\'t match!</p>';
+            break;
+        case "userexists":
+            echo '<p>⚠️ User already exists!</p>';
+            break;
+        case "stmtfailed":
+            echo '<p>⚠️ Something went wrong, please try again later!</p>';
+            break;
+        case "weakpassword":
+            echo '<p>⚠️ Password must be at least 8 characters long, include at least one uppercase letter and one number.</p>';
+            break;
+        case "ratelimited":
+            echo '<p>⚠️ You have run out of chances, try again later!</p>';
+            break;
+        case "none": 
+            echo '<p>✅ You have signed up successfully!</p>';
+            break;
+        default:
+            echo '<p>⚠️ An unexpected error has occurred.</p>';
+            break;
     }
+    echo '</div>'; 
+
+    // JavaScript for both auto-close and manual close. This makes the popup interactive for the user
+    echo '
+    <script>
+        function closePopup() {
+            var popup = document.getElementById("errorPopup");
+            popup.style.opacity = "0"; 
+            setTimeout(function() {
+                popup.style.display = "none"; 
+            }, 500); 
+        }
+
+        // Auto-close after 5 seconds (5000 milliseconds)
+        setTimeout(closePopup, 5000);
+    </script>
+    ';
+}
 ?>
-
-
-
-
+    <footer>
+        <p>&copy; 2025 Votify. All rights reserved.</p>
+    </footer>
 </body>
 </html>
