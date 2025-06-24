@@ -44,22 +44,86 @@
     </form>
 
   </div>
-  <?php
-    if (isset($_GET["error"])) {
-      if ($_GET["error"] == "emptyinput") {
-          echo "<p>Fill all fields in!</p>";
-      } else if ($_GET["error"] == "emailnotfound") {
-          echo "<p>Incorrect login information!</p>";
-      } else if ($_GET["error"] == "incorrectpassword") {
-          echo "<p>Incorrect password!</p>";
-      } else if ($_GET["error"] == "ratelimited") {
-        echo "<p>Too many login attempts. Try again later</p>";
-      }    
-      else {
-        echo "<p>Incorrect details or an unexpected error has occurred.</p>";
-    } 
-  }
-  ?>
+<?php
+if (isset($_GET["error"])) {
+    // Inline Css for Error-Message 
+    echo '
+    <style>
+        .error-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            color: #d32f2f;
+            padding: 20px 40px 20px 30px; /* Extra right padding for close button */
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .error-popup p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #d32f2f;
+            background: none;
+            border: none;
+            padding: 0 5px;
+        }
+        .close-btn:hover {
+            color: #9a0007;
+        }
+    </style>
+    ';
+
+    // Display the error popup with close button
+    echo '<div class="error-popup" id="errorPopup">
+            <button class="close-btn" onclick="closePopup()">×</button>';
+    
+    if ($_GET["error"] == "emptyinput") {
+        echo '<p>⚠️ Fill all fields in!</p>';
+    } else if ($_GET["error"] == "emailnotfound") {
+        echo '<p>⚠️ Incorrect login information!</p>';
+    } else if ($_GET["error"] == "incorrectpassword") {
+        echo '<p>⚠️ Incorrect password!</p>';
+    } else if ($_GET["error"] == "ratelimited") {
+        echo '<p>⚠️ You have run out of chances, try again later!</p>';
+    }
+    else {
+        echo '<p>⚠️ Incorrect details or an unexpected error has occurred.</p>';
+    }
+    echo '</div>';
+
+    // JavaScript for both auto-close and manual close
+    echo '
+    <script>
+        function closePopup() {
+            var popup = document.getElementById("errorPopup");
+            popup.style.opacity = "0";
+            setTimeout(function() { 
+                popup.style.display = "none"; 
+            }, 500);
+        }
+        
+        // Auto-close after 5 seconds
+        setTimeout(closePopup, 5000);
+    </script>
+    ';
+}
+?>
   <footer>
     <p>&copy; 2025 My Website. All rights reserved.</p>
   </footer>
