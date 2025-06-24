@@ -1,4 +1,5 @@
 <?php
+/*
 session_start();
 
 // Handle login form submission
