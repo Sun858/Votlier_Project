@@ -56,6 +56,9 @@
         else if ($_GET["error"] == "none") {
             echo "<p>You have signed up!</p>";
         }
+        else if ($_GET["error"] == "weakpassword") {
+            echo "<p>Password must be at least 8 characters long, include at least one uppercase letter and one number.</p>";
+        }
     }
 ?>
 

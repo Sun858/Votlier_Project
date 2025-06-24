@@ -32,6 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
         exit();
     }
 
+    // Password strength validayion
+    if (passwordStrength($password) !== false) {
+        header("location: ../pages/signup.php?error=weakpassword");
+        exit();
+    }
+
     // Password Verification
     if (pwdMatch($password, $confirmPassword) !== false) {
         header("location: ../pages/signup.php?error=passwordsdontmatch");
@@ -44,9 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
         exit();
     }
     
-
-
-
 
 
     // Store all the PII (ENCRYPTED) and hashed password into the database

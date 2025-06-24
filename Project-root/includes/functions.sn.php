@@ -39,6 +39,12 @@ function invalidEmail($email) {
     return !filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
+function passwordStrength($password) {
+    // At least 8 characters, one uppercase, and one number
+    return !preg_match('/^(?=.*[A-Z])(?=.*\d).{8,}$/', $password);
+}
+
+
 function pwdMatch($password, $confirmPassword) {
     // Checks if the password and confirm password fields match.
     return $password !== $confirmPassword;
