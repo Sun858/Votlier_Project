@@ -7,12 +7,6 @@ if (!isset($_SESSION["admin_id"])) {
     exit();
 }
 
-// Logout logic
-if (isset($_GET['logout']) && $_GET['logout'] === 'true') {
-    session_destroy();
-    header("Location: admin_login.php");
-    exit();
-}
 
 // Docker DB Connection
 $conn = new mysqli('db', 'admin', 'adminpassword', 'voting_system');
@@ -100,23 +94,7 @@ if (isset($_GET['delete_poll_id'])) {
         .delete-button:hover {
             text-decoration: underline;
         }
-        .logout-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            background-color: #f44336;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: background-color 0.3s ease;
-        }
-        .logout-button:hover {
-            background-color: #d32f2f;
-        }
+    
     </style>
 </head>
 <body>
@@ -124,7 +102,6 @@ if (isset($_GET['delete_poll_id'])) {
     <a href="../pages/admin_election.php">⬅️ Back</a>
   </div>
 
-    <a href="?logout=true" class="logout-button">Logout</a>
     <h2>Existing Elections 📋</h2>
 
     <?php if (isset($_SESSION['message'])): ?>
