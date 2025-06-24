@@ -120,6 +120,9 @@ if (isset($_GET['delete_poll_id'])) {
     </style>
 </head>
 <body>
+    <div style="margin: 10px;">
+    <a href="../pages/admin_election.php">⬅️ Back</a>
+  </div>
 
     <a href="?logout=true" class="logout-button">Logout</a>
     <h2>Existing Elections 📋</h2>

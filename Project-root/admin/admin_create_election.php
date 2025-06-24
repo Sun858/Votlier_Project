@@ -102,6 +102,9 @@ if ($poll_id) {
     </style>
 </head>
 <body>
+    <div style="margin: 10px;">
+    <a href="../pages/admin_election.php">⬅️ Back</a>
+    </div>
     <h2><?= $poll_id ? "✏️ Edit Election: " . htmlspecialchars($election['election_name']) : "🗳️ Create New Election" ?></h2>
 
     <!-- Logout Button -->
