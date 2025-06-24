@@ -14,11 +14,9 @@ if (isset($_GET['logout']) && $_GET['logout'] === 'true') {
     exit();
 }
 
-// Connect to database
-$conn = new mysqli("localhost", "root", "", "voting_system");
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+// Docker DB Connection
+$conn = new mysqli('db', 'admin', 'adminpassword', 'voting_system');
+if ($conn->connect_error) die("DB Error: Check 1) Docker containers 2) .env credentials");
 
 // Fetch elections
 $result = $conn->query("SELECT * FROM election");

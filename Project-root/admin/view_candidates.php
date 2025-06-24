@@ -13,10 +13,9 @@ if (!isset($_GET['poll_id'])) {
 
 $poll_id = $_GET['poll_id'];
 
-$conn = new mysqli("localhost", "root", "", "voting_system");
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+// Docker DB Connection
+$conn = new mysqli('db', 'admin', 'adminpassword', 'voting_system');
+if ($conn->connect_error) die("DB Error: Check 1) Docker containers 2) .env credentials");
 
 // Verify if the poll_id exists in the election table
 $stmt_check_election = $conn->prepare("SELECT * FROM election WHERE poll_id = ?");

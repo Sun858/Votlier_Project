@@ -4,10 +4,9 @@ if (!isset($_SESSION["admin_id"])) {
     die("Access denied.");
 }
 
-$conn = new mysqli("localhost", "root", "", "voting_system");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// Docker DB Connection
+$conn = new mysqli('db', 'admin', 'adminpassword', 'voting_system');
+if ($conn->connect_error) die("DB Error: Check 1) Docker containers 2) .env credentials");
 
 // Sanitize and assign election details
 $poll_id = $_POST['poll_id'];
