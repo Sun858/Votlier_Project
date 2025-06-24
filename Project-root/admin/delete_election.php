@@ -2,7 +2,7 @@
 session_start();
 
 // Only allow admin users
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'administration') {
+if (!isset($_SESSION["admin_id"])) {
     die("Access denied.");
 }
 
