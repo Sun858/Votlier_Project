@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login and Signup</title>
+  <title>Votify Staff Login</title>
   <link rel="stylesheet" href="../Assets/css/loginTest.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -18,17 +18,15 @@
   <nav>
     <a href="../index.html"><i class="fas fa-home"></i> Home</a>
     <a href="../pages/login.php"><i class="fas fa-user"></i> Login</a>
-    <a href="../pages/stafflogin.php"><i class="fa fa-user"></i> Staff Login </a>
     <a href="../pages/contact.html"><i class="fa fa-phone"></i> Contact </a>
-    
   </nav>
 
   <div class="container">
-    <h2>Login to Votify</h2>
+    <h2>Staff Authentication Votify</h2>
 
     <!-- Login Form -->
     <!-- The action attribute of the form points to the login.php file -->
-    <form id="loginForm" action="../includes/login-inc.php" method="POST">
+    <form id="loginForm" action="../includes/admin-login-inc.php" method="POST">
       <div class="form-group">
         <label for="loginEmail">Email:</label>
         <input type="email" id="loginEmail" name="loginEmail" required>
@@ -44,9 +42,6 @@
       <a href="../pages/forgot_password.html" class="forgot-password-link">Forgot Password?</a>
 
     </form>
-
-     <!-- Signup Link -->
-    <a href="../pages/signup.php" id="signupButton">Don't have an account? Sign Up</a>
 
   </div>
   <?php
@@ -65,7 +60,6 @@
     } 
   }
   ?>
-
   <footer>
     <p>&copy; 2025 My Website. All rights reserved.</p>
   </footer>
