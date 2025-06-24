@@ -50,8 +50,9 @@
 
   </div>
 <?php
+// This code will check for an "error parameter in the HTML, which occurs when an error is reported in functions.sn.php.
 if (isset($_GET["error"])) {
-    // Inline Css for Error-Message 
+    // Inline Css for Error-Message, the styling of the error message 
     echo '
     <style>
         .error-popup {
@@ -94,10 +95,10 @@ if (isset($_GET["error"])) {
     </style>
     ';
 
-    // Display the error popup with close button
+    // Display the error popup with a close button for a better user experience.
     echo '<div class="error-popup" id="errorPopup">
             <button class="close-btn" onclick="closePopup()">×</button>';
-    
+    // This code here is a manual check of the url, which checks if any of the keywords are present. If they are, the echo is performed and transformed by the styling.
     if ($_GET["error"] == "emptyinput") {
         echo '<p>⚠️ Fill all fields in!</p>';
     } else if ($_GET["error"] == "emailnotfound") {
@@ -112,7 +113,7 @@ if (isset($_GET["error"])) {
     }
     echo '</div>';
 
-    // JavaScript for both auto-close and manual close
+    // JavaScript for both auto-close and manual close. This would make the popup interactive for the user.
     echo '
     <script>
         function closePopup() {
