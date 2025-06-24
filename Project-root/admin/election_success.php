@@ -11,7 +11,7 @@ if (!isset($_SESSION["admin_id"])) {
     <title>Election Created</title>
 </head>
 <body>
-    <h2>✅ Election Created Successfully!</h2>
+    <h2>Election Created Successfully!✅</h2>
     <a href="dashboard.php">Go to Dashboard</a>
 </body>
 </html>
