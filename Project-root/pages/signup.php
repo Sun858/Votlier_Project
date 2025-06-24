@@ -33,7 +33,8 @@
     </form>
     <a href="../pages/login.php" class="back-to-login-link">Back to Login</a>
 
-<?php
+<?php 
+// This code is the error handling that works from the functions.sn.php functions with a header. It reads the header in the url, and if any match, the error is displayed.
     if (isset($_GET["error"])) {
         if ($_GET["error"] == "emptyinput") {
             echo "<p> Fill in all required fields.</p>";
