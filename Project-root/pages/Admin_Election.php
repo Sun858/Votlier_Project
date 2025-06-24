@@ -65,6 +65,37 @@ if (!isset($_SESSION["admin_id"])) {
             <p>Explore your data and manage your business efficiently</p>
         </header>
 
+        <!-- This script is for the 'Create Election' button which when clicked, redirects to the admin_create_election.php file, so the admin can fill the form and create election -->
+        <div style="margin: 25px 0;">
+    <a href="/admin/admin_create_election.php" 
+       style="display: inline-flex; align-items: center; 
+              padding: 12px 20px; background-color: #4CAF50; 
+              color: white; text-decoration: none; border-radius: 4px;
+              font-weight: 500; gap: 8px;">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Create New Election
+    </a>
+        </div>
+
+    <!-- This script is for the 'Current Elections' button which when clicked, redirects to the dashboard.php file to view existing elections -->
+        <div style="margin: 20px 0; text-align: center;">
+    <a href="../admin/dashboard.php" 
+       style="display: inline-flex; 
+              align-items: center;
+              padding: 12px 24px;
+              background-color: #2196F3;
+              color: white;
+              text-decoration: none;
+              border-radius: 4px;
+              font-weight: 500;
+              gap: 8px;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+              transition: all 0.3s ease;">
+        <ion-icon name="list-circle-outline" style="font-size: 1.2em;"></ion-icon>
+        Current Elections
+    </a>
+        </div>
+
     </main>
 
     <!-- Ionicon scripts -->
