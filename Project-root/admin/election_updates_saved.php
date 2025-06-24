@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'administration') {
+if (!isset($_SESSION["admin_id"])) {
     die("Access denied.");
 }
 
