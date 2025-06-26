@@ -1,7 +1,9 @@
 <?php
 session_start();
 // This is the security page for rate limiting and timeout. 15Min is currently set
+require_once '../DatabaseConnection/config.php';
 require_once '../includes/security.sn.php';
+require_once '../includes/result_functions.php';
 checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
 if (!isset($_SESSION["admin_id"])) {
@@ -65,6 +67,22 @@ if (!isset($_SESSION["admin_id"])) {
             <p>Explore your data and manage your business efficiently</p>
         </header>
     </main>
+    
+    <h2>Election Results</h2>
+    <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
+        <label for="poll_id">Select Election:</label>
+        <select name="poll_id" id="poll_id" required>
+            <option value="">-- Select --</option>
+            <?php foreach ($elections as $e): ?>
+                <option value="<?= $e['poll_id'] ?>" <?= $pollId == $e['poll_id'] ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($e['election_name']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="submit" name="tally_votes">Tally Votes</button>
+        <button type="submit" name="view_results">View Results</button>
+    </form>
+
 
     <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
