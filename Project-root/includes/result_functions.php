@@ -1,17 +1,4 @@
 <?php
-
-// Logs an admin action (e.g., tallying votes, viewing results) to the audit log
-function logAdminAction($conn, $adminId, $actionType, $description) {
-    $stmt = $conn->prepare("INSERT INTO admin_logs (admin_id, action_type, description) VALUES (?, ?, ?)");
-    if ($stmt) {
-        $stmt->bind_param("iss", $adminId, $actionType, $description);
-        $stmt->execute();
-        $stmt->close();
-    } else {
-        error_log("Failed to prepare statement for admin_logs: " . $conn->error);
-    }
-}
-
 // Tallies votes for a given poll and updates the tally table for each candidate
 function tallyVotes($conn, $pollId, $adminId) {
     logAdminAction($conn, $adminId, 'Tally Votes', "Tallying votes for poll ID: $pollId");

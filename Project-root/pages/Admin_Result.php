@@ -4,7 +4,6 @@ session_start();
 require_once '../DatabaseConnection/config.php';
 require_once '../includes/security.sn.php';
 require_once '../includes/result_functions.php';
-require_once '../includes/submit_tally.php'; 
 
 checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
