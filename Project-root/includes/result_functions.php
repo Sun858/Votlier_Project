@@ -1,11 +1,27 @@
 <?php
+
+// Logs an admin action (e.g., tallying votes, viewing results) to the audit log
+function logAdminAction($conn, $adminId, $actionType, $description) {
+    $stmt = $conn->prepare("INSERT INTO admin_logs (admin_id, action_type, description) VALUES (?, ?, ?)");
+    if ($stmt) {
+        $stmt->bind_param("iss", $adminId, $actionType, $description);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        error_log("Failed to prepare statement for admin_logs: " . $conn->error);
+    }
+}
+
+// Tallies votes for a given poll and updates the tally table for each candidate
 function tallyVotes($conn, $pollId, $adminId) {
-    // Log the tally action
     logAdminAction($conn, $adminId, 'Tally Votes', "Tallying votes for poll ID: $pollId");
 
-    // Get all candidates in the selected election
     $candidateSql = "SELECT candidate_id FROM candidates WHERE poll_id = ?";
     $stmt = $conn->prepare($candidateSql);
+    if (!$stmt) {
+        error_log("Failed to prepare candidate SQL: " . $conn->error);
+        return;
+    }
     $stmt->bind_param("i", $pollId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -16,10 +32,10 @@ function tallyVotes($conn, $pollId, $adminId) {
     }
     $stmt->close();
 
-    // Loop over each candidate and count votes
+    // Count votes per preference rank and update/inject into tally table
     foreach ($candidateIds as $candidateId) {
         $voteSql = "
-            SELECT 
+            SELECT
                 COUNT(*) AS total_votes,
                 SUM(CASE WHEN preference_rank = 1 THEN 1 ELSE 0 END) AS r1_votes,
                 SUM(CASE WHEN preference_rank = 2 THEN 1 ELSE 0 END) AS r2_votes,
@@ -28,13 +44,16 @@ function tallyVotes($conn, $pollId, $adminId) {
             WHERE poll_id = ? AND candidate_id = ?
         ";
         $stmt = $conn->prepare($voteSql);
+        if (!$stmt) {
+            error_log("Failed to prepare vote SQL: " . $conn->error);
+            continue;
+        }
         $stmt->bind_param("ii", $pollId, $candidateId);
         $stmt->execute();
         $stmt->bind_result($total, $r1, $r2, $r3);
         $stmt->fetch();
         $stmt->close();
 
-        // Insert or update tally table
         $upsert = "
             INSERT INTO tally (poll_id, candidate_id, total_votes, r1_votes, r2_votes, r3_votes)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -46,15 +65,53 @@ function tallyVotes($conn, $pollId, $adminId) {
                 updatetime = CURRENT_TIMESTAMP
         ";
         $stmt = $conn->prepare($upsert);
+        if (!$stmt) {
+            error_log("Failed to prepare upsert SQL: " . $conn->error);
+            continue;
+        }
         $stmt->bind_param("iiiiii", $pollId, $candidateId, $total, $r1, $r2, $r3);
         $stmt->execute();
         $stmt->close();
     }
 }
 
-function loadAdminResultPageState($conn) {
-    session_start();
+// Retrieves the election results (votes per candidate) for a given poll
+function getElectionResults($conn, $pollId, $adminId) {
+    logAdminAction($conn, $adminId, 'View Results', "Viewing results for poll ID: $pollId");
 
+    $results = [];
+    $sql = "
+        SELECT
+            c.candidate_id,
+            c.candidate_name,
+            t.total_votes,
+            t.r1_votes,
+            t.r2_votes,
+            t.r3_votes,
+            c.party
+        FROM tally t
+        JOIN candidates c ON t.candidate_id = c.candidate_id
+        WHERE t.poll_id = ?
+        ORDER BY t.r1_votes DESC, t.total_votes DESC
+    ";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        error_log("Failed to prepare getElectionResults SQL: " . $conn->error);
+        return [];
+    }
+    $stmt->bind_param("i", $pollId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    while ($row = $res->fetch_assoc()) {
+        $results[] = $row;
+    }
+    $stmt->close();
+    return $results;
+}
+
+// Loads all data needed for admin_result.php (elections list, selected poll ID, results, message)
+function loadAdminResultPageState($conn) {
     $state = [
         'pollId' => $_SESSION['selected_poll_id'] ?? null,
         'results' => $_SESSION['view_results'] ?? [],
@@ -62,19 +119,18 @@ function loadAdminResultPageState($conn) {
         'elections' => []
     ];
 
-    // Fetch all elections for the dropdown
     $query = "SELECT poll_id, election_name FROM election ORDER BY start_datetime DESC";
     $res = $conn->query($query);
     if ($res) {
         while ($row = $res->fetch_assoc()) {
             $state['elections'][] = $row;
         }
+    } else {
+        error_log("Failed to fetch elections: " . $conn->error);
     }
 
-    // Clear session variables after using them
     unset($_SESSION['view_results'], $_SESSION['selected_poll_id'], $_SESSION['tally_success']);
 
     return $state;
 }
-
 ?>
