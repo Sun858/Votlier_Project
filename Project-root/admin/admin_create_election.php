@@ -81,7 +81,6 @@ if ($poll_id) {
             padding: 10px 15px;
             cursor: pointer;
         }
-      
     </style>
 </head>
 <body>
