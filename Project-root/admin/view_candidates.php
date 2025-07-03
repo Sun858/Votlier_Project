@@ -153,6 +153,11 @@ $candidates_result = $stmt->get_result();
     </div>
 
     <a href="dashboard.php" class="back-link">⬅ Back to Dashboard</a>
+    <a href="admin_create_election.php?poll_id=<?= urlencode($poll_id) ?>" 
+    class="edit-button"
+    title="Edit this election">
+    <span class="edit-icon">✏️</span> Edit
+    </a>
 </body>
 </html>
 
