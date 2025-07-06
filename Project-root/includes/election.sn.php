@@ -94,10 +94,13 @@ function createOrUpdateElection($conn, $electionData, $candidatesData = [], $adm
 
                 $stmt = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
                 if ($stmt === false) throw new Exception("Prepare INSERT candidate failed: " . $conn->error);
+
+                $candidateParty = $candidate['party'] ?? null;
+
                 $stmt->bind_param("isss",
                     $pollId,
                     $candidate['candidate_name'],
-                    $candidate['party'] ?? null,
+                    $candidateParty,
                     $adminId
                 );
                 $stmt->execute();
