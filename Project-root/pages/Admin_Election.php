@@ -451,39 +451,47 @@ if ($allElectionsResult->num_rows > 0) {
                 updateDisplayedCandidateNumbers();
             });
 
-            importCandidatesBtn.addEventListener('click', async () => {
-                const selectedPollId = importElectionSelect.value;
-                if (!selectedPollId) {
-                    alert('Please select an election to import candidates from.');
+        importCandidatesBtn.addEventListener('click', async () => {
+            const selectedPollId = importElectionSelect.value;
+            if (!selectedPollId) {
+                alert('Please select an election to import candidates from.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`../includes/fetch_candidates.php?poll_id=${selectedPollId}`);
+                const result = await response.json();
+
+                if (!result.success) {
+                    alert(result.message || 'Import failed.');
                     return;
                 }
 
-                try {
-                    const response = await fetch(`../includes/fetch_candidates_for_import.php?poll_id=${selectedPollId}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const candidatesToImport = await response.json();
+                const candidatesToImport = result.candidates;
 
-                    if (candidatesToImport.length > 0) {
-                        candidatesToImport.forEach(candidate => {
-                            const existingNames = Array.from(candidatesContainer.querySelectorAll('input[name*="[candidate_name]"]')).map(input => input.value.toLowerCase());
-                            if (!existingNames.includes(candidate.candidate_name.toLowerCase())) {
-                                candidatesContainer.appendChild(createCandidateField(candidate));
-                            } else {
-                                console.log(`Skipping duplicate candidate: ${candidate.candidate_name}`);
-                            }
-                        });
-                        updateDisplayedCandidateNumbers();
-                    } else {
-                        alert('No candidates found in the selected election.');
-                    }
-                } catch (error) {
-                    console.error('Error importing candidates:', error);
-                    alert('Failed to import candidates. Please try again.');
+                if (candidatesToImport.length > 0) {
+                    candidatesToImport.forEach(candidate => {
+                        const existingNames = Array.from(
+                            candidatesContainer.querySelectorAll('input[name*="[candidate_name]"]')
+                        ).map(input => input.value.toLowerCase());
+
+                        if (!existingNames.includes(candidate.candidate_name.toLowerCase())) {
+                            candidatesContainer.appendChild(createCandidateField(candidate));
+                        } else {
+                            console.log(`Skipping duplicate candidate: ${candidate.candidate_name}`);
+                        }
+                    });
+                    updateDisplayedCandidateNumbers();
+                    alert('Candidates imported successfully!');
+                } else {
+                    alert('No candidates found to import.');
                 }
-            });
+            } catch (error) {
+                console.error('Error importing candidates:', error);
+                alert('Failed to import candidates. Please try again.');
+            }
         });
+
     </script>
 </body>
 </html>
