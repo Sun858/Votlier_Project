@@ -1,16 +1,17 @@
 <?php
 session_start();
 require_once '../includes/security.sn.php';
+// This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/election.sn.php';
 require_once '../DatabaseConnection/config.php';
-checkSessionTimeout();
+checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
+// I will need to move this stuff to the handler when I can, I feel this is bad for MVC...
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
 
-// Handle deletion if requested
 if (isset($_GET['delete_poll_id'])) {
     if (deleteElection($conn, $_GET['delete_poll_id'])) {
         $_SESSION['message'] = "Election deleted successfully.";
@@ -23,24 +24,33 @@ if (isset($_GET['delete_poll_id'])) {
 
 $editing = false;
 $editData = [];
-$existingCandidates = []; // Initialize an empty array for candidates
+$existingCandidates = [];
 
 if (isset($_GET['edit_poll_id'])) {
     $editing = true;
     $editData = getElectionById($conn, $_GET['edit_poll_id']);
     if ($editData) {
+        $editData['start_datetime'] = $editData['start_datetime'] ? date('Y-m-d\TH:i', strtotime($editData['start_datetime'])) : '';
+        $editData['end_datetime'] = $editData['end_datetime'] ? date('Y-m-d\TH:i', strtotime($editData['end_datetime'])) : '';
         $existingCandidates = getCandidatesByPoll($conn, $editData['poll_id']);
     } else {
-        // If edit_poll_id is invalid, redirect back to clear the state
         $_SESSION['message'] = "Invalid election ID for editing.";
         header("Location: admin_election.php");
         exit();
     }
 }
 
-$elections = getAllElections($conn);
-?>
+$allElectionsResult = getAllElections($conn);
+$allElectionsForImport = [];
+$allElectionsForTable = [];
 
+if ($allElectionsResult->num_rows > 0) {
+    while($row = $allElectionsResult->fetch_assoc()) {
+        $allElectionsForImport[] = $row;
+        $allElectionsForTable[] = $row;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,30 +59,174 @@ $elections = getAllElections($conn);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_Election.css">
     <style>
-        /* Basic styling for candidate entries to make them visually distinct */
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="datetime-local"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .datetime-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .datetime-input-group label {
+            flex: 0 0 120px;
+            margin-right: 10px;
+            margin-bottom: 0;
+            font-weight: bold;
+        }
+        .datetime-input-group input[type="datetime-local"] {
+            flex-grow: 1;
+            margin-right: 10px;
+            width: auto;
+        }
+        .datetime-input-group button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
         .candidate-entry {
-            border: 1px solid #ccc;
+            border: 1px solid #e0e0e0;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #fcfcfc;
+            position: relative;
         }
-        .candidate-entry label {
-            display: block; /* Make labels take full width */
-            margin-bottom: 8px;
+        .candidate-entry h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
         }
         .candidate-entry input[type="text"] {
-            width: calc(100% - 10px); /* Adjust width */
-            padding: 8px;
-            margin-top: 4px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            width: calc(100% - 10px);
+            margin-bottom: 10px;
         }
-        .remove-candidate {
+        .candidate-entry .remove-candidate {
+            background-color: #dc3545;
+            color: white;
             padding: 8px 12px;
-            cursor: pointer;
             border: none;
             border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .import-candidates-section {
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #e6f2ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .import-candidates-section h3 {
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #0056b3;
+        }
+        .import-candidates-section select {
+            flex-grow: 1;
+            margin-right: 10px;
+            min-width: 200px;
+            width: auto;
+            margin-top: 0;
+        }
+        .import-candidates-section button {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 0;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .action-buttons button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .action-buttons button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+        .action-buttons button#addCandidateBtn {
+            background-color: #17a2b8;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .action-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .action-links a:last-child {
+            margin-right: 0;
+        }
+        .action-links a.delete {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -117,37 +271,70 @@ $elections = getAllElections($conn);
     <main class="main-content">
         <h1>Manage Elections</h1>
 
-        <?php if (isset($_SESSION['message'])): ?>
-            <p style="color: green;"> <?= htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?> </p>
+        <?php if (isset($_SESSION['message'])): ?> 
+            <p style="color: green; font-weight: bold;"> <?= htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?> </p>
         <?php endif; ?>
 
-        <form action="../includes/save_election.php" method="post" id="electionForm">
-            <h2>Election Details</h2>
-            <?php if ($editing): ?>
-                <label>Poll ID: <input type="text" value="<?= htmlspecialchars($editData['poll_id'] ?? '') ?>" readonly></label><br>
-                <input type="hidden" name="poll_id" value="<?= htmlspecialchars($editData['poll_id'] ?? '') ?>">
-            <?php else: ?>
-                <p>Poll ID will be automatically generated upon creation.</p>
-                <input type="hidden" name="poll_id" value="">
-            <?php endif; ?>
+        <div class="form-container">
+            <h2><?= $editing ? 'Edit Election' : 'Create New Election' ?></h2>
+            <form action="../includes/save_election.php" method="post" id="electionForm">
+                <?php if ($editing): ?>
+                    <label>Poll ID: <input type="text" value="<?= htmlspecialchars($editData['poll_id'] ?? '') ?>" readonly></label>
+                    <input type="hidden" name="poll_id" value="<?= htmlspecialchars($editData['poll_id'] ?? '') ?>">
+                <?php else: ?>
+                    <p>Poll ID will be automatically generated upon creation.</p>
+                    <input type="hidden" name="poll_id" value="">
+                <?php endif; ?>
 
-            <label>Election Type: <input type="text" name="election_type" value="<?= htmlspecialchars($editing ? ($editData['election_type'] ?? '') : '') ?>" required></label><br>
-            <label>Election Name: <input type="text" name="election_name" value="<?= htmlspecialchars($editing ? ($editData['election_name'] ?? '') : '') ?>" required></label><br>
-            <label>Start Date/Time: <input type="datetime-local" name="start_datetime" value="<?= htmlspecialchars($editing ? ($editData['start_datetime'] ?? '') : '') ?>" required></label><br>
-            <label>End Date/Time: <input type="datetime-local" name="end_datetime" value="<?= htmlspecialchars($editing ? ($editData['end_datetime'] ?? '') : '') ?>" required></label><br>
+                <label>Election Type:
+                    <input type="text" name="election_type" value="<?= htmlspecialchars($editing ? ($editData['election_type'] ?? '') : '') ?>" required>
+                </label>
+                <label>Election Name:
+                    <input type="text" name="election_name" value="<?= htmlspecialchars($editing ? ($editData['election_name'] ?? '') : '') ?>" required>
+                </label>
 
-            <h2 style="margin-top: 20px;">Candidates</h2>
-            <div id="candidatesContainer" data-existing-candidates='<?= json_encode($existingCandidates) ?>'>
-                <p>Loading candidates... (If this message persists, JavaScript might be disabled or have errors.)</p>
-            </div>
+                <div class="datetime-input-group">
+                    <label for="start_datetime_input">Start Date/Time:</label>
+                    <input type="datetime-local" id="start_datetime_input" name="start_datetime" value="<?= htmlspecialchars($editing ? ($editData['start_datetime'] ?? '') : '') ?>" required>
+                    <button type="button" id="setCurrentStartTimeBtn">Current Time</button>
+                </div>
+                
+                <div class="datetime-input-group">
+                    <label for="end_datetime_input">End Date/Time:</label>
+                    <input type="datetime-local" id="end_datetime_input" name="end_datetime" value="<?= htmlspecialchars($editing ? ($editData['end_datetime'] ?? '') : '') ?>">
+                </div>
 
-            <button type="button" id="addCandidateBtn" style="background-color: green; color: white; margin-top: 10px; padding: 10px 15px; border-radius: 5px; cursor: pointer;">+ Add Candidate</button><br>
+                <h2 style="margin-top: 20px;">Candidates</h2>
 
-            <button type="submit" style="margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;"> <?= $editing ? 'Update Election' : 'Create Election' ?> </button>
-        </form>
+                <?php if ($editing || count($allElectionsForImport) > 0): ?>
+                    <div class="import-candidates-section">
+                        <h3>Import Candidates from an Existing Election</h3>
+                        <select id="importElectionSelect">
+                            <option value="">-- Select an Election --</option>
+                            <?php foreach ($allElectionsForImport as $electionOption): ?>
+                                <?php if ($editing && $electionOption['poll_id'] == ($editData['poll_id'] ?? '')) continue; ?>
+                                <option value="<?= htmlspecialchars($electionOption['poll_id']) ?>">
+                                    <?= htmlspecialchars($electionOption['election_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="button" id="importCandidatesBtn">Import Candidates</button>
+                    </div>
+                <?php endif; ?>
+
+                <div id="candidatesContainer" data-existing-candidates='<?= json_encode($existingCandidates) ?>'>
+                    <p>Loading candidates... (If this message persists, JavaScript might be disabled or have errors.)</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" id="addCandidateBtn">+ Add Candidate</button>
+                    <button type="submit"><?= $editing ? 'Update Election' : 'Create Election' ?></button>
+                </div>
+            </form>
+        </div>
 
         <h2>Current Elections</h2>
-        <?php if ($elections->num_rows > 0): ?>
+        <?php if (!empty($allElectionsForTable)): ?>
             <table>
                 <thead>
                     <tr>
@@ -160,19 +347,19 @@ $elections = getAllElections($conn);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $elections->fetch_assoc()): ?>
+                    <?php foreach ($allElectionsForTable as $row): ?>
                         <tr>
                             <td><?= htmlspecialchars($row['poll_id']) ?></td>
                             <td><?= htmlspecialchars($row['election_type']) ?></td>
                             <td><?= htmlspecialchars($row['election_name']) ?></td>
                             <td><?= htmlspecialchars($row['start_datetime']) ?></td>
-                            <td><?= htmlspecialchars($row['end_datetime']) ?></td>
-                            <td>
+                            <td><?= htmlspecialchars($row['end_datetime'] ?? 'No End Date') ?></td>
+                            <td class="action-links">
                                 <a href="?edit_poll_id=<?= urlencode($row['poll_id']) ?>">Edit</a>
-                                <a href="?delete_poll_id=<?= urlencode($row['poll_id']) ?>" onclick="return confirm('Delete this election and all its candidates?');">Delete</a>
+                                <a href="?delete_poll_id=<?= urlencode($row['poll_id']) ?>" onclick="return confirm('Delete this election and all its candidates?');" class="delete">Delete</a>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         <?php else: ?>
@@ -184,42 +371,58 @@ $elections = getAllElections($conn);
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
     <script>
+        // WHAT HAVE I DONE HERE SANJAY HELP!!! sorry bro use gpt to understand this lmao it is used to dynamically shape the page with my functions, apparently i cant do it normally.
         document.addEventListener('DOMContentLoaded', () => {
             const candidatesContainer = document.getElementById('candidatesContainer');
             const addCandidateBtn = document.getElementById('addCandidateBtn');
+            const importElectionSelect = document.getElementById('importElectionSelect');
+            const importCandidatesBtn = document.getElementById('importCandidatesBtn');
+            const startDatetimeInput = document.getElementById('start_datetime_input');
+            const setCurrentStartTimeBtn = document.getElementById('setCurrentStartTimeBtn');
             const existingCandidatesJson = candidatesContainer.dataset.existingCandidates;
-            const existingCandidates = JSON.parse(existingCandidatesJson);
+            const existingCandidates = existingCandidatesJson ? JSON.parse(existingCandidatesJson) : [];
             
-            // candidateCounter needs to start at the highest existing index + 1
-            // or 0 if no existing candidates. This ensures unique indices for new fields.
-            let candidateCounter = existingCandidates.length > 0 ? existingCandidates.length : 0; 
+            let candidateCounter = 0;
 
-            // --- Helper function to create a single candidate input block ---
+            function formatDateTime(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            setCurrentStartTimeBtn.addEventListener('click', () => {
+                startDatetimeInput.value = formatDateTime(new Date());
+            });
+
+            const isEditing = document.querySelector('input[name="poll_id"][value]').value !== '';
+            if (!isEditing && startDatetimeInput.value === '') {
+                 startDatetimeInput.value = formatDateTime(new Date());
+            }
+
             function createCandidateField(candidate = {}) {
-                // Use candidateCounter for the unique index in the name attribute
                 const currentIndex = candidateCounter++;
 
                 const div = document.createElement('div');
-                div.classList.add('candidate-entry'); // For styling
+                div.classList.add('candidate-entry');
                 div.innerHTML = `
                     <h3>Candidate <span class="candidate-number">${currentIndex + 1}</span></h3>
                     <label>Candidate Name: <input type="text" name="candidates[${currentIndex}][candidate_name]" value="${candidate.candidate_name || ''}" required></label><br>
                     <label>Party: <input type="text" name="candidates[${currentIndex}][party]" value="${candidate.party || ''}"></label><br>
-                    <button type="button" class="remove-candidate" style="background-color: red; color: white; margin-top: 5px;">Remove Candidate</button>
+                    <button type="button" class="remove-candidate">Remove Candidate</button>
                 `;
 
-                // Add event listener for the remove button
                 const removeButton = div.querySelector('.remove-candidate');
                 removeButton.addEventListener('click', () => {
                     div.remove();
-                    // Re-index displayed numbers after removal for better UX
                     updateDisplayedCandidateNumbers();
                 });
 
                 return div;
             }
 
-            // --- Helper function to update the displayed candidate numbers (e.g., Candidate 1, Candidate 2) ---
             function updateDisplayedCandidateNumbers() {
                 const candidateEntries = candidatesContainer.querySelectorAll('.candidate-entry');
                 candidateEntries.forEach((entry, idx) => {
@@ -230,28 +433,55 @@ $elections = getAllElections($conn);
                 });
             }
 
-            // --- INITIAL RENDERING LOGIC ON PAGE LOAD ---
-            // Clear the "Loading candidates..." message or any initial placeholder
             candidatesContainer.innerHTML = '';
 
-            if (existingCandidates && existingCandidates.length > 0) {
-                // If editing and there are existing candidates, render them
+            if (existingCandidates.length > 0) {
                 existingCandidates.forEach(candidate => {
                     candidatesContainer.appendChild(createCandidateField(candidate));
                 });
             } else {
-                // If not editing or no existing candidates, add one empty field
                 candidatesContainer.appendChild(createCandidateField());
             }
 
-            // Ensure displayed numbers are correct after initial load
+            candidateCounter = candidatesContainer.querySelectorAll('.candidate-entry').length;
             updateDisplayedCandidateNumbers();
 
-
-            // --- EVENT LISTENER FOR 'ADD CANDIDATE' BUTTON ---
             addCandidateBtn.addEventListener('click', () => {
                 candidatesContainer.appendChild(createCandidateField());
-                updateDisplayedCandidateNumbers(); // Update numbers after adding
+                updateDisplayedCandidateNumbers();
+            });
+
+            importCandidatesBtn.addEventListener('click', async () => {
+                const selectedPollId = importElectionSelect.value;
+                if (!selectedPollId) {
+                    alert('Please select an election to import candidates from.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`../includes/fetch_candidates_for_import.php?poll_id=${selectedPollId}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const candidatesToImport = await response.json();
+
+                    if (candidatesToImport.length > 0) {
+                        candidatesToImport.forEach(candidate => {
+                            const existingNames = Array.from(candidatesContainer.querySelectorAll('input[name*="[candidate_name]"]')).map(input => input.value.toLowerCase());
+                            if (!existingNames.includes(candidate.candidate_name.toLowerCase())) {
+                                candidatesContainer.appendChild(createCandidateField(candidate));
+                            } else {
+                                console.log(`Skipping duplicate candidate: ${candidate.candidate_name}`);
+                            }
+                        });
+                        updateDisplayedCandidateNumbers();
+                    } else {
+                        alert('No candidates found in the selected election.');
+                    }
+                } catch (error) {
+                    console.error('Error importing candidates:', error);
+                    alert('Failed to import candidates. Please try again.');
+                }
             });
         });
     </script>

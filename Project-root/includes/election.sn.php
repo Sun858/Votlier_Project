@@ -1,9 +1,8 @@
 <?php
-// includes/election.sn.php
 
 // Fetches all elections
 function getAllElections($conn) {
-    $sql = "SELECT * FROM election";
+    $sql = "SELECT poll_id, election_name, election_type, start_datetime, end_datetime FROM election ORDER BY election_name ASC";
     return $conn->query($sql);
 }
 
@@ -14,7 +13,7 @@ function getElectionById($conn, $pollId) {
         error_log("Prepare failed: " . $conn->error);
         return null;
     }
-    $stmt->bind_param("i", $pollId); // Changed to 'i' for integer poll_id
+    $stmt->bind_param("i", $pollId);
     $stmt->execute();
     $result = $stmt->get_result();
     $electionData = $result->fetch_assoc();
@@ -24,12 +23,12 @@ function getElectionById($conn, $pollId) {
 
 // Fetches candidates for a given election poll ID
 function getCandidatesByPoll($conn, $pollId) {
-    $stmt = $conn->prepare("SELECT * FROM candidates WHERE poll_id = ? ORDER BY candidate_id ASC"); // Order for consistency
+    $stmt = $conn->prepare("SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ? ORDER BY candidate_id ASC");
     if ($stmt === false) {
         error_log("Prepare failed: " . $conn->error);
-        return []; // Return empty array on error
+        return [];
     }
-    $stmt->bind_param("i", $pollId); // Changed to 'i' for integer poll_id
+    $stmt->bind_param("i", $pollId);
     $stmt->execute();
     $result = $stmt->get_result();
     $candidates = [];
@@ -40,63 +39,77 @@ function getCandidatesByPoll($conn, $pollId) {
     return $candidates;
 }
 
-// Creates or Updates an Election and its Candidates (Centralized Logic)
-function createOrUpdateElection($conn, $electionData, $candidatesData = []) {
-    $conn->begin_transaction(); // Start transaction for atomicity
+// This one allows you tyo be lazy if you dont want to type new candidates.
+function getElectionCandidatesForImport($conn, $sourcePollId) {
+    $stmt = $conn->prepare("SELECT candidate_name, party FROM candidates WHERE poll_id = ? ORDER BY candidate_name ASC");
+    if ($stmt === false) {
+        error_log("Prepare getElectionCandidatesForImport failed: " . $conn->error);
+        return [];
+    }
+    $stmt->bind_param("i", $sourcePollId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $candidates = [];
+    while ($row = $result->fetch_assoc()) {
+        $candidates[] = $row;
+    }
+    $stmt->close();
+    return $candidates;
+}
+
+
+// Creates or Updates an Election and its Candidates
+function createOrUpdateElection($conn, $electionData, $candidatesData = [], $adminId) {
+    $conn->begin_transaction();
 
     try {
-        if (!empty($electionData['poll_id'])) {
-            // Update existing election
+        $pollId = $electionData['poll_id'] ?? null;
+        $endDateTime = (!empty($electionData['end_datetime'])) ? $electionData['end_datetime'] : NULL;
+
+        if (!empty($pollId)) {
             $stmt = $conn->prepare("UPDATE election SET election_type=?, election_name=?, start_datetime=?, end_datetime=? WHERE poll_id=?");
             if ($stmt === false) throw new Exception("Prepare UPDATE election failed: " . $conn->error);
-            $stmt->bind_param("ssssi", $electionData['election_type'], $electionData['election_name'], $electionData['start_datetime'], $electionData['end_datetime'], $electionData['poll_id']);
+
+            $stmt->bind_param("ssssi", $electionData['election_type'], $electionData['election_name'], $electionData['start_datetime'], $endDateTime, $pollId);
             $stmt->execute();
             $stmt->close();
-            $pollId = $electionData['poll_id'];
 
-            // For updates, delete existing candidates and re-insert to simplify logic.
-            // This is safer than trying to track individual adds/edits/deletes via JavaScript.
             deleteCandidatesForPoll($conn, $pollId);
 
         } else {
-            // Insert new election
             $stmt = $conn->prepare("INSERT INTO election (election_type, election_name, start_datetime, end_datetime) VALUES (?, ?, ?, ?)");
             if ($stmt === false) throw new Exception("Prepare INSERT election failed: " . $conn->error);
-            $stmt->bind_param("ssss", $electionData['election_type'], $electionData['election_name'], $electionData['start_datetime'], $electionData['end_datetime']);
+            $stmt->bind_param("ssss", $electionData['election_type'], $electionData['election_name'], $electionData['start_datetime'], $endDateTime);
             $stmt->execute();
             $stmt->close();
-            $pollId = $conn->insert_id; // Get the ID of the newly inserted election
+            $pollId = $conn->insert_id;
         }
 
-        // Save candidates if provided
-        if (!empty($candidatesData) && $pollId) {
+        if ($pollId && !empty($candidatesData)) {
             foreach ($candidatesData as $candidate) {
-                // Ensure required fields exist
-                if (empty($candidate['candidate_name'])) {
+                if (!isset($candidate['candidate_name']) || empty($candidate['candidate_name'])) {
                     error_log("Skipping candidate due to missing name.");
-                    continue; // Skip this candidate if name is empty
+                    continue;
                 }
 
-                // Insert new candidate (as previous ones were deleted for update)
-                // Removed candidate_symbol
                 $stmt = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
                 if ($stmt === false) throw new Exception("Prepare INSERT candidate failed: " . $conn->error);
-                $stmt->bind_param("isss", // 'i' for poll_id, 's' for strings, 'i' for admin_id
+                $stmt->bind_param("isss",
                     $pollId,
                     $candidate['candidate_name'],
                     $candidate['party'] ?? null,
-                    $_SESSION['admin_id'] // Use the admin_id from the session
+                    $adminId
                 );
                 $stmt->execute();
                 $stmt->close();
             }
         }
 
-        $conn->commit(); // Commit transaction if all successful
-        return true;
+        $conn->commit();
+        return $pollId;
 
     } catch (Exception $e) {
-        $conn->rollback(); // Rollback on error
+        $conn->rollback();
         error_log("Election save failed: " . $e->getMessage());
         return false;
     }
@@ -104,20 +117,18 @@ function createOrUpdateElection($conn, $electionData, $candidatesData = []) {
 
 // Deletes an election and its associated candidates
 function deleteElection($conn, $pollId) {
-    $conn->begin_transaction(); // Start transaction
+    $conn->begin_transaction();
 
     try {
-        // Delete candidates first (to satisfy foreign key constraints if they exist)
         $stmt = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
         if ($stmt === false) throw new Exception("Prepare DELETE candidates failed: " . $conn->error);
-        $stmt->bind_param("i", $pollId); // Changed to 'i' for integer poll_id
+        $stmt->bind_param("i", $pollId);
         $stmt->execute();
         $stmt->close();
 
-        // Then delete the election
         $stmt = $conn->prepare("DELETE FROM election WHERE poll_id = ?");
         if ($stmt === false) throw new Exception("Prepare DELETE election failed: " . $conn->error);
-        $stmt->bind_param("i", $pollId); // Changed to 'i' for integer poll_id
+        $stmt->bind_param("i", $pollId);
         $stmt->execute();
         $stmt->close();
 
@@ -134,9 +145,8 @@ function deleteElection($conn, $pollId) {
 function deleteCandidatesForPoll($conn, $pollId) {
     $stmt = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
     if ($stmt === false) throw new Exception("Prepare DELETE candidates for poll failed: " . $conn->error);
-    $stmt->bind_param("i", $pollId); // Changed to 'i' for integer poll_id
+    $stmt->bind_param("i", $pollId);
     $stmt->execute();
     $stmt->close();
     return true;
 }
-?>

@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `election` (
     election_type VARCHAR(50) NOT NULL,
     election_name VARCHAR(255) NOT NULL,
     start_datetime DATETIME NOT NULL,
-    end_datetime DATETIME DEFAULT NULL
+    end_datetime DATETIME NULL DEFAULT NULL
 );
 
 -- Candidates Table --
