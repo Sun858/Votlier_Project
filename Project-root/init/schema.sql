@@ -73,7 +73,9 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     party VARCHAR(255),
     candidate_symbol VARCHAR(255),
     admin_id INT NOT NULL,
-    FOREIGN KEY (poll_id) REFERENCES election(poll_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES election(poll_id) ON DELETE CASCADE,
     FOREIGN KEY (admin_id) REFERENCES administration(admin_id)
 );
 
