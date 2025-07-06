@@ -1,105 +1,94 @@
 <?php
 session_start();
-// This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/security.sn.php';
-checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
+require_once '../includes/election.sn.php';
+require_once '../DatabaseConnection/config.php';
+checkSessionTimeout();
 
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
+
+// Handle deletion if requested
+if (isset($_GET['delete_poll_id'])) {
+    deleteElection($conn, $_GET['delete_poll_id']);
+    $_SESSION['message'] = "Election deleted successfully.";
+    header("Location: admin_election.php");
+    exit();
+}
+
+$editing = false;
+$editData = [];
+if (isset($_GET['edit_poll_id'])) {
+    $editing = true;
+    $editData = getElectionById($conn, $_GET['edit_poll_id']);
+}
+
+$elections = getAllElections($conn);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ionicon Sidebar Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Admin Election Management</title>
     <link rel="stylesheet" href="../Assets/css/Admin_Election.css">
-
 </head>
 <body>
-
     <aside class="sidebar">
-        <div class="sidebar-top-bar">
-            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
-            <h3>Votify</h3>
-        </div>
-        <nav class="sidebar-nav">
-            <ul>
-                <li><a href="Admin_Home.php">
-                    <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
-                    <span class="text">Home</span>
-                </a></li>
-                <li><a href="Admin_Profile.php">
-                    <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
-                    <span class="text">Profile</span>
-                </a></li>
-                <li><a href="Admin_Election.php">
-                    <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
-                    <span class="text">Election</span>
-                </a></li>
-                <li><a href="Admin_Result.php">
-                    <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
-                    <span class="text">Result</span>
-                </a></li>
-                <li><a href="Admin_Settings.php">
-                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
-                    <span class="text">Settings</span>
-                </a></li>
-            </ul>
-        </nav>
-        <div class="sidebar-footer">
-            <a href="../includes/logout.php" class="footer-link signout-link">
-                <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
-                <span class="text">Sign Out</span>
-            </a>
-        </div>
+        <!-- sidebar content -->
     </aside>
-
     <main class="main-content">
-        <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
-        </header>
+        <h1>Manage Elections</h1>
 
-        <!-- This script is for the 'Create Election' button which when clicked, redirects to the admin_create_election.php file, so the admin can fill the form and create election -->
-        <div style="margin: 25px 0;">
-    <a href="/admin/admin_create_election.php" 
-       style="display: inline-flex; align-items: center; 
-              padding: 12px 20px; background-color: #4CAF50; 
-              color: white; text-decoration: none; border-radius: 4px;
-              font-weight: 500; gap: 8px;">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Create New Election
-    </a>
-        </div>
+        <?php if (isset($_SESSION['message'])): ?>
+            <p style="color: green;"> <?= $_SESSION['message']; unset($_SESSION['message']); ?> </p>
+        <?php endif; ?>
 
-    <!-- This script is for the 'Current Elections' button which when clicked, redirects to the dashboard.php file to view existing elections -->
-        <div style="margin: 20px 0; text-align: center;">
-    <a href="../admin/dashboard.php" 
-       style="display: inline-flex; 
-              align-items: center;
-              padding: 12px 24px;
-              background-color: #2196F3;
-              color: white;
-              text-decoration: none;
-              border-radius: 4px;
-              font-weight: 500;
-              gap: 8px;
-              box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-              transition: all 0.3s ease;">
-        <ion-icon name="list-circle-outline" style="font-size: 1.2em;"></ion-icon>
-        Current Elections
-    </a>
-        </div>
+        <form action="../includes/save_election.php" method="post">
+            <?php if ($editing): ?>
+                <input type="hidden" name="poll_id" value="<?= htmlspecialchars($editData['poll_id']) ?>">
+            <?php endif; ?>
+            <label>Election Type: <input type="text" name="election_type" value="<?= $editing ? htmlspecialchars($editData['election_type']) : '' ?>"></label>
+            <label>Election Name: <input type="text" name="election_name" value="<?= $editing ? htmlspecialchars($editData['election_name']) : '' ?>"></label>
+            <label>Start Date/Time: <input type="datetime-local" name="start_datetime" value="<?= $editing ? htmlspecialchars($editData['start_datetime']) : '' ?>"></label>
+            <label>End Date/Time: <input type="datetime-local" name="end_datetime" value="<?= $editing ? htmlspecialchars($editData['end_datetime']) : '' ?>"></label>
+            <button type="submit"> <?= $editing ? 'Update Election' : 'Create Election' ?> </button>
+        </form>
 
+        <h2>Current Elections</h2>
+        <?php if ($elections->num_rows > 0): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Poll ID</th>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $elections->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['poll_id']) ?></td>
+                            <td><?= htmlspecialchars($row['election_type']) ?></td>
+                            <td><?= htmlspecialchars($row['election_name']) ?></td>
+                            <td><?= htmlspecialchars($row['start_datetime']) ?></td>
+                            <td><?= htmlspecialchars($row['end_datetime']) ?></td>
+                            <td>
+                                <a href="?edit_poll_id=<?= urlencode($row['poll_id']) ?>">Edit</a>
+                                <a href="?delete_poll_id=<?= urlencode($row['poll_id']) }" onclick="return confirm('Delete this election?');">Delete</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>No elections available.</p>
+        <?php endif; ?>
     </main>
-
-    <!-- Ionicon scripts -->
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
