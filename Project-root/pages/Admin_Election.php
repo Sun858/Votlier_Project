@@ -37,8 +37,42 @@ $elections = getAllElections($conn);
 </head>
 <body>
     <aside class="sidebar">
-        <!-- sidebar content -->
+        <div class="sidebar-top-bar">
+            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
+            <h3>Votify</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="Admin_Home.php">
+                    <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                    <span class="text">Home</span>
+                </a></li>
+                <li><a href="Admin_Profile.php">
+                    <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
+                    <span class="text">Profile</span>
+                </a></li>
+                <li><a href="Admin_Election.php">
+                    <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
+                    <span class="text">Election</span>
+                </a></li>
+                <li><a href="Admin_Result.php">
+                    <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
+                    <span class="text">Result</span>
+                </a></li>
+                <li><a href="Admin_Settings.php">
+                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+                    <span class="text">Settings</span>
+                </a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../includes/logout.php" class="footer-link signout-link">
+                <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
+                <span class="text">Sign Out</span>
+            </a>
+        </div>
     </aside>
+
     <main class="main-content">
         <h1>Manage Elections</h1>
 
@@ -80,7 +114,7 @@ $elections = getAllElections($conn);
                             <td><?= htmlspecialchars($row['end_datetime']) ?></td>
                             <td>
                                 <a href="?edit_poll_id=<?= urlencode($row['poll_id']) ?>">Edit</a>
-                                <a href="?delete_poll_id=<?= urlencode($row['poll_id']) }" onclick="return confirm('Delete this election?');">Delete</a>
+                                <a href="?delete_poll_id=<?= urlencode($row['poll_id']) ?>" onclick="return confirm('Delete this election?');">Delete</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -90,5 +124,8 @@ $elections = getAllElections($conn);
             <p>No elections available.</p>
         <?php endif; ?>
     </main>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
