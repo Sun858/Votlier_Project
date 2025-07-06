@@ -71,7 +71,6 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     poll_id INT NOT NULL,
     candidate_name VARCHAR(255) NOT NULL,
     party VARCHAR(255),
-    candidate_symbol VARCHAR(255),
     admin_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
