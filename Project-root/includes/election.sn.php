@@ -59,7 +59,7 @@ function getElectionCandidatesForImport($conn, $sourcePollId) {
 
 
 // Creates or Updates an Election and its Candidates
-function createOrUpdateElection($conn, $electionData, $candidatesData = [], $adminId) {
+function createOrUpdateElection($conn, $electionData, $adminId, $candidatesData = []) {
     $conn->begin_transaction();
 
     try {

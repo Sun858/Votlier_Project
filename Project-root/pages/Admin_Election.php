@@ -491,6 +491,7 @@ if ($allElectionsResult->num_rows > 0) {
                 alert('Failed to import candidates. Please try again.');
             }
         });
+    });
 
     </script>
 </body>

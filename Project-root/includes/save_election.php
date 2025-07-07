@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Pass admin_id from session to the function
     $adminId = $_SESSION['admin_id'];
 
-    if (createOrUpdateElection($conn, $electionData, $candidatesData, $adminId)) {
+    if (createOrUpdateElection($conn, $electionData, $adminId, $candidatesData)) {
         $_SESSION['message'] = $electionData['poll_id'] ? "Election updated successfully." : "Election created successfully.";
     } else {
         $_SESSION['message'] = "Failed to save election. Please check logs for details.";
