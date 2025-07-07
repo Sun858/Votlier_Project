@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `election` (
     election_type VARCHAR(50) NOT NULL,
     election_name VARCHAR(255) NOT NULL,
     start_datetime DATETIME NOT NULL,
-    end_datetime DATETIME DEFAULT NULL
+    end_datetime DATETIME NULL DEFAULT NULL
 );
 
 -- Candidates Table --
@@ -71,9 +71,10 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     poll_id INT NOT NULL,
     candidate_name VARCHAR(255) NOT NULL,
     party VARCHAR(255),
-    candidate_symbol VARCHAR(255),
     admin_id INT NOT NULL,
-    FOREIGN KEY (poll_id) REFERENCES election(poll_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES election(poll_id) ON DELETE CASCADE,
     FOREIGN KEY (admin_id) REFERENCES administration(admin_id)
 );
 
