@@ -1,13 +1,25 @@
 <?php
 session_start();
 // This is the security page for rate limiting and timeout. 15Min is currently set
+require_once '../DatabaseConnection/config.php';
 require_once '../includes/security.sn.php';
+require_once '../includes/result_functions.php';
+
 checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
+
+// Redirect if not logged in as an admin
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
+
+// Load all the variables to pre-apply for the view
+$pageState = loadAdminResultPageState($conn);
+$pollId = $pageState['pollId'];
+$results = $pageState['results'];
+$tallyMsg = $pageState['tallyMsg'];
+$elections = $pageState['elections']; 
 ?>
 
 <!DOCTYPE html>
@@ -64,9 +76,59 @@ if (!isset($_SESSION["admin_id"])) {
             <h1>Welcome to Voter Dashboard</h1>
             <p>Explore your data and manage your business efficiently</p>
         </header>
+
+        <h2>Election Results</h2>
+
+        <?php if ($tallyMsg): // Display success message if available ?>
+            <p style="color: green; font-weight: bold;"><?= htmlspecialchars($tallyMsg) ?></p>
+        <?php endif; ?>
+
+        <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
+            <label for="poll_id">Select Election:</label>
+            <select name="poll_id" id="poll_id" required>
+                <option value="">-- Select --</option>
+                <?php foreach ($elections as $e): ?>
+                    <option value="<?= $e['poll_id'] ?>" <?= $pollId == $e['poll_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($e['election_name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" name="tally_votes">Tally Votes</button>
+            <button type="submit" name="view_results">View Results</button>
+        </form>
+
+        <?php if (!empty($results)): // Display results table if results are available ?>
+            <h3>Results for Selected Election (Poll ID: <?= htmlspecialchars($pollId) ?>)</h3>
+            <table border="1" style="width:100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Candidate ID</th>
+                        <th>Candidate Name</th>
+                        <th>Total Votes</th>
+                        <th>Rank 1 Votes</th>
+                        <th>Rank 2 Votes</th>
+                        <th>Rank 3 Votes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($results as $result): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($result['candidate_id']) ?></td>
+                            <td><?= htmlspecialchars($result['candidate_name']) ?></td>
+                            <td><?= htmlspecialchars($result['total_votes']) ?></td>
+                            <td><?= htmlspecialchars($result['r1_votes']) ?></td>
+                            <td><?= htmlspecialchars($result['r2_votes']) ?></td>
+                            <td><?= htmlspecialchars($result['r3_votes']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php elseif ($pollId && isset($_POST['view_results']) && empty($results)): ?>
+            <p>No results found for the selected election, or votes have not yet been tallied.</p>
+        <?php endif; ?>
+
     </main>
 
-    <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
