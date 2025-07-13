@@ -197,6 +197,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && strpos($_SERVER['CONTENT_TYPE'], 'a
     }
 }
 
+// --- Handle AJAX POST request for deleting election ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_poll_id'])) {
+    $poll_id = filter_var($_POST['delete_poll_id'], FILTER_VALIDATE_INT);
+
+    if ($poll_id === false) {
+        sendJsonResponse(false, 'Invalid poll ID provided for deletion.');
+    }
+
+    $conn->begin_transaction();
+
+    try {
+        // Delete candidates first due to foreign key constraint
+        $stmt_candidates = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
+        $stmt_candidates->bind_param("i", $poll_id);
+        if (!$stmt_candidates->execute()) {
+            throw new Exception('Failed to delete candidates: ' . $stmt_candidates->error);
+        }
+        $stmt_candidates->close();
+
+        // Then delete the election
+        $stmt_election = $conn->prepare("DELETE FROM election WHERE poll_id = ?");
+        $stmt_election->bind_param("i", $poll_id);
+        if (!$stmt_election->execute()) {
+            throw new Exception('Failed to delete election: ' . $stmt_election->error);
+        }
+        $stmt_election->close();
+
+        $conn->commit();
+        sendJsonResponse(true, 'Election and its candidates deleted successfully!');
+
+    } catch (Exception $e) {
+        $conn->rollback();
+        sendJsonResponse(false, 'Deletion failed: ' . $e->getMessage());
+    } finally {
+        if ($conn) {
+            $conn->close();
+        }
+    }
+}
+
+
 // --- Dynamic Table Data Fetching for AJAX (Search, Filter, Sort, Pagination) ---
 if (isset($_GET['fetch_table_data']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $search_query = $_GET['search_query'] ?? '';
@@ -230,6 +271,21 @@ if (isset($_GET['fetch_table_data']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $where_clauses[] = "e.election_type = ?";
         $bind_types .= 's';
         $bind_params[] = $election_type_filter;
+    }
+
+    // Status filter - Dynamically build SQL based on selected status
+    if (!empty($election_status_filter)) {
+        switch ($election_status_filter) {
+            case 'Ongoing':
+                $where_clauses[] = "(e.start_datetime <= NOW() AND (e.end_datetime IS NULL OR e.end_datetime >= NOW()))";
+                break;
+            case 'Upcoming':
+                $where_clauses[] = "(e.start_datetime > NOW())";
+                break;
+            case 'Completed':
+                $where_clauses[] = "(e.end_datetime IS NOT NULL AND e.end_datetime < NOW())";
+                break;
+        }
     }
 
     // Base query components
@@ -364,6 +420,11 @@ if ($election_types_result) {
 // For statuses, we don't query the DB. We know the possible values by using the start_datetime and end_datetime columns.
 $possible_statuses = ['Ongoing', 'Upcoming', 'Completed']; // Manually define
 sort($possible_statuses); // Sort them alphabetically for consistent display
+
+// Ensure the connection is closed after all PHP logic that uses it
+if ($conn) {
+    $conn->close();
+}
 
 // End output buffering for the main HTML content, sending it to the browser.
 ob_end_flush();
@@ -973,22 +1034,6 @@ ob_end_flush();
         </header>
 
         <div style="margin: 25px 0; display: flex; gap: 15px;">
-            <!-- Original button/link for creating election (preserving its behavior) -->
-            <a href="/admin/admin_create_election.php"
-                style="
-                    display: inline-flex;
-                    align-items: center;
-                    padding: 12px 20px;
-                    background-color: #007BFF; /* A different color to distinguish */
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 75px;
-                    font-weight: 500;
-                    gap: 8px;">
-                <ion-icon name="create-outline"></ion-icon>
-                Create Election (Old)
-            </a>
-
             <!-- NEW button for the wizard -->
             <button id="triggerNewElectionWizardBtn"
                 style="
@@ -1220,9 +1265,6 @@ ob_end_flush();
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
-    <!-- Link of JavaScript file for candidates modal -->
-    <script src="../Assets/js/admin_dashboard.js"></script>
-
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const electionTableBody = document.getElementById('election-table-body');
@@ -1315,19 +1357,8 @@ ob_end_flush();
 
                     if (elections.length > 0) {
                         elections.forEach(row => {
-                            // Calculate status (redundant from PHP now, but good for consistency)
-                            const now = new Date();
-                            const start = new Date(row.start_datetime);
-                            const end = row.end_datetime ? new Date(row.end_datetime) : null;
-
-                            let display_status = 'Unknown';
-                            if (end && end < now) {
-                                display_status = 'Completed';
-                            } else if (start > now) {
-                                display_status = 'Upcoming';
-                            } else if (start <= now && (!end || end >= now)) {
-                                display_status = 'Ongoing';
-                            }
+                            // Use the status already calculated by PHP
+                            const display_status = row.status; 
 
                             const tr = document.createElement('tr');
                             tr.id = `election-${row.poll_id}`;
@@ -1441,7 +1472,7 @@ ob_end_flush();
             // Show custom confirmation dialog
             confirmMessage.textContent = 'Are you sure you want to delete this election? This action cannot be undone.';
             confirmDialog.style.display = 'block';
-            confirmOverlay.style.display = 'block';
+            confirmOverlay.style.display = 'flex'; // Use flex to center
         });
 
         // Handle "Yes" click on custom dialog
@@ -1462,12 +1493,15 @@ ob_end_flush();
                 currentDeleteButton.dataset.tooltip = 'Deleting election...';
 
                 try {
-                    const response = await fetch('../admin/delete_election_api.php', {
+                    const formData = new URLSearchParams();
+                    formData.append('delete_poll_id', currentPollId);
+
+                    const response = await fetch(window.location.href, { // Pointing to itself
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: 'poll_id=' + encodeURIComponent(currentPollId)
+                        body: formData.toString()
                     });
 
                     const data = await response.json();
@@ -1503,11 +1537,13 @@ ob_end_flush();
             currentPollId = null;
         });
 
-        confirmOverlay.addEventListener('click', function() {
-            confirmDialog.style.display = 'none';
-            confirmOverlay.style.display = 'none';
-            currentDeleteButton = null;
-            currentPollId = null;
+        confirmOverlay.addEventListener('click', function(event) {
+            if (event.target === confirmOverlay) { // Only close if clicking on the overlay itself, not the dialog
+                confirmDialog.style.display = 'none';
+                confirmOverlay.style.display = 'none';
+                currentDeleteButton = null;
+                currentPollId = null;
+            }
         });
 
         // --- Pagination Event Listeners ---
