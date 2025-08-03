@@ -43,21 +43,6 @@ function getActivePollsForUser($conn, $userId) {
     return $polls;
 }
 
-// Get candidates for a poll
-function getCandidatesByPoll($conn, $pollId) {
-    $sql = "SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $pollId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $candidates = [];
-    while ($row = $result->fetch_assoc()) {
-        $candidates[] = $row;
-    }
-    $stmt->close();
-    return $candidates;
-}
-
 // Submits a user's ranked vote (up to any amoutn of preferences)
 function submitUserVote($conn, $userId, $pollId, $votes) {
     if (hasUserVoted($conn, $userId, $pollId)) {

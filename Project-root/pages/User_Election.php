@@ -3,6 +3,7 @@ session_start(); //figure out if i can move this out of the view
 require_once '../DatabaseConnection/config.php';
 require_once '../includes/security.sn.php';
 require_once '../includes/election.sn.php';
+require_once '../includes/vote.sn.php';
 checkSessionTimeout();
 
 if (!isset($_SESSION["user_id"])) {
