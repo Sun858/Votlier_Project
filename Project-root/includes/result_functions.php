@@ -26,37 +26,43 @@ function tallyVotes($conn, $pollId, $adminId) {
                 COUNT(*) AS total_votes,
                 SUM(CASE WHEN preference_rank = 1 THEN 1 ELSE 0 END) AS r1_votes,
                 SUM(CASE WHEN preference_rank = 2 THEN 1 ELSE 0 END) AS r2_votes,
-                SUM(CASE WHEN preference_rank = 3 THEN 1 ELSE 0 END) AS r3_votes
+                SUM(CASE WHEN preference_rank = 3 THEN 1 ELSE 0 END) AS r3_votes,
+                SUM(CASE WHEN preference_rank = 4 THEN 1 ELSE 0 END) AS r4_votes,
+                SUM(CASE WHEN preference_rank = 5 THEN 1 ELSE 0 END) AS r5_votes
             FROM ballot
             WHERE poll_id = ? AND candidate_id = ?
         ";
         $stmt = $conn->prepare($voteSql);
         if (!$stmt) {
-            error_log("Failed to prepare vote SQL: " . $conn->error);
+            error_log("Failed to prepare vote SQL for tally: " . $conn->error);
             continue;
         }
         $stmt->bind_param("ii", $pollId, $candidateId);
         $stmt->execute();
-        $stmt->bind_result($total, $r1, $r2, $r3);
+        // Bind results for all 5 preference ranks
+        $stmt->bind_result($total, $r1, $r2, $r3, $r4, $r5);
         $stmt->fetch();
         $stmt->close();
 
         $upsert = "
-            INSERT INTO tally (poll_id, candidate_id, total_votes, r1_votes, r2_votes, r3_votes)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO tally (poll_id, candidate_id, total_votes, r1_votes, r2_votes, r3_votes, r4_votes, r5_votes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 total_votes = VALUES(total_votes),
                 r1_votes = VALUES(r1_votes),
                 r2_votes = VALUES(r2_votes),
                 r3_votes = VALUES(r3_votes),
+                r4_votes = VALUES(r4_votes),
+                r5_votes = VALUES(r5_votes),
                 updatetime = CURRENT_TIMESTAMP
         ";
         $stmt = $conn->prepare($upsert);
         if (!$stmt) {
-            error_log("Failed to prepare upsert SQL: " . $conn->error);
+            error_log("Failed to prepare upsert SQL for tally: " . $conn->error);
             continue;
         }
-        $stmt->bind_param("iiiiii", $pollId, $candidateId, $total, $r1, $r2, $r3);
+        // Bind parameters for all 5 preference ranks
+        $stmt->bind_param("iiiiiiii", $pollId, $candidateId, $total, $r1, $r2, $r3, $r4, $r5);
         $stmt->execute();
         $stmt->close();
     }
@@ -75,6 +81,8 @@ function getElectionResults($conn, $pollId, $adminId) {
             t.r1_votes,
             t.r2_votes,
             t.r3_votes,
+            t.r4_votes, 
+            t.r5_votes, 
             c.party
         FROM tally t
         JOIN candidates c ON t.candidate_id = c.candidate_id
