@@ -25,6 +25,39 @@ function encryptBallot($ballotData) {
     return ['encrypted_ballot' => $encryptedBallot, 'iv' => $iv];
 }
 
+// Get polls the user can vote in: active, and user hasn't voted
+function getActivePollsForUser($conn, $userId) {
+    $now = date("Y-m-d H:i:s");
+    $sql = "SELECT poll_id, election_name FROM election
+            WHERE start_datetime <= ? AND (end_datetime IS NULL OR end_datetime > ?)
+            AND poll_id NOT IN (SELECT poll_id FROM ballot WHERE user_id = ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssi", $now, $now, $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $polls = [];
+    while ($row = $result->fetch_assoc()) {
+        $polls[] = $row;
+    }
+    $stmt->close();
+    return $polls;
+}
+
+// Get candidates for a poll
+function getCandidatesByPoll($conn, $pollId) {
+    $sql = "SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $pollId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $candidates = [];
+    while ($row = $result->fetch_assoc()) {
+        $candidates[] = $row;
+    }
+    $stmt->close();
+    return $candidates;
+}
+
 // Submits a user's ranked vote (up to any amoutn of preferences)
 function submitUserVote($conn, $userId, $pollId, $votes) {
     if (hasUserVoted($conn, $userId, $pollId)) {
