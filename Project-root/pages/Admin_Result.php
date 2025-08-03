@@ -36,7 +36,6 @@ $elections = $pageState['elections'];
 
     <aside class="sidebar">
         <div class="sidebar-top-bar">
-            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
             <h3>Votify</h3>
         </div>
         <nav class="sidebar-nav">
@@ -79,13 +78,20 @@ $elections = $pageState['elections'];
 
         <h2>Election Results</h2>
 
-        <?php if ($tallyMsg): // Display success message if available ?>
-            <p style="color: green; font-weight: bold;"><?= htmlspecialchars($tallyMsg) ?></p>
-        <?php endif; ?>
-
         <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
-            <label for="poll_id">Select Election:</label>
-            <select name="poll_id" id="poll_id" required>
+            <label for="poll_id" 
+             style="
+                color: #303a44ff;
+                font-weight:600; 
+                font-size: 1.2em;
+            ">
+            Select Election:
+            </label>
+            <select name="poll_id" id="poll_id"
+                style="
+                    width: 190px;
+                    height: 40px;
+                    font-size: 1.1em;" required>
                 <option value="">-- Select --</option>
                 <?php foreach ($elections as $e): ?>
                     <option value="<?= $e['poll_id'] ?>" <?= $pollId == $e['poll_id'] ? 'selected' : '' ?>>
@@ -93,39 +99,108 @@ $elections = $pageState['elections'];
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" name="tally_votes">Tally Votes</button>
-            <button type="submit" name="view_results">View Results</button>
+            <button type="submit" name="tally_votes" 
+                style="
+                    background: #4CAF50; 
+                    color: #fff; 
+                    border: none; 
+                    padding: 8px 18px; 
+                    border-radius: 4px; 
+                    margin-left: 10px; 
+                    font-weight: 600; 
+                    cursor: pointer; 
+                    transition: 
+                    background 0.2s;">
+                Tally Votes
+            </button>
+            <button type="submit" name="view_results"
+                style="
+                    background: #8c8fdcff; 
+                    color: #fff; 
+                    border: none; 
+                    padding: 8px 18px; 
+                    border-radius: 4px; 
+                    margin-left: 10px; 
+                    font-weight: 600; 
+                    cursor: pointer; 
+                    transition: 
+                    background 0.2s;">
+                View Results
+            </button>
         </form>
 
-        <?php if (!empty($results)): // Display results table if results are available ?>
-            <h3>Results for Selected Election (Poll ID: <?= htmlspecialchars($pollId) ?>)</h3>
-            <table border="1" style="width:100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                    <tr>
-                        <th>Candidate ID</th>
-                        <th>Candidate Name</th>
-                        <th>Total Votes</th>
-                        <th>Rank 1 Votes</th>
-                        <th>Rank 2 Votes</th>
-                        <th>Rank 3 Votes</th>
+        <!--Display success message if available-->
+        <?php if ($tallyMsg):?>
+            <div style="
+                padding:12px;
+                color:#2e7d32;
+                background:#f5faf5;
+                border-left:3px solid;
+                margin:8px 0;
+                font-size:15px">
+                <?= htmlspecialchars($tallyMsg) ?>
+            </div>
+        <?php endif; ?>
+
+        <!--Display Results table if results are available-->
+        <?php if (!empty($results)): ?>
+            <!-- Table Header -->
+            <h3 style="
+                padding: 12px 16px;
+                color: #1b5e20;
+                background: #e8f5e9;
+                border-left: 4px solid #2e7d32;
+                margin: 12px 0;
+                font-size: 16px;
+                font-weight: 600;
+                border-radius: 0 4px 4px 0;
+             ">
+                 Results for Selected Election (Poll ID: <?= htmlspecialchars($pollId) ?>)
+            </h3>
+            <!-- table to display candidate voting results. -->
+            <table border="0" 
+                style="
+                    width:100%; 
+                    border-collapse: collapse; 
+                    margin-top: 20px; 
+                    font-family: Arial, 
+                    sans-serif; 
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    table-layout: fixed;
+                    word-wrap: break-word;">
+
+                 <thead>
+                    <tr style="background-color: #475968ff; color: white;">
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 5%;">Candidate ID</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 12%;">Candidate Name</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Total Votes</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 1 Votes</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 2 Votes</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 3 Votes</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 4 Votes</th>
+                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 5 Votes</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($results as $result): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($result['candidate_id']) ?></td>
-                            <td><?= htmlspecialchars($result['candidate_name']) ?></td>
-                            <td><?= htmlspecialchars($result['total_votes']) ?></td>
-                            <td><?= htmlspecialchars($result['r1_votes']) ?></td>
-                            <td><?= htmlspecialchars($result['r2_votes']) ?></td>
-                            <td><?= htmlspecialchars($result['r3_votes']) ?></td>
-                        </tr>
+                    <?php foreach ($results as $index => $result): ?>
+                    <tr style="background-color: <?= $index % 2 === 0 ? '#ffffff' : '#f8f9fa' ?>; border-bottom: 1px solid #ddd;">
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['candidate_id']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['candidate_name']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['total_votes']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r1_votes']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r2_votes']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r3_votes']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r4_votes']) ?></td>
+                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r5_votes']) ?></td>
+
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        <?php elseif ($pollId && isset($_POST['view_results']) && empty($results)): ?>
-            <p>No results found for the selected election, or votes have not yet been tallied.</p>
-        <?php endif; ?>
+            <?php elseif ($pollId && isset($_POST['view_results']) && empty($results)): ?>
+                <p>No results found for the selected election, or votes have not yet been tallied.</p>
+            <?php endif; ?>
 
     </main>
 

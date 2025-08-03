@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pollId !== null) {
     if (isset($_POST['tally_votes'])) {
         tallyVotes($conn, $pollId, $adminId);
         // Above triggers the tallyVotes function in result_functions.php
-        $_SESSION['tally_success'] = "Tally completed for poll ID $pollId.";
+        $_SESSION['tally_success'] = "Tally completed for Poll ID $pollId.";
     } elseif (isset($_POST['view_results'])) {
         $_SESSION['view_results'] = getElectionResults($conn, $pollId, $adminId);
         // Stores all the results to display on the front end page.
