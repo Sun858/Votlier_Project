@@ -2,7 +2,28 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require '../DatabaseConnection/config.php'; // This is the database connection including the authentication details
+require 'security.sn.php'; // Security based functions, includes rate limiting.
 require 'functions.sn.php'; // This has most of the functions that are called within this file
+
+// Get the user's IP address
+$ip = $_SERVER['REMOTE_ADDR'];
+// Show what event is being logged, in this case, the user signup.
+$resource = 'user_signup';
+
+/**
+ * This checks if the user's IP is already rate limited. If it is, they just get an error and cant do anything.
+ * This code allows for only 6 attempts per 30 mins before they are rate limited from the service. This is quite lenient, change in future?
+ * This is precise, becausse it checks the resource being performed so it cannot be mistaken.
+ */
+if (isRateLimitedDB($conn, $ip, $resource, 6, 1800)) {
+    header("location: ../pages/signup.php?error=ratelimited");
+    exit();
+}
+
+// This calls the function and logs the signup attempt to increment. This ends the loop eventually with the above code.
+recordSignupAttemptDB($conn, $ip, $resource);
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERSALLY 'Post' then this will happen:
     // Grab all the data that user has inputted into the FORM
@@ -32,6 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
         exit();
     }
 
+    // Password strength validayion
+    if (passwordStrength($password) !== false) {
+        header("location: ../pages/signup.php?error=weakpassword");
+        exit();
+    }
+
     // Password Verification
     if (pwdMatch($password, $confirmPassword) !== false) {
         header("location: ../pages/signup.php?error=passwordsdontmatch");
@@ -44,9 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // If the server request is UNIVERS
         exit();
     }
     
-
-
-
 
 
     // Store all the PII (ENCRYPTED) and hashed password into the database

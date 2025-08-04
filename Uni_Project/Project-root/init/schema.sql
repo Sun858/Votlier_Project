@@ -5,34 +5,56 @@ USE voting_system;
 -- Table Structure --
 
 -- Users Table --
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    middle_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    hash_password BLOB NOT NULL,
-    salt BLOB NOT NULL,
+    first_name BLOB NOT NULL,
+    middle_name BLOB NOT NULL,
+    last_name BLOB NOT NULL,
+    email BLOB NOT NULL,
+    email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
+    hash_password VARBINARY(32) NOT NULL,
+    salt VARBINARY(16) NOT NULL,
     iterations INT NOT NULL,
-    encryption_key BLOB NOT NULL,
-    iv BLOB NOT NULL,
-    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    iv VARBINARY(16) NOT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_email_blind_index (email_blind_index)
 );
 
 -- Administration Table --
-CREATE TABLE IF NOT EXISTS `administration` (
+CREATE TABLE IF NOT EXISTS administration (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    middle_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    hash_password BLOB NOT NULL,
-    salt BLOB NOT NULL,
+    first_name BLOB NOT NULL,
+    middle_name BLOB NOT NULL,
+    last_name BLOB NOT NULL,
+    email BLOB NOT NULL,
+    email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
+    hash_password VARBINARY(32) NOT NULL,
+    salt VARBINARY(16) NOT NULL,
     iterations INT NOT NULL,
-    encryption_key BLOB NOT NULL,
-    iv BLOB NOT NULL,
-    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    iv VARBINARY(16) NOT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_admin_email_blind_index (email_blind_index)
 );
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    ip_address VARCHAR(45) NOT NULL,
+    resource VARCHAR(100) NOT NULL,
+    attempt_time DATETIME NOT NULL,
+    INDEX (ip_address),
+    INDEX (resource),
+    INDEX (attempt_time)
+);
+
+CREATE TABLE IF NOT EXISTS admin_audit_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    details TEXT,
+    event_time DATETIME NOT NULL,
+    ip_address VARCHAR(45),
+    FOREIGN KEY (admin_id) REFERENCES administration(admin_id) ON DELETE CASCADE
+);
+
 
 -- Election Table --
 CREATE TABLE IF NOT EXISTS `election` (
@@ -40,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `election` (
     election_type VARCHAR(50) NOT NULL,
     election_name VARCHAR(255) NOT NULL,
     start_datetime DATETIME NOT NULL,
-    end_datetime DATETIME DEFAULT NULL
+    end_datetime DATETIME NULL DEFAULT NULL
 );
 
 -- Candidates Table --
@@ -49,9 +71,10 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     poll_id INT NOT NULL,
     candidate_name VARCHAR(255) NOT NULL,
     party VARCHAR(255),
-    candidate_symbol VARCHAR(255),
     admin_id INT NOT NULL,
-    FOREIGN KEY (poll_id) REFERENCES election(poll_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES election(poll_id) ON DELETE CASCADE,
     FOREIGN KEY (admin_id) REFERENCES administration(admin_id)
 );
 
@@ -63,7 +86,8 @@ CREATE TABLE IF NOT EXISTS `ballot` (
     candidate_id INT NOT NULL,
     preference_rank INT NOT NULL,
     dateandtime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    encrypted_ballot TEXT NOT NULL,
+    encrypted_ballot BLOB NOT NULL,
+    iv VARBINARY(16) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (poll_id) REFERENCES election(poll_id),
     FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id),
@@ -95,24 +119,28 @@ This is able to be done cause the votes are already compiled within the tally ta
     
 
 -- Dummy administrator user to be inserted into the database is below, because our project doesn't allow the creation of an Administrator in the user interface for security reasons.
-INSERT INTO administration (
-  first_name,
-  middle_name,
-  last_name,
-  email,
-  hash_password,
-  salt,
-  iterations,
-  encryption_key,
-  iv
+INSERT INTO `administration` (
+  `admin_id`,
+  `first_name`,
+  `middle_name`,
+  `last_name`,
+  `email`,
+  `email_blind_index`,
+  `hash_password`,
+  `salt`,
+  `iterations`,
+  `iv`,
+  `date_created`
 ) VALUES (
-  'k9vU8U1pbQ72q8j+M8BGOA==',  -- Encrypted 'Lorem'
-  '',                          -- No middle name
-  'Q+WTpsCzkF9eHdNOEXu+Tg==',  -- Encrypted 'Ipsum'
-  'M11TwJKc9zPRBoRNGIqK3z91XjMsmoSrUSeFea6Cgrs=', -- Encrypted email
-  UNHEX('F4A9BDA59343DA85D8E7D992F4D78D5C25E23D0BB4CB3471ED51429D8356A878'),
-  UNHEX('17F2B61BBADC09D1E1517A1C85A9D136'),
+  1,
+  0xd9045473871485880d2b1ba04a28822c,
+  0x83d06e757ff57e640127770e7b20b9ca,
+  0x8544aa4941152796a54b57e9fdaada1a,
+  0x2c49a4f966291c2619cf27f7e9b4a3ac5cac7c2bd7ee0b2110619feecd200636,
+  0x7e13ad2689d6467d9322717e70e5f4f013790380165eb14f9526ddf7513fca5d,
+  0xcbe495402bcf497e3df8096d34ca7158bf460ecd440dad98940c0dc15d707af6,
+  0xae0545a33a9e2fe7edeafcad391074fe,
   100000,
-  UNHEX('9336D7D95C773D4CA42D91A87C6E933BB396A43ABF8C123B2FC4460FD9853D82'),
-  UNHEX('8AEAB398431163C1202381B4D6762B76')
+  0x667e14898b4a35b0698d272fead0cace,
+  '2025-06-17 12:17:17'
 );

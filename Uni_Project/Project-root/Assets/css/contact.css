@@ -1,5 +1,4 @@
 @import url('base.css');
-@import url('scroll.css');
 
 /* Top Section */
 .top-section {
@@ -176,4 +175,3 @@
   .contact-form button:hover {
     transform: scale(1.05);
   }
-

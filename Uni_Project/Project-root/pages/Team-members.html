@@ -7,7 +7,6 @@
 
   <!-- Link to Cloudflare-hosted font CSS file -->  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
   <link rel="stylesheet" href="../Assets/css/Team-members.css">
 
 </head>
@@ -17,116 +16,99 @@
   </header>
   <nav>
     <a href="../index.html"><i class="fas fa-home"></i> Home</a>
-    <a href="../pages/login.html"><i class="fas fa-user"></i> Login</a>
+    <a href="../pages/login.php"><i class="fas fa-user"></i> Login</a>
     <a href="../pages/contact.html"><i class="fa fa-phone"></i> Contact </a>
   </nav>
   <main>
-
-    <!-- --------------------------Tesst ---------------------------------->
-        <!-- Team Header section -->
-    <section class="Team-header">
-      <h1>Meet The Visionaries</h1>
-      <p>The brilliant minds shaping the future of engagement through innovation, passion, and expertise.</p>
-      <a href="#team" class="scroll-down">
-          <span>Meet Our Team</span>
-      </a>
-  </section>
-  
-  <!-- Team Section -->
-  <section id="team" class="team-section">
-      <div class="section-header">
-          <h2>The Votify Crew</h2>
-          <p>A team of visionaries driven by a shared passion to innovate, inspire, and empower. Combining creativity, expertise,
-             and a relentless commitment to excellence, we strive to craft solutions that redefine possibilities and deliver exceptional
-              value to our users every day.</p>
-      </div>
-      
-      <div class="team-grid">
-          <!-- Team Member 1 -->
-          <div class="team-member">
-              <div class="team-image-container">
-                  <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Emma Wilson, Campaign Manager" class="team-image">
-              </div>
-              <h3>Deniz Ismail</h3>
-              <p class="role">Role </p>
-              <p class="bio">Write down a Bio</p>
-              <div class="team-social">
-                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
-              </div>
-          </div>
-          
-          <!-- Team Member 2 -->
-          <div class="team-member">
-              <div class="team-image-container">
-                  <img loading="lazy" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="James Chen, Policy Director" class="team-image">
-              </div>
-              <h3>Sharmarke</h3>
-              <p class="role">Role</p>
-              <p class="bio">Write down a Bio</p>
-              <div class="team-social">
-                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
-              </div>
-          </div>
-          
-          <!-- Team Member 3 -->
-          <div class="team-member">
-              <div class="team-image-container">
-                  <img loading="lazy" src="../Assets/images/San_j.jpeg" alt="Sanjay Sapkota, CEO" class="team-image">
-              </div>
-              <h3>Sanjay Sapkota </h3>
-              <p class="role">Role </p>
-              <p class="bio">Write down a Bio</p>
-              <div class="team-social">
-                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
-              </div>
-          </div>
-      </div>
-  </section>
-
-  <!-- JavaScript for Interactivity -->
-  <script>
-      // Navbar Scroll Effect
-      window.addEventListener('scroll', () => {
-          const navbar = document.querySelector('.navbar');
-          navbar.classList.toggle('scrolled', window.scrollY > 50);
-      });
-
-      // Team Member Reveal on Scroll
-      const teamMembers = document.querySelectorAll('.team-member');
-      const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-              if (entry.isIntersecting) {
-                  entry.target.classList.add('visible');
-              }
-          });
-      }, { threshold: 0.25 });
-
-      teamMembers.forEach(member => observer.observe(member));
-  </script>
-
-
-
-
-
-    <!-- --------------------------Tesst ---------------------------------->
-
+    <!-- Team Header section -->
+      <section class="Team-header">
+        <h1>Meet The Visionaries</h1>
+        <p>The brilliant minds shaping the future of engagement through innovation, passion, and expertise.</p>
+        <a href="#team" class="scroll-down">
+            <span>Meet Our Team</span>
+        </a>
+      </section>
     
+    <!-- Team Section -->
+    <section id="team" class="team-section">
+        <div class="section-header">
+            <h2>The Votify Crew</h2>
+            <p>A team of visionaries driven by a shared passion to innovate, inspire, and empower. Combining creativity, expertise,
+              and a relentless commitment to excellence, we strive to craft solutions that redefine possibilities and deliver exceptional
+              value to our users every day.
+            </p>
+        </div>
+        
+        <div class="team-grid">
+            <!-- Team Member 1 -->
+            <div class="team-member">
+                <div class="team-image-container">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" 
+                    alt="Emma Wilson, Campaign Manager" class="team-image">
+                </div>
+                <h3>Deniz Ismail</h3>
+                <p class="role">Role </p>
+                <p class="bio">Write down a Bio</p>
+                <div class="team-social">
+                  <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                  <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                  <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <!-- Team Member 2 -->
+            <div class="team-member">
+                <div class="team-image-container">
+                    <img loading="lazy" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" 
+                    alt="James Chen, Policy Director" class="team-image">
+                </div>
+                <h3>Sharmarke</h3>
+                <p class="role">Role</p>
+                <p class="bio">Write down a Bio</p>
+                <div class="team-social">
+                  <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                  <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                  <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <!-- Team Member 3 -->
+            <div class="team-member">
+                <div class="team-image-container">
+                    <img loading="lazy" src="../Assets/images/San_j.jpeg" alt="Sanjay Sapkota, CEO" class="team-image">
+                </div>
+                <h3>Sanjay Sapkota </h3>
+                <p class="role">Role </p>
+                <p class="bio">Write down a Bio</p>
+                <div class="team-social">
+                  <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                  <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                  <a href="#" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- JavaScript for Interactivity -->
+    <script>
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
 
-    <div class="elevator-controls">
-      <button class="scroll-btn up-btn" onclick="scrollUp()">
-        <span><i class="fas fa-arrow-up"></i></span>
-      </button>
-      <button class="scroll-btn down-btn" onclick="scrollDown()">
-        <span><i class="fas fa-arrow-down"></i></span>
-      </button>
-    </div>
+        // Team Member Reveal on Scroll
+        const teamMembers = document.querySelectorAll('.team-member');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.25 });
+
+        teamMembers.forEach(member => observer.observe(member));
+    </script>
 
   </main>
 
@@ -142,29 +124,20 @@
       </svg>
     </div>
     
-    <div class="footer-container">
-      
+    <div class="footer-container"> 
       <div class="footer-section">
         <h3>Quicklinks</h3>
         <ul class="footer-links">
           <li><a href="../index.html"> Home</a></li> 
-          <li><a href="../pages/login.html"> Login</a></li>
+          <li><a href="../pages/login.php"> Login</a></li>
           <li><a href="../pages/contact.html"> Contact </a></li>
         </ul>
       </div>
-      
-      <div class="footer-section">
-        <h3>TBC...</h3>
-        <ul class="footer-links">
-          <li><a href="#">TBC...</a></li>
-        </ul>
-      </div>
-      
+
       <div class="footer-section">
         <h3>Resources</h3>
         <ul class="footer-links">
           <li><a href="../pages/Documentation.html">Documentation</a></li>
-          <li><a href="../pages/Voting-guides.html">Voting Guides</a></li>
           <li><a href="../pages/FAQ.html">FAQ</a></li>
         </ul>
       </div>
@@ -177,7 +150,6 @@
         </ul>
       </div>
     </div>
-  
       <div class="social-links">
         <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
         <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
