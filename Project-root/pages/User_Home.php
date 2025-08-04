@@ -24,7 +24,6 @@ if (!isset($_SESSION["user_id"])) {
 
     <aside class="sidebar">
         <div class="sidebar-top-bar">
-            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
             <h3>Votify</h3>
         </div>
         <nav class="sidebar-nav">
@@ -64,58 +63,6 @@ if (!isset($_SESSION["user_id"])) {
             <h1>Welcome to Voter Dashboard</h1>
             <p>Explore your data and manage your business efficiently</p>
         </header>
-
-        <section class="dashboard-section">
-            <h2>Overview</h2>
-            <div class="profile-container">
-                <h3>Your Profile Summary</h3>
-                <p>This dashboard features a green gradient sidebar that expands on hover with modern Ionicon navigation icons.</p>
-                <ul>
-                    <li>Status: Active</li>
-                    <li>Last Login: 2 hours ago</li>
-                    <li>Projects: 5</li>
-                    <li>Notifications: 3</li>
-                </ul>
-                <button>View Details</button>
-            </div>
-
-            <div class="profile-container">
-                <h3>Latest Activity</h3>
-                <p>New voter registered, election results updated, report generated.</p>
-                <ul>
-                    <li>Today: 15 new registrations</li>
-                    <li>This week: 42 votes cast</li>
-                    <li>This month: 187 total votes</li>
-                </ul>
-                <button>See All Activity</button>
-            </div>
-        </section>
-
-        <section class="dashboard-section">
-            <h2>Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <ion-icon class="stat-icon" name="people-outline"></ion-icon>
-                    <div class="stat-value">1,250</div>
-                    <div class="stat-label">Total Voters</div>
-                </div>
-                <div class="stat-card">
-                    <ion-icon class="stat-icon" name="checkmark-circle-outline"></ion-icon>
-                    <div class="stat-value">875</div>
-                    <div class="stat-label">Votes Cast</div>
-                </div>
-                <div class="stat-card">
-                    <ion-icon class="stat-icon" name="time-outline"></ion-icon>
-                    <div class="stat-value">72%</div>
-                    <div class="stat-label">Participation</div>
-                </div>
-                <div class="stat-card">
-                    <ion-icon class="stat-icon" name="alert-circle-outline"></ion-icon>
-                    <div class="stat-value">18</div>
-                    <div class="stat-label">Pending Issues</div>
-                </div>
-            </div>
-        </section>
 
     </main>
 
