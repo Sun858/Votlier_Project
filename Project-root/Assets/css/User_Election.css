@@ -32,3 +32,104 @@
     color: #666;
 }
 
+/*Election Picker Part*/ 
+.styled-select {
+    width: 80%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+    transition: border-color 0.3s ease-in-out;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.styled-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+
+/* Voting Form: Only Displays if a poll is selected and candidates exist */ 
+.voting-form {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.preferences-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.preference-group {
+    position: relative;
+}
+
+.preference-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.preference-number {
+    background: #5542ab;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.candidate-select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: #f8f9fa;
+}
+
+.candidate-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+
+.submit-vote-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: #5542ab;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.submit-vote-btn:hover {
+    background: #443788;
+    transform: translateY(-1px);
+}
+
+.submit-vote-btn ion-icon {
+    font-size: 1.3rem;
+}
+

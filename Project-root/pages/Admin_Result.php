@@ -30,7 +30,6 @@ $elections = $pageState['elections'];
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_Result.css">
-    <link rel="stylesheet" href="../Assets/css/Admin_Result_Extra.css"> 
 
 
 </head>
@@ -81,13 +80,8 @@ $elections = $pageState['elections'];
         <h2>Election Results</h2>
 
         <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
-            <label for="poll_id" 
-             style="
-                color: #303a44ff;
-                font-weight:600; 
-                font-size: 1.2em;
-            ">
-            Select Election:
+            <label for="poll_id" class="Title">
+                Select Election:
             </label>
             <select name="poll_id" id="poll_id" class="styled-select" required>
                 <option value="">-- Select --</option>
@@ -107,13 +101,7 @@ $elections = $pageState['elections'];
 
         <!--Display success message if available-->
         <?php if ($tallyMsg):?>
-            <div style="
-                padding:12px;
-                color:#2e7d32;
-                background:#f5faf5;
-                border-left:3px solid;
-                margin:8px 0;
-                font-size:15px">
+            <div class="Result-banner">
                 <?= htmlspecialchars($tallyMsg) ?>
             </div>
         <?php endif; ?>
@@ -121,55 +109,34 @@ $elections = $pageState['elections'];
         <!--Display Results table if results are available-->
         <?php if (!empty($results)): ?>
             <!-- Table Header -->
-            <h3 style="
-                padding: 12px 16px;
-                color: #1b5e20;
-                background: #e8f5e9;
-                border-left: 4px solid #2e7d32;
-                margin: 12px 0;
-                font-size: 16px;
-                font-weight: 600;
-                border-radius: 0 4px 4px 0;
-             ">
+            <h3 class ="Result-banner">
                  Results for Selected Election (Poll ID: <?= htmlspecialchars($pollId) ?>)
             </h3>
-            <!-- table to display candidate voting results. -->
-            <table border="0" 
-                style="
-                    width:100%; 
-                    border-collapse: collapse; 
-                    margin-top: 20px; 
-                    font-family: Arial, 
-                    sans-serif; 
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                    table-layout: fixed;
-                    word-wrap: break-word;">
-
-                 <thead>
-                    <tr style="background-color: #475968ff; color: white;">
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 5%;">Candidate ID</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 12%;">Candidate Name</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Total Votes</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 1 Votes</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 2 Votes</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 3 Votes</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 4 Votes</th>
-                        <th style="text-align: left; border-bottom: 2px solid #ddd; width: 8%;">Rank 5 Votes</th>
-
+            <!-- Table to display candidate voting results. -->
+           <table class ="results-table">
+                <thead>
+                    <tr class="results-table-header-row">
+                        <th>Candidate ID</th>
+                        <th>Candidate Name</th>
+                        <th>Total Votes</th>
+                        <th>Rank 1 Votes</th>
+                        <th>Rank 2 Votes</th>
+                        <th>Rank 3 Votes</th>
+                        <th>Rank 4 Votes</th>
+                        <th>Rank 5 Votes</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($results as $index => $result): ?>
-                    <tr style="background-color: <?= $index % 2 === 0 ? '#ffffff' : '#f8f9fa' ?>; border-bottom: 1px solid #ddd;">
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['candidate_id']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['candidate_name']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['total_votes']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r1_votes']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r2_votes']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r3_votes']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r4_votes']) ?></td>
-                        <td style="border-bottom: 1px solid #ddd;"><?= htmlspecialchars($result['r5_votes']) ?></td>
-
+                    <tr>
+                        <td><?= htmlspecialchars($result['candidate_id']) ?></td>
+                        <td><?= htmlspecialchars($result['candidate_name']) ?></td>
+                        <td><?= htmlspecialchars($result['total_votes']) ?></td>
+                        <td><?= htmlspecialchars($result['r1_votes']) ?></td>
+                        <td><?= htmlspecialchars($result['r2_votes']) ?></td>
+                        <td><?= htmlspecialchars($result['r3_votes']) ?></td>
+                        <td><?= htmlspecialchars($result['r4_votes']) ?></td>
+                        <td><?= htmlspecialchars($result['r5_votes']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -179,6 +146,8 @@ $elections = $pageState['elections'];
             <?php endif; ?>
 
     </main>
+
+        <!-- Ionicon scripts -->
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

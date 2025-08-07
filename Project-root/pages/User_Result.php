@@ -68,7 +68,7 @@ if (!isset($_SESSION["user_id"])) {
         <section class="result-section">
             <form method="post" class="election-select-form">
                 <label for="poll_id">Choose Election:</label>
-                <select name="poll_id" id="poll_id" required>
+                <select name="poll_id" id="poll_id" class="styled-select" required>
                     <option value="">-- Select --</option>
                     <?php foreach ($elections as $election): ?>
                         <option value="<?= htmlspecialchars($election['poll_id']) ?>" <?= ($selectedPollId == $election['poll_id']) ? 'selected' : '' ?>>
@@ -76,7 +76,7 @@ if (!isset($_SESSION["user_id"])) {
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit">View Results</button>
+                <button type="submit" class="View-Results-button">View Results</button>
             </form>
 
             <?php if ($selectedPollId && empty($results)): ?>
@@ -87,7 +87,7 @@ if (!isset($_SESSION["user_id"])) {
             <div class="results-table-wrapper">
                 <table class="results-table">
                     <thead>
-                        <tr>
+                        <tr class="results-table-header-row">
                             <th>Candidate</th>
                             <th>Party</th>
                             <th>Total Votes</th>
