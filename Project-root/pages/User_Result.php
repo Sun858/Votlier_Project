@@ -2,6 +2,7 @@
 session_start();
 // This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/security.sn.php';
+require_once '../includes/view_results_user.php';
 checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
 if (!isset($_SESSION["user_id"])) {
@@ -60,10 +61,61 @@ if (!isset($_SESSION["user_id"])) {
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Election Results</h1>
+            <p>Select an election to view results.</p>
         </header>
 
+        <section class="result-section">
+            <form method="post" class="election-select-form">
+                <label for="poll_id">Choose Election:</label>
+                <select name="poll_id" id="poll_id" required>
+                    <option value="">-- Select --</option>
+                    <?php foreach ($elections as $election): ?>
+                        <option value="<?= htmlspecialchars($election['poll_id']) ?>" <?= ($selectedPollId == $election['poll_id']) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($election['election_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit">View Results</button>
+            </form>
+
+            <?php if ($selectedPollId && empty($results)): ?>
+                <div class="no-results-msg">No results found for this election.</div>
+            <?php endif; ?>
+
+            <?php if (!empty($results)): ?>
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Party</th>
+                            <th>Total Votes</th>
+                            <th>Rank 1</th>
+                            <th>Rank 2</th>
+                            <th>Rank 3</th>
+                            <th>Rank 4</th>
+                            <th>Rank 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results as $row): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['candidate_name']) ?></td>
+                            <td><?= htmlspecialchars($row['party']) ?></td>
+                            <td><?= intval($row['total_votes']) ?></td>
+                            <td><?= intval($row['r1_votes']) ?></td>
+                            <td><?= intval($row['r2_votes']) ?></td>
+                            <td><?= intval($row['r3_votes']) ?></td>
+                            <td><?= intval($row['r4_votes']) ?></td>
+                            <td><?= intval($row['r5_votes']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+        </section>
     </main>
 
     <!-- Ionicon scripts -->

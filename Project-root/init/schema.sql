@@ -103,6 +103,8 @@ CREATE TABLE IF NOT EXISTS `tally` (
     r1_votes INT DEFAULT 0,
     r2_votes INT DEFAULT 0,
     r3_votes INT DEFAULT 0,
+    r4_votes INT DEFAULT 0,
+    r5_votes INT DEFAULT 0,
     updatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (poll_id) REFERENCES election(poll_id),
     FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id),
