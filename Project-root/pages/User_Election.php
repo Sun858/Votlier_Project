@@ -32,6 +32,9 @@ if ($selectedPollId) {
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/User_Election.css">
+    <link rel="stylesheet" href="../Assets/css/User_Election_Extra.css"> <!-- Voting Form Stylesheet -->
+    
+
 </head>
 <body>
 
@@ -78,15 +81,24 @@ if ($selectedPollId) {
         </header>
 
         <section class="vote-section">
-        <h2>Cast Your Vote</h2>
-        <?php if (count($polls) === 0): ?>
-            <p>No elections are currently available for you to vote in.</p>
-        <?php else: ?>
+            <h2>Cast Your Vote</h2>
+            <?php if (count($polls) === 0): ?>
+                <p  style="
+                    padding: 12px 16px;
+                    color: #1b5e20;
+                    background: #e8f5e9;
+                    border-left: 4px solid #2e7d32;
+                    margin: 12px 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border-radius: 0 4px 4px 0;
+                ">No elections are currently available for you to vote in.</p>
+            <?php else: ?>
 
             <!-- Election Picker -->
             <form method="GET" action="">
                 <label for="poll_id">Choose an election:</label>
-                <select id="poll_id" name="poll_id" required onchange="this.form.submit()">
+                <select id="poll_id" name="poll_id" required onchange="this.form.submit()" class="styled-select">
                     <option value="">-- Select an election --</option>
                     <?php foreach ($polls as $poll): ?>
                         <option value="<?php echo $poll['poll_id']; ?>" <?php if ($selectedPollId == $poll['poll_id']) echo 'selected'; ?>>
@@ -98,29 +110,65 @@ if ($selectedPollId) {
 
             <!-- Voting Form: Only show if a poll is selected and candidates exist -->
             <?php if ($selectedPollId && count($candidates) > 0): ?>
-                <form action="../includes/submit_vote.php" method="POST">
+                <form action="../includes/submit_vote.php" method="POST" class="voting-form">
                     <input type="hidden" name="poll_id" value="<?php echo htmlspecialchars($selectedPollId); ?>">
-                    <?php
-                    // Up to 3 preferences (adjust as needed)
-                    for ($i = 1; $i <= 3; $i++) {
-                        echo "<label for='candidate_id_$i'>Preference $i:</label>";
-                        echo "<select id='candidate_id_$i' name='candidate_id_$i'>";
-                        echo "<option value=''>-- Select a candidate --</option>";
-                        foreach ($candidates as $cand) {
-                            echo "<option value='{$cand['candidate_id']}'>{$cand['candidate_name']} ({$cand['party']})</option>";
-                        }
-                        echo "</select><br>";
-                    }
-                    ?>
-                    <input type="submit" value="Submit Vote">
+                    <div class="preferences-container">
+                        <?php 
+                        // Up to 3 Preferences (Adjust as Needed)
+                        for ($i = 1; $i <= 3; $i++): ?>
+                            <div class="preference-group">
+                                <div class="preference-header">
+                                    <span class="preference-number"><?php echo $i; ?>)</span>
+                                    <label for="candidate_id_<?php echo $i; ?>">Preference <?php echo $i; ?></label>
+                                </div>
+                                <select id="candidate_id_<?php echo $i; ?>" name="candidate_id_<?php echo $i; ?>" class="candidate-select">
+                                    <option value="">Select your <?php echo $i; ?><?php echo ($i == 1) ? 'st' : (($i == 2) ? 'nd' : 'rd'); ?> choice</option>
+                                    <?php foreach ($candidates as $cand): ?>
+                                        <option value="<?php echo $cand['candidate_id']; ?>">
+                                            <?php echo htmlspecialchars($cand['candidate_name']); ?> 
+                                            <span class="party-name">(<?php echo htmlspecialchars($cand['party']); ?>)</span>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endfor; ?>
+                    </div>
+                    <button type="submit" class="submit-vote-btn">
+                        <ion-icon name="checkmark-circle-outline"></ion-icon>
+                        Cast Your Vote
+                    </button>
                 </form>
+        
             <?php elseif ($selectedPollId): ?>
-                <p>No candidates have been added for this election yet.</p>
+                <p style="
+                    padding: 12px 16px;
+                    color: #1b5e20;
+                    background: #e8f5e9;
+                    border-left: 4px solid #2e7d32;
+                    margin: 12px 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    border-radius: 0 4px 4px 0;
+                    ">No candidates have been added for this election yet.
+                </p>
             <?php endif; ?>
 
         <?php endif; ?>
 
-        <a href="User_Home.php" class="back-to-home-link">Back to Home</a>
+            <a href="User_Home.php" class="back-to-home-link" 
+                style="
+                    background: #4CAF50; 
+                    color: #fff; 
+                    border: none; 
+                    padding: 8px 18px; 
+                    border-radius: 4px; 
+                    margin-left: 10px; 
+                    font-weight: 600; 
+                    cursor: pointer; 
+                    transition: 
+                    background 0.2s;
+                    text-decoration: none;" >Back to Home
+            </a>
         </section>
 
         <?php
@@ -193,8 +241,5 @@ if ($selectedPollId) {
     <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <footer>
-        <p>&copy; 2025 Votify. All rights reserved.</p>
-    </footer>
 </body>
 </html>

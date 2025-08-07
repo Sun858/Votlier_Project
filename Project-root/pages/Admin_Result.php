@@ -30,6 +30,8 @@ $elections = $pageState['elections'];
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_Result.css">
+    <link rel="stylesheet" href="../Assets/css/Admin_Result_Extra.css"> 
+
 
 </head>
 <body>
@@ -87,11 +89,7 @@ $elections = $pageState['elections'];
             ">
             Select Election:
             </label>
-            <select name="poll_id" id="poll_id"
-                style="
-                    width: 190px;
-                    height: 40px;
-                    font-size: 1.1em;" required>
+            <select name="poll_id" id="poll_id" class="styled-select" required>
                 <option value="">-- Select --</option>
                 <?php foreach ($elections as $e): ?>
                     <option value="<?= $e['poll_id'] ?>" <?= $pollId == $e['poll_id'] ? 'selected' : '' ?>>
@@ -99,32 +97,10 @@ $elections = $pageState['elections'];
                     </option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" name="tally_votes" 
-                style="
-                    background: #4CAF50; 
-                    color: #fff; 
-                    border: none; 
-                    padding: 8px 18px; 
-                    border-radius: 4px; 
-                    margin-left: 10px; 
-                    font-weight: 600; 
-                    cursor: pointer; 
-                    transition: 
-                    background 0.2s;">
+            <button type="submit" name="tally_votes" class="tally-button">
                 Tally Votes
             </button>
-            <button type="submit" name="view_results"
-                style="
-                    background: #8c8fdcff; 
-                    color: #fff; 
-                    border: none; 
-                    padding: 8px 18px; 
-                    border-radius: 4px; 
-                    margin-left: 10px; 
-                    font-weight: 600; 
-                    cursor: pointer; 
-                    transition: 
-                    background 0.2s;">
+            <button type="submit" name="view_results" class="View-Results-button">
                 View Results
             </button>
         </form>

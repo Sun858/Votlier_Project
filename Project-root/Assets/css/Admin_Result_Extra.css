@@ -1,0 +1,46 @@
+/*Election Picker Box */ 
+.styled-select {
+    width: 80%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+    transition: border-color 0.3s ease-in-out;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.styled-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+
+/* For Tally Button */
+.tally-button{ 
+    background: #4CAF50; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    margin-left: 10px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 
+    background 0.2s;
+}
+
+/* View Results Button */
+.View-Results-button {
+    background: #8c8fdcff; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    margin-left: 10px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 
+    background 0.2s;
+}
