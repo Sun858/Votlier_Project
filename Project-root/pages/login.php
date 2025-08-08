@@ -55,7 +55,7 @@
 
      <!-- Signup Link -->
       <div>
-        <a href="../pages/signup.html" class="signupButton">Don't have an account? Sign Up</a>
+        <a href="../pages/signup.php" class="signupButton">Don't have an account? Sign Up</a>
       </div>
       <!-- Staff Login Link -->
       <div>
