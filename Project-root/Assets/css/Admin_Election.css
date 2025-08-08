@@ -1,35 +1,148 @@
 @import url('Base1.css');
 
-  /* --- Main Content Area Styling --- */
-        .main-content {
-            margin-left: var(--sidebar-closed-width);
-            flex-grow: 1;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: margin-left var(--transition-duration) ease-in-out;
-        }
+/* --- Main Content Area Styling --- */
+.main-content {
+    margin-left: var(--sidebar-closed-width);
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: margin-left var(--transition-duration) ease-in-out;
+}
 
-        .sidebar:hover ~ .main-content {
-            margin-left: var(--sidebar-open-width);
-        }
+.sidebar:hover~.main-content {
+    margin-left: var(--sidebar-open-width);
+}
 
-        .main-header {
-            background-color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow-light);
-        }
+.main-header {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: var(--box-shadow-light);
+}
 
-        .main-header h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
+.main-header h1 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
 
-        .main-header p {
-            margin-bottom: 0;
-            color: #666;
-        }
+.main-header p {
+    margin-bottom: 0;
+    color: #666;
+}
 
-       
+/* Table Styling */
+.table-caption {                 /* Caption for the Table */
+    caption-side: top;
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 12px;
+    color: #333;
+    background-color: #f0f0f0;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+/* New Election Button */
+.New-Election {     /* Container for the New Election button */
+    margin: 25px 0;
+    display: flex;
+    gap: 15px;
+}
+
+.New-Election-Wizard-Button { /* Button for triggering the New Election Wizard */
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 20px;
+    background-color:rgb(101, 76, 175); 
+    color: white;
+    text-decoration: none;
+    border-radius: 75px;
+    font-weight: 500;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* General Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* Close Button */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Styles for the content injected by view_candidates.php (inside #candidatesContent) */
+#candidatesContent h2 {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#candidatesContent ul {
+    list-style: none; /* Remove default bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+#candidatesContent li {
+    background-color: #fff;
+    border: 1px solid #eee;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+#candidatesContent li strong {
+    color: #000;
+    font-size: 1.2em;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#candidatesContent li img {
+    border-radius: 50%; /* Make images circular */
+    width: 70px;
+    height: 70px;
+    float: left; /* Float image to the left */
+    margin-right: 15px;
+}
+
+#candidatesContent p {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 10px;
+}
