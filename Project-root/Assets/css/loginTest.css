@@ -1,10 +1,9 @@
 @import url('base.css');
-@import url('scroll.css');
 
 .container {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     padding: 60px;
-    border-radius: 25%;
+    border-radius: 12%;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     max-width: 600px;
     margin: 2em auto;

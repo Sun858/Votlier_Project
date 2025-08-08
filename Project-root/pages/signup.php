@@ -5,34 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="../Assets/css/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
 </head>
 <body>
-    <h1>Let's create an Account</h1>
-    <form action="../includes/submit-form.php" method="POST">
+    <div class="container">
+        <h1>Let's create an Account</h1>
+        <form action="../includes/submit-form.php" method="POST">
 
-        <label for="first-name">First Name:</label>
-        <input type="text" id="first-name" name="first-name" required>
-          
-        <label for="middle-name">Middle Name:</label>
-        <input type="text" id="middle-name" name="middle-name">
-          
-        <label for="last-name">Last Name:</label>
-        <input type="text" id="last-name" name="last-name" required>
-                    
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <div class="form-group">
+            <label for="first-name">First Name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="first-name" name="first-name" required>
+            </div>
+        </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <div class="form-group">
+            <label for="middle-name">Middle Name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="middle-name" name="middle-name">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="last-name">Last Name:</label>
+            <div class="input-wrapper">
+                <input type="text" id="last-name" name="last-name" required>
+            </div>
+        </div>
+                
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <div class="input-wrapper">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="email" name="email"  placeholder=" your.email@domain.com" required>
+            </div>
+        </div>
 
-        <label for="confirm-password">Confirm Password:</label>
-        <input type="password" id="confirm-password" name="confirm-password" required>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" name="password" placeholder="************" required>
+            </div>
+        </div>
 
-        <input type="submit" value="Sign Up">
-    </form>
-    <a href="../pages/login.php" class="back-to-login-link">Back to Login</a>
+        <div class="form-group">
+            <label for="confirm-password">Confirm Password:</label>
+            <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="************" required>
+            </div>
+        </div>
 
+        <button type="submit" name="submit">
+            Sign Up 
+            <i class="fa-solid fa-folder-open"></i>
+        </button>
+        </form>
+        <div class= "back-to-login">
+            <a href="../pages/login.php" class="back-to-login-link">Back to Login</a>
+        </div>
+    </div>
 <?php
 // This code handles displaying error or success messages based on URL parameters,
 // utilizing a styled popup with auto-close and manual close functionality.

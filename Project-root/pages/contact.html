@@ -47,10 +47,12 @@
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required aria-required="true" placeholder="your.email@domain.com">
           </div>
+
           <div class="form-group">
             <label for="voter-id">Voter ID (Optional)</label>
             <input type="text" id="voter-id" name="voter-id" placeholder="e.g., V123456">
           </div>
+
           <div class="form-group">
             <label for="subject">Subject</label>
             <select id="subject" name="subject" required aria-required="true">
@@ -61,15 +63,18 @@
               <option value="general">General Inquiry</option>
             </select>
           </div>
+
           <div class="form-group">
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="6" required aria-required="true" placeholder="Your message..."></textarea>
           </div>
+
           <div class="form-group">
             <button type="submit" aria-label="Submit your message">Send Message</button>
             <div id="form-spinner" class="spinner" style="display: none; margin: 20px auto;"></div>
           </div>
         </form>
+
         <div id="form-alert" class="alert"></div>
         <p><small>Your data is encrypted end-to-end.. View our <a href="/privacy" class="pulse-link">Privacy Policy</a>.</small></p>
       </section>
