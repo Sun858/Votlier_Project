@@ -22,28 +22,35 @@
   </nav>
 
   <div class="container">
-    <h2>Staff Authentication Votify</h2>
+    <h2>Staff Login Votify</h2>
 
     <!-- Login Form -->
     <!-- The action attribute of the form points to the login.php file -->
     <form id="loginForm" action="../includes/admin-login-inc.php" method="POST">
-      <div class="form-group">
+            <div class="form-group">
         <label for="loginEmail">Email:</label>
-        <input type="email" id="loginEmail" name="loginEmail" required>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="loginEmail" name="loginEmail" placeholder="your.email@domain.com" required>
+        </div>
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="loginPassword" required>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="loginPassword" name="loginPassword" placeholder="************" required>
+       </div>
       </div>
 
-      <button type="submit" name="submit">Login</button>
-      
-      <a href="../pages/forgot_password.html" class="forgot-password-link">Forgot Password?</a>
-      <a href="../pages/login.php" class="forgot-password-link"><i class="fas fa-user"></i>User Login</a>
-
+      <button type="submit" name="submit">
+        <i class="fas fa-sign-in-alt"></i> 
+        Login
+      </button>
+      <div>
+        <a href="../pages/login.php" class="forgot-password-link"><i class="fa fa-user"></i> Users Login </a>
+      </div>
     </form>
-
   </div>
 <?php
 // This code will check for an "error parameter in the HTML, which occurs when an error is reported in functions.sn.php.
@@ -167,10 +174,7 @@ if (isset($_GET["error"])) {
     </div>
   
       <div class="social-links">
-        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=61574787246840" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
         <a href="mailto:contact@votify.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
     

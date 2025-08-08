@@ -152,8 +152,5 @@ if (isset($_GET["error"])) {
     ';
 }
 ?>
-    <footer>
-        <p>&copy; 2025 Votify. All rights reserved.</p>
-    </footer>
 </body>
 </html>

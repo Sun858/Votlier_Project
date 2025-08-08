@@ -259,22 +259,6 @@ body {
     transform: translateY(-3px); /* Slight lift */
 }
 
-.team-member .bio {
-    color: #2c2c2c;
-    font-size: 1.1rem;
-    line-height: 2;
-    max-width: 320px;
-    margin: 0 auto;
-    font-weight: 300;
-    opacity: 0.9;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.team-member:hover .bio {
-    opacity: 1; /* Full visibility */
-    transform: translateY(-2px); /* Subtle lift */
-}
-
 /* Animations */
 @keyframes scrollPulse {
     0% { transform: scaleY(1); opacity: 1; }

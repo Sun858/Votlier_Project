@@ -30,23 +30,37 @@
     <form id="loginForm" action="../includes/login-inc.php" method="POST">
       <div class="form-group">
         <label for="loginEmail">Email:</label>
-        <input type="email" id="loginEmail" name="loginEmail" required>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="loginEmail" name="loginEmail" placeholder="your.email@domain.com" required>
+        </div>
       </div>
 
       <div class="form-group">
         <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="loginPassword" required>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="loginPassword" name="loginPassword" placeholder="************" required>
+       </div>
       </div>
 
-      <button type="submit" name="submit">Login</button>
-      
-      <a href="../pages/forgot_password.html" class="forgot-password-link">Forgot Password?</a>
+      <button type="submit" name="submit">
+        <i class="fas fa-sign-in-alt"></i> 
+        Login
+      </button>
+      <div>
+        <a href="../pages/forgot_password.html" class="forgot-password-link">Forgot Password?</a>
+      </div>
     </form>
 
      <!-- Signup Link -->
-    <a href="../pages/signup.php" id="signupButton">Don't have an account? Sign Up</a>
-    <a href="../pages/stafflogin.php" class="forgot-password-link"><i class="fa fa-user"></i> Staff Login </a>
-
+      <div>
+        <a href="../pages/signup.html" class="signupButton">Don't have an account? Sign Up</a>
+      </div>
+      <!-- Staff Login Link -->
+      <div>
+        <a href="../pages/stafflogin.php" class="forgot-password-link"><i class="fa fa-user"></i> Staff Login </a>
+      </div>
 
   </div>
 <?php
@@ -177,10 +191,7 @@ if (isset($_GET["error"])) {
     </div>
   
       <div class="social-links">
-        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=61574787246840" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
         <a href="mailto:contact@votify.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
     

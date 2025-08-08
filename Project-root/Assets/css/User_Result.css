@@ -64,23 +64,6 @@
     background 0.2s;
 }
 
-/* Table Styling */
-/*
-.results-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-.results-table-header-row {
-    background-color: #59af2dff;
-    color: white;
-}
-    */
-
 /* Styling for the table and its cells */
 .results-table {
     width: 100%;
