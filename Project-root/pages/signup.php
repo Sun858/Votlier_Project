@@ -6,8 +6,6 @@
     <title>Sign Up</title>
     <link rel="stylesheet" href="../Assets/css/signup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-
 </head>
 <body>
     <div class="container">
@@ -69,10 +67,9 @@
         </div>
     </div>
 <?php
-// This code handles displaying error or success messages based on URL parameters,
-// utilizing a styled popup with auto-close and manual close functionality.
 if (isset($_GET["error"])) {
-    // Inline CSS for Error-Message styling. This defines the look and feel of the popup.
+    $isSuccess = $_GET["error"] === "none";
+    
     echo '
     <style>
         .error-popup {
@@ -83,7 +80,7 @@ if (isset($_GET["error"])) {
             background-color: #ffebee;
             border-left: 4px solid #f44336;
             color: #d32f2f;
-            padding: 20px 40px 20px 30px; /* Extra right padding for close button */
+            padding: 20px 40px 20px 30px;
             border-radius: 4px;
             font-family: Arial, sans-serif;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -92,50 +89,47 @@ if (isset($_GET["error"])) {
             max-width: 80%;
             opacity: 1;
             transition: opacity 0.5s ease-out;
-            /* Added for success message styling */
-            box-sizing: border-box; /* Include padding and border in the element\'s total width and height */
+            box-sizing: border-box;
         }
         .error-popup.success {
-            background-color: #e8f5e9; /* Light green for success */
-            border-left-color: #4CAF50; /* Green border for success */
-            color: #2E7D32; /* Darker green text for success */
+            background-color: #e8f5e9;
+            border-left-color: #4CAF50;
+            color: #2E7D32;
         }
         .error-popup p {
             margin: 0;
             font-weight: bold;
             font-size: 18px;
         }
+        .error-popup.success p {
+            color: #2E7D32;
+        }
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             cursor: pointer;
             font-size: 20px;
-            color: #d32f2f; /* Error close button color */
+            color: #d32f2f;
             background: none;
             border: none;
-            padding: 0 5px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
         .error-popup.success .close-btn {
-            color: #2E7D32; /* Success close button color */
-        }
-        .close-btn:hover {
-            color: #9a0007; /* Error hover color */
-        }
-        .error-popup.success .close-btn:hover {
-            color: #1B5E20; /* Success hover color */
+            color: #2E7D32;
         }
     </style>
     ';
 
-    
-    // Display the error/success popup with a close button for a better user experience.
-    echo '<div class="error-popup" id="errorPopup">
+    echo '<div class="error-popup' . ($isSuccess ? ' success' : '') . '" id="errorPopup">
             <button class="close-btn" onclick="closePopup()">×</button>';
 
-    /**  This code here is a manual check of the url, which checks if any of the keywords are present.
-    *If they are, the echo message is displayed.
-    */
     switch ($_GET["error"]) {
         case "emptyinput":
             echo '<p>⚠️ Fill in all required fields.</p>';
@@ -170,7 +164,6 @@ if (isset($_GET["error"])) {
     }
     echo '</div>'; 
 
-    // JavaScript for both auto-close and manual close. This makes the popup interactive for the user
     echo '
     <script>
         function closePopup() {

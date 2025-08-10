@@ -94,17 +94,23 @@ if (isset($_GET["error"])) {
         }
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 5px;
+            right: 5px;
             cursor: pointer;
             font-size: 20px;
             color: #d32f2f;
             background: none;
             border: none;
-            padding: 0 5px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
-        .close-btn:hover {
-            color: #9a0007;
+        .error-popup.success .close-btn {
+            color: #2E7D32;
         }
     </style>
     ';
@@ -134,18 +140,18 @@ if (isset($_GET["error"])) {
 
     // JavaScript for both auto-close and manual close. This would make the popup interactive for the user.
     echo '
-    <script>
-        function closePopup() {
-            var popup = document.getElementById("errorPopup");
-            popup.style.opacity = "0";
-            setTimeout(function() { 
-                popup.style.display = "none"; 
-            }, 500);
-        }
-        
-        // Auto-close after 5 seconds
-        setTimeout(closePopup, 5000);
-    </script>
+      <script>
+          function closePopup() {
+              var popup = document.getElementById("errorPopup");
+              popup.style.opacity = "0";
+              setTimeout(function() { 
+                  popup.style.display = "none"; 
+              }, 500);
+          }
+          
+          // Auto-close after 5 seconds
+          setTimeout(closePopup, 5000);
+      </script>
     ';
 }
 ?>

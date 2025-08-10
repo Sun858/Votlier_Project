@@ -141,8 +141,9 @@ $elections = $pageState['elections'];
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <?php elseif ($pollId && isset($_POST['view_results']) && empty($results)): ?>
-                <p>No results found for the selected election, or votes have not yet been tallied.</p>
+            
+            <?php elseif ($pollId && empty($tallyMsg) && empty($results)): ?>
+                <p class ="Result-banner">No results found for the selected election, or votes have not yet been tallied.</p>
             <?php endif; ?>
 
     </main>
