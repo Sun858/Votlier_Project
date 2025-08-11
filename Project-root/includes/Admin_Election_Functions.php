@@ -11,17 +11,7 @@ function sendJsonResponse($success, $message, $data = [])
 }
 
 
-
-
-
-/**
- * Handles fetching a single election's details and its candidates.
- * Used for both viewing candidates and populating the edit form.
- *
- * mysqli $conn The database connection object.
- *  $poll_id The ID of the election to fetch.
- */
-
+//Handles fetching a single election's details and its candidates.
 function handleFetchElectionDetails(mysqli $conn, $poll_id)
 {
     $stmt_election = $conn->prepare("SELECT poll_id, election_name, election_type, start_datetime, end_datetime FROM election WHERE poll_id = ?");
@@ -51,13 +41,7 @@ function handleFetchElectionDetails(mysqli $conn, $poll_id)
     ]);
 }
 
-/**
- * Handles the creation or update of an election and its candidates.
- *
- *  mysqli $conn The database connection object.
- *  $data The JSON decoded data from the AJAX request.
- *  $admin_id The ID of the logged-in admin.
- */
+// Create and or update elections
 function handleSaveElection(mysqli $conn, $data, $admin_id)
 {
     if (!isset($data['election']) || !isset($data['candidates'])) {
@@ -134,12 +118,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
     }
 }
 
-/**
- * Handles the deletion of an election and its associated candidates.
- *
- *  mysqli $conn The database connection object.
- *  int $poll_id The ID of the election to delete.
- */
+// Delete election obv
 function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
 {
     if ($poll_id === false) {
@@ -173,11 +152,7 @@ function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
 }
 
 
-/**
- * Fetches data for the election management table, including search, filter, sort, and pagination.
- *
- * mysqli $conn The database connection object.
- */
+// Search and filters. Futureproof UI.
 function handleFetchTableData(mysqli $conn)
 {
     $search_query = $_GET['search_query'] ?? '';
@@ -290,12 +265,7 @@ function handleFetchTableData(mysqli $conn)
     ]);
 }
 
-/**
- * Fetches distinct election types and possible statuses for dropdown filters.
- *
- *  mysqli $conn The database connection object.
- * An array containing 'election_types' and 'possible_statuses'.
- */
+// Filter data func
 function getFilterData(mysqli $conn)
 {
     $election_types_result = $conn->query("SELECT DISTINCT election_type FROM election ORDER BY election_type ASC");
@@ -308,4 +278,73 @@ function getFilterData(mysqli $conn)
     $possible_statuses = ['Ongoing', 'Upcoming', 'Completed'];
     sort($possible_statuses);
     return ['election_types' => $election_types, 'possible_statuses' => $possible_statuses];
+}
+
+// Got my old import candidates function, just added it here with a bit of the added javascript stuff sanjay did.
+function handleImportCandidates(mysqli $conn, $dest_poll_id, $source_poll_id, $admin_id)
+{
+    // Fetch candidates from source poll
+    $stmt = $conn->prepare("SELECT candidate_name, party FROM candidates WHERE poll_id = ? ORDER BY candidate_name ASC");
+    if (!$stmt) {
+        sendJsonResponse(false, 'Failed to prepare candidate fetch statement.');
+    }
+    $stmt->bind_param("i", $source_poll_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $candidates = [];
+    while ($row = $result->fetch_assoc()) {
+        $candidates[] = $row;
+    }
+    $stmt->close();
+
+    if (empty($candidates)) {
+        sendJsonResponse(false, 'No candidates found to import from source election.');
+    }
+    $stmt_insert = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
+    if (!$stmt_insert) {
+        sendJsonResponse(false, 'Failed to prepare candidate insert statement.');
+    }
+    foreach ($candidates as $cand) {
+        $stmt_insert->bind_param("issi", $dest_poll_id, $cand['candidate_name'], $cand['party'], $admin_id);
+        $stmt_insert->execute();
+    }
+    $stmt_insert->close();
+
+    logAdminAction($conn, $admin_id, 'Import Candidates', "Imported candidates from poll {$source_poll_id} to {$dest_poll_id}.");
+    sendJsonResponse(true, 'Candidates imported successfully.');
+}
+
+// Ends an election immediately.
+function handleManualEndElection(mysqli $conn, $poll_id, $admin_id)
+{
+    $now = date("Y-m-d H:i:s");
+    $stmt = $conn->prepare("UPDATE election SET end_datetime = ? WHERE poll_id = ?");
+    if (!$stmt) {
+        sendJsonResponse(false, 'Failed to prepare end election statement.');
+    }
+    $stmt->bind_param("si", $now, $poll_id);
+    if (!$stmt->execute()) {
+        $stmt->close();
+        sendJsonResponse(false, 'Failed to end election.');
+    }
+    $stmt->close();
+    logAdminAction($conn, $admin_id, 'End Election', "Election {$poll_id} ended manually at {$now}.");
+    sendJsonResponse(true, 'Election ended successfully.');
+}
+
+// Re-open election by having it set the end time to null.
+function handleManualReopenElection(mysqli $conn, $poll_id, $admin_id)
+{
+    $stmt = $conn->prepare("UPDATE election SET end_datetime = NULL WHERE poll_id = ?");
+    if (!$stmt) {
+        sendJsonResponse(false, 'Failed to prepare reopen election statement.');
+    }
+    $stmt->bind_param("i", $poll_id);
+    if (!$stmt->execute()) {
+        $stmt->close();
+        sendJsonResponse(false, 'Failed to reopen election.');
+    }
+    $stmt->close();
+    logAdminAction($conn, $admin_id, 'Reopen Election', "Election {$poll_id} reopened (end_datetime cleared).");
+    sendJsonResponse(true, 'Election re-opened successfully.');
 }

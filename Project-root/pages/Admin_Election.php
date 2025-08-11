@@ -43,6 +43,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['delete_poll_id'])) {
         $poll_id = filter_var($_POST['delete_poll_id'], FILTER_VALIDATE_INT);
         handleDeleteElection($conn, $poll_id, $admin_id);
+    }  elseif (isset($_POST['import_candidates'])) {
+        $dest_poll_id = intval($_POST['dest_poll_id']);
+        $source_poll_id = intval($_POST['source_poll_id']);
+        handleImportCandidates($conn, $dest_poll_id, $source_poll_id, $admin_id);
+    } elseif (isset($_POST['end_election'])) {
+        $poll_id = intval($_POST['end_election']);
+        handleManualEndElection($conn, $poll_id, $admin_id);
+    } elseif (isset($_POST['reopen_election'])) {
+        $poll_id = intval($_POST['reopen_election']);
+        handleManualReopenElection($conn, $poll_id, $admin_id);
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['fetch_all_elections'])) {
+    // Fetch all elections (optionally exclude current one via $_GET['exclude_poll_id'])
+    $exclude_poll_id = isset($_GET['exclude_poll_id']) ? intval($_GET['exclude_poll_id']) : null;
+    $stmt = $conn->prepare($exclude_poll_id ?
+        "SELECT poll_id, election_name FROM election WHERE poll_id <> ? ORDER BY election_name ASC"
+        : "SELECT poll_id, election_name FROM election ORDER BY election_name ASC");
+    if ($exclude_poll_id) {
+        $stmt->bind_param("i", $exclude_poll_id);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $elections = [];
+    while ($row = $result->fetch_assoc()) {
+        $elections[] = $row;
+    }
+    $stmt->close();
+    sendJsonResponse(true, 'Elections fetched.', ['elections' => $elections]);
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_GET['fetch_poll_id']) || isset($_GET['view_candidates_poll_id'])) {
+        $poll_id = $_GET['fetch_poll_id'] ?? $_GET['view_candidates_poll_id'];
+        handleFetchElectionDetails($conn, $poll_id);
+    } elseif (isset($_GET['fetch_table_data'])) {
+        handleFetchTableData($conn);
+    } elseif (isset($_GET['fetch_all_elections'])) {
+        // Fetch all elections for candidate import dropdown (optionally exclude current poll)
+        $exclude_poll_id = isset($_GET['exclude_poll_id']) ? intval($_GET['exclude_poll_id']) : null;
+        $stmt = $conn->prepare($exclude_poll_id ?
+            "SELECT poll_id, election_name FROM election WHERE poll_id <> ? ORDER BY election_name ASC"
+            : "SELECT poll_id, election_name FROM election ORDER BY election_name ASC");
+        if ($exclude_poll_id) {
+            $stmt->bind_param("i", $exclude_poll_id);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $elections = [];
+        while ($row = $result->fetch_assoc()) {
+            $elections[] = $row;
+        }
+        $stmt->close();
+        sendJsonResponse(true, 'Elections fetched.', ['elections' => $elections]);
+        exit;
     }
 }
 
@@ -284,6 +340,22 @@ ob_end_flush();
                 </div>
                 <button type="button" id="new-add-candidate-btn">Add Candidate</button>
                 <div id="candidateAddConfirmation" style="color: green; margin-top: 10px; font-weight: bold; display: none;">Candidate Added!</div>
+                
+                <div style="margin-top: 15px; margin-bottom: 10px;">
+                    <button type="button" id="importCandidatesBtn" style="background: #007bff; color: #fff; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer;">
+                        <ion-icon name="cloud-download-outline"></ion-icon>
+                        Import Candidates from Another Election
+                    </button>
+                    <div id="importCandidatesDropdownContainer" style="display: none; margin-top: 8px;">
+                        <label for="importSourceElection" style="font-weight: bold;">Select Election:</label>
+                        <select id="importSourceElection">
+                            <option value="">-- Choose Election --</option>
+                        </select>
+                        <button type="button" id="confirmImportCandidatesBtn" style="margin-left: 12px; background: #28a745; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;">
+                            Import
+                        </button>
+                    </div>
+                </div>
 
 
                 <h4>Current Candidates:</h4>

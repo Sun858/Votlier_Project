@@ -726,3 +726,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial fetch of elections when the page loads
     fetchAndRenderElections();
 });
+
+// Show/hide the dropdown and populate with available elections
+document.getElementById('importCandidatesBtn').onclick = function() {
+    const dropdown = document.getElementById('importCandidatesDropdownContainer');
+    dropdown.style.display = 'block';
+
+    const select = document.getElementById('importSourceElection');
+    // Clear previous options except the default one
+    select.innerHTML = '<option value="">-- Choose Election --</option>';
+
+    // Get current poll ID (if editing)
+    const destPollId = document.getElementById('editPollId').value || '';
+
+    // Fetch elections, excluding the current one if editing
+    fetch('Admin_Election.php?fetch_all_elections=1' + (destPollId ? '&exclude_poll_id=' + destPollId : ''), {
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.elections && data.elections.length) {
+            data.elections.forEach(election => {
+                const option = document.createElement('option');
+                option.value = election.poll_id;
+                option.textContent = election.election_name + ' (ID: ' + election.poll_id + ')';
+                select.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No elections available';
+            select.appendChild(option);
+        }
+    });
+};
+
+// When confirm import is clicked
+document.getElementById('confirmImportCandidatesBtn').onclick = function() {
+    const sourcePollId = document.getElementById('importSourceElection').value;
+    const destPollId = document.getElementById('editPollId').value || '';
+
+    if (!sourcePollId || !destPollId) {
+        alert('Please select a source election and ensure current election is being edited.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('import_candidates', '1');
+    formData.append('dest_poll_id', destPollId);
+    formData.append('source_poll_id', sourcePollId);
+
+    fetch('Admin_Election.php', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Candidates imported!');
+            refreshCurrentCandidates(destPollId);
+        } else {
+            alert('Import failed: ' + data.message);
+        }
+        document.getElementById('importCandidatesDropdownContainer').style.display = 'none';
+    });
+};
+
+// Function to refresh the current candidates box after import
+function refreshCurrentCandidates(pollId) {
+    fetch('Admin_Election.php?fetch_poll_id=' + pollId, {
+        credentials: 'same-origin'
+    })
+    .then(res => res.json())
+    .then(data => {
+        const candidateListDiv = document.getElementById('new-candidates-list');
+        candidateListDiv.innerHTML = '';
+        if (data.success && data.candidates && data.candidates.length > 0) {
+            data.candidates.forEach(cand => {
+                const p = document.createElement('p');
+                p.textContent = cand.candidate_name + (cand.party ? ' (' + cand.party + ')' : '');
+                candidateListDiv.appendChild(p);
+            });
+        } else {
+            candidateListDiv.innerHTML = '<p id="new-no-candidates-message" style="text-align: center; color: #777;">No candidates added yet.</p>';
+        }
+    });
+}
