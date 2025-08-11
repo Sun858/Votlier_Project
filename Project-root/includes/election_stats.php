@@ -153,6 +153,23 @@ function getOngoingElectionsCount($conn) {
     }
     return 0; // Return 0 on failure or no ongoing elections
 }
+// This function retrieves all FAQs from the database
+// This function is for the FAQ management in the admin settings page.
+function getAllFAQs($conn) {
+    $faqs = [];
+    $sql = "SELECT faq_id, question, answer, date_created FROM faqs ORDER BY date_created DESC";
+    $result = $conn->query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $faqs[] = $row;
+        }
+    }
+    
+    return $faqs;
+}
+
+
 
 ?>
 

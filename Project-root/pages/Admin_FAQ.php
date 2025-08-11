@@ -1,62 +1,91 @@
 <?php
 session_start();
-// Include the database connection file and security functions
-require_once '../DatabaseConnection/config.php';
+// This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/security.sn.php';
+require_once '../DatabaseConnection/config.php';
+require_once '../includes/election_stats.php';
+checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
-// Check if the user is an admin; if not, redirect to login page
-// Assuming a session variable 'is_admin' is set upon successful admin login
-if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
-    header("Location: login.php");
+if (!isset($_SESSION["admin_id"])) {
+    header("location: ../pages/login.php");
     exit();
 }
 
 // Handle FAQ form submissions (Add, Edit, Delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once '../includes/faq_handler.php';
-    // After handling the request, redirect to prevent form resubmission
-    header("Location: Admin_FAQ.php");
-    exit();
 }
 
 // Fetch all FAQs from the database to display in the table
-$sql = "SELECT id, question, answer, date_created FROM faqs ORDER BY date_created DESC";
-$result = $conn->query($sql);
-$faqs = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $faqs[] = $row;
-    }
-}
+//This function is written in the includes/election_stats.php file
+$faqs = getAllFAQs($conn);
+
 $conn->close();
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Manage FAQs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../Assets/css/Documentation.css">
+    <title>Ionicon Sidebar Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_FAQ.css">
+
 </head>
 <body>
-    <header>
-        <h1>Admin Dashboard</h1>
-    </header>
-    <nav>
-        <a href="Admin_Home.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="Admin_FAQ.php" class="active"><i class="fas fa-question-circle"></i> Manage FAQs</a>
-        <a href="Admin_Election.php"><i class="fas fa-vote-yea"></i> Manage Elections</a>
-        <a href="Admin_Result.php"><i class="fas fa-poll"></i> View Results</a>
-        <a href="../includes/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </nav>
-    <main>
-        <section class="admin-faq-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-top-bar">
+            <h3>Votify</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="Admin_Home.php">
+                    <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                    <span class="text">Home</span>
+                </a></li>
+                <li><a href="Admin_Profile.php">
+                    <span class="icon"><ion-icon name="people-outline"></ion-icon></span>
+                    <span class="text">Profile</span>
+                </a></li>
+                <li><a href="Admin_Election.php">
+                    <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
+                    <span class="text">Election</span>
+                </a></li>
+                <li><a href="Admin_Result.php">
+                    <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
+                    <span class="text">Result</span>
+                </a></li>
+                <li><a href="Admin_FAQ.php">
+                    <span class="icon"><ion-icon name="help-outline"></ion-icon></span>
+                    <span class="text">Manage FAQs</span>
+                </a></li>
+                <li><a href="Admin_Settings.php">
+                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+                    <span class="text">Settings</span>
+                </a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../includes/logout.php" class="footer-link signout-link">
+                <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
+                <span class="text">Sign Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="main-header">
+            <h1>Welcome to Voter Dashboard</h1>
+            <p>Explore your data and manage your business efficiently</p>
+        </header>
+
+      <section class="admin-faq-container">
             <h2>Manage FAQs</h2>
 
-            <!-- Add/Edit FAQ Form -->
-            <form id="faq-form" action="Admin_FAQ.php" method="POST" class="faq-form">
+            <form id="faq-form" action="../pages/Admin_FAQ.php" method="POST" class="faq-form">
                 <input type="hidden" name="faq_id" id="faq_id">
                 <div class="form-group">
                     <label for="question">Question:</label>
@@ -72,7 +101,6 @@ $conn->close();
                 </div>
             </form>
 
-            <!-- FAQ List Table -->
             <div class="faq-list">
                 <h3>Current FAQs</h3>
                 <table>
@@ -92,12 +120,13 @@ $conn->close();
                                     <td><?php echo htmlspecialchars($faq['answer']); ?></td>
                                     <td><?php echo htmlspecialchars($faq['date_created']); ?></td>
                                     <td>
-                                        <button class="btn btn-edit" onclick="editFaq(<?php echo htmlspecialchars(json_encode($faq)); ?>)">
+                                        <button class="btn btn-edit" onclick='editFaq(<?php echo json_encode($faq); ?>)'>
                                             <i class="fas fa-edit"></i> Edit
                                         </button>
-                                        <form action="Admin_FAQ.php" method="POST" style="display: inline;">
-                                            <input type="hidden" name="faq_id" value="<?php echo $faq['id']; ?>">
-                                            <button type="submit" name="action" value="delete" class="btn btn-delete">
+                                        <form action="../pages/Admin_FAQ.php" method="POST" style="display: inline;">
+                                            <input type="hidden" name="faq_id" value="<?php echo htmlspecialchars($faq['faq_id']); ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="btn btn-delete">
                                                 <i class="fas fa-trash-alt"></i> Delete
                                             </button>
                                         </form>
@@ -114,20 +143,22 @@ $conn->close();
             </div>
         </section>
     </main>
-    <footer>
-        <!-- Footer content from your other pages, assuming it's the same -->
-        <!-- You would typically include the footer content here -->
-    </footer>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- JavaScript to handle the edit and cancel actions for FAQs -->
     <script>
         function editFaq(faq) {
-            document.getElementById('faq_id').value = faq.id;
+        // Populate the form fields with the selected FAQ data
+            document.getElementById('faq_id').value = faq.faq_id;
             document.getElementById('question').value = faq.question;
             document.getElementById('answer').value = faq.answer;
             document.getElementById('submit-btn').value = 'update';
             document.getElementById('submit-btn').textContent = 'Update FAQ';
             document.getElementById('cancel-btn').style.display = 'inline-block';
         }
-
+        // Reset the form when the cancel button is clicked
         document.getElementById('cancel-btn').addEventListener('click', () => {
             document.getElementById('faq-form').reset();
             document.getElementById('faq_id').value = '';
