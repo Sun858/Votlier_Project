@@ -166,7 +166,7 @@
       <div class="footer-section">
         <h3>Resources</h3>
         <ul class="footer-links">
-          <li><a href="../pages/Documentation.html">Documentation</a></li>
+          <li><a href="../pages/Documentation.php">Documentation</a></li>
           <li><a href="../pages/FAQ.html">FAQ</a></li>
         </ul>
       </div>
@@ -210,7 +210,6 @@
     </div>
   </footer>
 
-  <script src="../Assets/js/scroll.js"></script>
 
   <script>
     // Floating animation for social icons

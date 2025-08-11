@@ -24,6 +24,7 @@ if (!isset($_SESSION["admin_id"])) {
 
     <aside class="sidebar">
         <div class="sidebar-top-bar">
+            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
             <h3>Votify</h3>
         </div>
         <nav class="sidebar-nav">
@@ -43,6 +44,10 @@ if (!isset($_SESSION["admin_id"])) {
                 <li><a href="Admin_Result.php">
                     <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                     <span class="text">Result</span>
+                </a></li>
+                <li><a href="Admin_FAQ.php">
+                    <span class="icon"><ion-icon name="help-outline"></ion-icon></span>
+                    <span class="text">Manage FAQs</span>
                 </a></li>
                 <li><a href="Admin_Settings.php">
                     <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>

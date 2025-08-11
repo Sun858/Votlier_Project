@@ -59,10 +59,14 @@ $upcomingElectionsCount = getUpcomingElectionsCount($conn);
                         <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                         <span class="text">Result</span>
                     </a></li>
-                <li><a href="Admin_Settings.php">
-                        <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
-                        <span class="text">Settings</span>
+                <li><a href="Admin_FAQ.php">
+                        <span class="icon"><ion-icon name="help-outline"></ion-icon></span>
+                        <span class="text">Manage FAQ</span>
                     </a></li>
+                <li><a href="Admin_Settings.php">
+                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+                    <span class="text">Settings</span>
+                </a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
