@@ -226,7 +226,6 @@ if (isset($_GET["error"])) {
     </div>
   </footer>
 
-  <script src="../Assets/js/scroll.js"></script>
 
   <script>
     // Floating animation for social icons
