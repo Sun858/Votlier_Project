@@ -10,10 +10,6 @@ function sendJsonResponse($success, $message, $data = [])
     exit();
 }
 
-
-
-
-
 /**
  * Handles fetching a single election's details and its candidates.
  * Used for both viewing candidates and populating the edit form.
@@ -100,7 +96,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             $actual_poll_id_for_candidates = $poll_id_to_update;
             $message_suffix = 'updated';
             // Log the update action
-            logAdminAction($conn, $admin_id, 'Edit Election', "Updated election '{$election_name}' (ID: {$poll_id_to_update}).");
+            logAdminAction($conn, $admin_id, 'Edit Election', "Updated election '{$election_name}'.");
         } else {
             $stmt = $conn->prepare("INSERT INTO election (election_type, election_name, start_datetime, end_datetime) VALUES (?, ?, ?, ?)");
             if (!$stmt) throw new Exception('Prepare statement failed for new election: ' . $conn->error);
@@ -110,7 +106,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             $stmt->close();
             $message_suffix = 'added';
             // Log the creation action
-            logAdminAction($conn, $admin_id, 'Add Election', "Added new election '{$election_name}' (ID: {$new_poll_id}).");
+            logAdminAction($conn, $admin_id, 'Add Election', "Added new election '{$election_name}'.");
         }
 
         if (!empty($candidates)) {
@@ -148,20 +144,31 @@ function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
 
     $conn->begin_transaction();
     try {
-        // Log the deletion action before sending the response
-        logAdminAction($conn, $admin_id, 'Delete Election', "Deleted election with ID: {$poll_id}.");
 
+        // Step 1: Retrieve the election name before deleting it
+        $stmt_get_name = $conn->prepare("SELECT election_name FROM election WHERE poll_id = ?");
+        $stmt_get_name->bind_param("i", $poll_id);
+        $stmt_get_name->execute();
+        $election_name_result = $stmt_get_name->get_result()->fetch_assoc();
+        $election_name = $election_name_result['election_name'] ?? 'Unknown Election';
+        $stmt_get_name->close();
+
+        // Step 2: Delete candidates and election
         $stmt_candidates = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
         if (!$stmt_candidates) throw new Exception('Failed to prepare statement for candidate deletion: ' . $conn->error);
         $stmt_candidates->bind_param("i", $poll_id);
         if (!$stmt_candidates->execute()) throw new Exception('Failed to delete candidates: ' . $stmt_candidates->error);
         $stmt_candidates->close();
 
+        // Step 3: Delete the election itself
         $stmt_election = $conn->prepare("DELETE FROM election WHERE poll_id = ?");
         if (!$stmt_election) throw new Exception('Failed to prepare statement for election deletion: ' . $conn->error);
         $stmt_election->bind_param("i", $poll_id);
         if (!$stmt_election->execute()) throw new Exception('Failed to delete election: ' . $stmt_election->error);
         $stmt_election->close();
+
+        // Step 4: Log the deletion action with the retrieved name
+        logAdminAction($conn, $admin_id, 'Delete Election', "Deleted election '{$election_name}'.");
 
         $conn->commit();
         sendJsonResponse(true, 'Election and its candidates deleted successfully!');

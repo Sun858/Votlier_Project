@@ -89,4 +89,74 @@ function getElectionActivities($conn, $limit = 5)
     $stmt->close();
     return $activities;
 }
+
+/* Retrieves the most recent admin login time from the database. */
+
+
+function getLastAdminLogin($conn) {
+    $sql = "SELECT attempt_time FROM login_attempts WHERE resource = 'admin_login' ORDER BY attempt_time DESC LIMIT 1";
+
+    // Prepare and execute the statement
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Check if a result was found
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $lastLoginTimestamp = $row['attempt_time'];
+
+            // Format the time into a more readable string
+            return date('F j, Y, g:i a', strtotime($lastLoginTimestamp));
+        }
+
+        // Close the statement
+        $stmt->close();
+    }
+
+    // Return a default message if no login attempts are found or on error
+    return 'No recent login recorded';
+}
+
+
+//   This function executes a MySQL query to select elections that start within the next 7 days
+
+function getUpcomingElectionsCount($conn) {
+    $sql = "SELECT COUNT(*) AS total_upcoming 
+            FROM election 
+            WHERE start_datetime >= NOW() AND start_datetime <= DATE_ADD(NOW(), INTERVAL 7 DAY)";
+
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            return (int)$row['total_upcoming'];
+        }
+    }
+    return 0; // Return 0 on failure or no elections found
+}
+
+// This function counts the number of ongoing elections
+function getOngoingElectionsCount($conn) {
+    $sql = "SELECT COUNT(*) AS total_ongoing 
+            FROM election 
+            WHERE start_datetime <= NOW() AND (end_datetime >= NOW() OR end_datetime IS NULL)";
+
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            return (int)$row['total_ongoing'];
+        }
+    }
+    return 0; // Return 0 on failure or no ongoing elections
+}
+
 ?>
+
+
+
+
+
