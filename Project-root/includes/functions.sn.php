@@ -1,4 +1,5 @@
 <?php
+// This file contains functions to handle user input validation, encryption, and database interactions for user management.
 
 // Debug environment variables
 error_log("MASTER_EMAIL_ENCRYPTION_KEY from getenv: " . (getenv('MASTER_EMAIL_ENCRYPTION_KEY') ?: 'NOT SET'));

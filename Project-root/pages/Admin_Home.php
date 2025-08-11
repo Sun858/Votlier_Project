@@ -1,13 +1,25 @@
 <?php
 session_start();
-// This is the security page for rate limiting and timeout. 15Min is currently set
+// Security and database includes
 require_once '../includes/security.sn.php';
-checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
+require_once '../DatabaseConnection/config.php';
+require_once '../includes/election_stats.php';
 
+// Check session timeout and admin login
+checkSessionTimeout(); 
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
     exit();
 }
+
+// Fetch statistics
+$totalElections = getTotalElections($conn);
+$totalVoters = getTotalVoters($conn); 
+$totalCandidates = getTotalCandidates($conn);
+$electionCounts = getElectionStatusCounts($conn); // Get all status counts
+
+$electionActivities = getElectionActivities($conn);
+
 ?>
 
 <!DOCTYPE html>
@@ -18,10 +30,8 @@ if (!isset($_SESSION["admin_id"])) {
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_Home.css">
-
 </head>
 <body>
-
     <aside class="sidebar">
         <div class="sidebar-top-bar">
             <h3>Votify</h3>
@@ -78,48 +88,105 @@ if (!isset($_SESSION["admin_id"])) {
                 <button>View Details</button>
             </div>
 
-            <div class="profile-container">
-                <h3>Latest Activity</h3>
-                <p>New voter registered, election results updated, report generated.</p>
-                <ul>
-                    <li>Today: 15 new registrations</li>
-                    <li>This week: 42 votes cast</li>
-                    <li>This month: 187 total votes</li>
-                </ul>
-                <button>See All Activity</button>
-            </div>
+<div class="profile-container">
+    <h3>Latest Election Activity</h3>
+    <p>Recent events related to elections.</p>
+    <ul class="activity-list">
+        <?php if (!empty($electionActivities)): ?>
+            <?php foreach ($electionActivities as $activity): ?>
+                <li>
+                    <strong><?php echo htmlspecialchars($activity['event_type']); ?>:</strong> 
+                    <?php echo htmlspecialchars($activity['details']); ?> 
+                    <small>(<?php echo htmlspecialchars(date('M d, Y H:i', strtotime($activity['event_time']))); ?>)</small>
+                </li>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <li>No recent election activity.</li>
+        <?php endif; ?>
+    </ul>
+    <button>See All Activity</button>
+</div>
+
+
+
         </section>
 
         <section class="dashboard-section">
             <h2>Statistics</h2>
             <div class="stats-grid">
+                <!-- Voters Card -->
                 <div class="stat-card">
                     <ion-icon class="stat-icon" name="people-outline"></ion-icon>
-                    <div class="stat-value">1,250</div>
+                    <div class="stat-value">
+                        <?php echo htmlspecialchars((string)$totalVoters, ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
                     <div class="stat-label">Total Voters</div>
                 </div>
+
+                <!-- Candidates Card -->
                 <div class="stat-card">
                     <ion-icon class="stat-icon" name="checkmark-circle-outline"></ion-icon>
-                    <div class="stat-value">875</div>
-                    <div class="stat-label">Votes Cast</div>
+                    <div class="stat-value">
+                        <?php echo htmlspecialchars((string)$totalCandidates, ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                    <div class="stat-label">Total Candidates</div>
                 </div>
-                <div class="stat-card">
+
+                <!-- Election Status Card -->
+                <div class="stat-card election-status-card">
                     <ion-icon class="stat-icon" name="time-outline"></ion-icon>
-                    <div class="stat-value">72%</div>
-                    <div class="stat-label">Participation</div>
-                </div>
-                <div class="stat-card">
-                    <ion-icon class="stat-icon" name="alert-circle-outline"></ion-icon>
-                    <div class="stat-value">18</div>
-                    <div class="stat-label">Pending Issues</div>
+                    <div class="stat-value" id="election-count-display">
+                        <?php echo htmlspecialchars((string)$electionCounts['total'], ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                    <div class="stat-label" id="election-count-label">Total Elections</div>
+                    
+                    <div class="election-status-buttons">
+                        <button class="status-btn active" data-status="total">Total</button>
+                        <button class="status-btn" data-status="active">Active</button>
+                        <button class="status-btn" data-status="upcoming">Upcoming</button>
+                        <button class="status-btn" data-status="completed">Completed</button>
+                    </div>
                 </div>
             </div>
         </section>
-
     </main>
 
     <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusButtons = document.querySelectorAll('.status-btn');
+        const displayElement = document.getElementById('election-count-display');
+        const labelElement = document.getElementById('election-count-label');
+        
+        // Data from PHP
+        const electionCounts = {
+            total: <?= $electionCounts['total'] ?>,
+            active: <?= $electionCounts['active'] ?>,
+            upcoming: <?= $electionCounts['upcoming'] ?>,
+            completed: <?= $electionCounts['completed'] ?>
+        };
+        // Function to update display based on button click and data 
+        function updateDisplay(status) {
+            displayElement.textContent = electionCounts[status] || '0';
+            labelElement.textContent = status.charAt(0).toUpperCase() + 
+                                    status.slice(1) + ' Elections';
+        }
+        
+        // Button click handlers
+        statusButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                statusButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update display
+                updateDisplay(this.dataset.status);
+            });
+        });
+    });
+    </script>
 </body>
 </html>

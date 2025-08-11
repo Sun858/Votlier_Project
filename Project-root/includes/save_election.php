@@ -1,5 +1,6 @@
 <?php
 // includes/save_election.php
+// This file handles the saving of election data, including creating or updating elections and candidates.
 
 session_start();
 require_once '../DatabaseConnection/config.php';

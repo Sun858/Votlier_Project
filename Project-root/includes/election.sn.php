@@ -1,5 +1,5 @@
 <?php
-
+// This page contains functions to retrieve election statistics from the database for the admin dashboard.
 // Fetches all elections
 function getAllElections($conn) {
     $sql = "SELECT poll_id, election_name, election_type, start_datetime, end_datetime FROM election ORDER BY election_name ASC";
