@@ -166,7 +166,7 @@
       <div class="footer-section">
         <h3>Resources</h3>
         <ul class="footer-links">
-          <li><a href="../pages/Documentation.php">Documentation</a></li>
+          <li><a href="../pages/FAQs.php">FAQs</a></li>
           <li><a href="../pages/FAQ.html">FAQ</a></li>
         </ul>
       </div>
@@ -210,13 +210,10 @@
     </div>
   </footer>
 
-
+  <script src="../Assets/js/Functions.js"></script>
+  <!----Floating animation for social icons -->
   <script>
-    // Floating animation for social icons
-    const socialIcons = document.querySelectorAll('.social-links a');
-    socialIcons.forEach((icon, index) => {
-      icon.style.animationDelay = `${index * 0.1}s`;
-    });
+    initSocialIcons();
   </script>
 
 </body>

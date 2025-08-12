@@ -85,8 +85,8 @@ $conn->close();
             <div class="footer-section">
                 <h3>Resources</h3>
                 <ul class="footer-links">
-                    <li><a href="../pages/Documentation.php">Documentation</a></li>
-                    <li><a href="../pages/FAQ.php">FAQ</a></li>
+                    <li><a href="../pages/FAQs.php">FAQs</a></li>
+                    <li><a href="../pages/FAQ.html">FAQ</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -124,30 +124,12 @@ $conn->close();
         </div>
     </footer>
 
+    <script src="../Assets/js/Functions.js"></script>
     <script>
-        // Floating animation for social icons
-        const socialIcons = document.querySelectorAll('.social-links a');
-        socialIcons.forEach((icon, index) => {
-            icon.style.animationDelay = `${index * 0.1}s`;
-        });
-
-        // Accordion functionality for FAQs
-        document.addEventListener('DOMContentLoaded', () => {
-            const accordionButtons = document.querySelectorAll('.accordion-button');
-            accordionButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const content = button.nextElementSibling;
-                    const isActive = button.classList.toggle('active');
-                    content.classList.toggle('active');
-                    if (isActive) {
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                    } else {
-                        content.style.maxHeight = '0';
-                    }
-                });
-            });
-        });
+        initAccordions();
+        initSocialIcons();
     </script>
+
 </body>
 
 </html>
