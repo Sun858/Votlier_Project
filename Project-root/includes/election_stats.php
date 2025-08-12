@@ -169,8 +169,6 @@ function getAllFAQs($conn) {
     return $faqs;
 }
 
-
-
 ?>
 
 
