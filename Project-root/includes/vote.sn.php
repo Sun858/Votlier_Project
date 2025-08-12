@@ -48,7 +48,12 @@ function submitUserVote($conn, $userId, $pollId, $votes) {
     if (hasUserVoted($conn, $userId, $pollId)) {
         return ['error' => 'You have already voted in this election.'];
     }
-
+    // Check for duplicate candidate_ids in preferences
+    $candidateIds = array_column($votes, 'candidate_id');
+    if (count($candidateIds) !== count(array_unique($candidateIds))) {
+        return ['error' => 'You cannot select the same candidate for more than one preference.'];
+    }
+    
     // Check election is active
     $stmt = $conn->prepare("SELECT start_datetime, end_datetime FROM election WHERE poll_id = ?");
     $stmt->bind_param("i", $pollId);
