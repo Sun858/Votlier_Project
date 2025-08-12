@@ -31,7 +31,7 @@ function handleFetchElectionDetails(mysqli $conn, $poll_id)
         sendJsonResponse(false, 'Election not found.');
     }
 
-    $stmt_candidates = $conn->prepare("SELECT candidate_name, party FROM candidates WHERE poll_id = ?");
+    $stmt_candidates = $conn->prepare("SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?");
     $stmt_candidates->bind_param("i", $poll_id);
     $stmt_candidates->execute();
     $candidates_result = $stmt_candidates->get_result();
@@ -81,23 +81,19 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
     $conn->begin_transaction();
     try {
         if ($poll_id_to_update) {
+            // Update existing election
             $stmt = $conn->prepare("UPDATE election SET election_type = ?, election_name = ?, start_datetime = ?, end_datetime = ? WHERE poll_id = ?");
             if (!$stmt) throw new Exception('Prepare statement failed for election update: ' . $conn->error);
             $stmt->bind_param("ssssi", $election_type, $election_name, $start_datetime_str, $end_datetime_str, $poll_id_to_update);
             $stmt->execute();
             $stmt->close();
 
-            $stmt_delete_candidates = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
-            if (!$stmt_delete_candidates) throw new Exception('Prepare statement failed for deleting old candidates: ' . $conn->error);
-            $stmt_delete_candidates->bind_param("i", $poll_id_to_update);
-            $stmt_delete_candidates->execute();
-            $stmt_delete_candidates->close();
-
             $actual_poll_id_for_candidates = $poll_id_to_update;
             $message_suffix = 'updated';
             // Log the update action
             logAdminAction($conn, $admin_id, 'Edit Election', "Updated election '{$election_name}'.");
         } else {
+            // Insert new election
             $stmt = $conn->prepare("INSERT INTO election (election_type, election_name, start_datetime, end_datetime) VALUES (?, ?, ?, ?)");
             if (!$stmt) throw new Exception('Prepare statement failed for new election: ' . $conn->error);
             $stmt->bind_param("ssss", $election_type, $election_name, $start_datetime_str, $end_datetime_str);
@@ -109,24 +105,109 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             logAdminAction($conn, $admin_id, 'Add Election', "Added new election '{$election_name}'.");
         }
 
-        if (!empty($candidates)) {
-            $stmt_candidates = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
-            if (!$stmt_candidates) throw new Exception('Prepare statement failed for candidates: ' . $conn->error);
-            foreach ($candidates as $candidate) {
+        // --- Begin Safe Candidate Update Logic ---
+        // Fetch existing candidates for this poll
+        $stmt_fetch_candidates = $conn->prepare("SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?");
+        $stmt_fetch_candidates->bind_param("i", $actual_poll_id_for_candidates);
+        $stmt_fetch_candidates->execute();
+        $result_existing = $stmt_fetch_candidates->get_result();
+        $existing_candidates = [];
+        while ($row = $result_existing->fetch_assoc()) {
+            $existing_candidates[$row['candidate_id']] = $row;
+        }
+        $stmt_fetch_candidates->close();
+
+        // Separate out submitted candidates into 'existing' and 'new'
+        $submitted_candidates_by_id = [];
+        $new_candidates = [];
+        foreach ($candidates as $candidate) {
+            if (!empty($candidate['candidate_id'])) {
+                $submitted_candidates_by_id[$candidate['candidate_id']] = $candidate;
+            } else {
+                $new_candidates[] = $candidate;
+            }
+        }
+
+        // 1. Update existing candidates if changed
+        foreach ($submitted_candidates_by_id as $candidate_id => $submitted) {
+            if (isset($existing_candidates[$candidate_id])) {
+                $old = $existing_candidates[$candidate_id];
+                $new_name = trim($submitted['name'] ?? '');
+                $new_party = trim($submitted['party'] ?? '');
+
+                // Only update if changed
+                if ($old['candidate_name'] !== $new_name || $old['party'] !== $new_party) {
+                    // Duplicate check for update (exclude self so it doesnt add a new candidate while ALSO updating it...)
+                    $stmt_dup = $conn->prepare("SELECT COUNT(*) FROM candidates WHERE poll_id = ? AND candidate_name = ? AND party = ? AND candidate_id != ?");
+                    $stmt_dup->bind_param("issi", $actual_poll_id_for_candidates, $new_name, $new_party, $candidate_id);
+                    $stmt_dup->execute();
+                    $dup_count = $stmt_dup->get_result()->fetch_row()[0];
+                    $stmt_dup->close();
+                    if ($dup_count > 0) throw new Exception("Another candidate with the same name and party already exists in this election.");
+
+                    $stmt_update = $conn->prepare("UPDATE candidates SET candidate_name = ?, party = ? WHERE candidate_id = ?");
+                    if (!$stmt_update) throw new Exception('Prepare statement failed for updating candidate: ' . $conn->error);
+                    $stmt_update->bind_param("ssi", $new_name, $new_party, $candidate_id);
+                    $stmt_update->execute();
+                    $stmt_update->close();
+                }
+                // Mark as processed
+                unset($existing_candidates[$candidate_id]);
+            }
+        }
+
+        // 2. Delete existing candidates not in submitted list, IF they have no votes
+        foreach ($existing_candidates as $candidate_id => $candidate) {
+            // Check for votes in ballot table
+            $stmt_votes = $conn->prepare("SELECT COUNT(*) AS vote_count FROM ballot WHERE candidate_id = ?");
+            $stmt_votes->bind_param("i", $candidate_id);
+            $stmt_votes->execute();
+            $vote_result = $stmt_votes->get_result();
+            $vote_count = $vote_result->fetch_assoc()['vote_count'] ?? 0;
+            $stmt_votes->close();
+
+            if ($vote_count > 0) {
+                // Cannot delete, votes exist
+                throw new Exception("Cannot remove candidate '{$candidate['candidate_name']}' as they already have votes.");
+            } else {
+                // Safe to delete
+                $stmt_del = $conn->prepare("DELETE FROM candidates WHERE candidate_id = ?");
+                if (!$stmt_del) throw new Exception('Prepare statement failed for deleting candidate: ' . $conn->error);
+                $stmt_del->bind_param("i", $candidate_id);
+                $stmt_del->execute();
+                $stmt_del->close();
+            }
+        }
+
+        // 3. Insert new candidates
+        if (!empty($new_candidates)) {
+            $stmt_new = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
+            if (!$stmt_new) throw new Exception('Prepare statement failed for new candidates: ' . $conn->error);
+            foreach ($new_candidates as $candidate) {
                 $candidate_name = trim($candidate['name'] ?? '');
                 $party = trim($candidate['party'] ?? '');
                 if (empty($candidate_name)) throw new Exception('Candidate name cannot be empty for an election.');
-                $stmt_candidates->bind_param("issi", $actual_poll_id_for_candidates, $candidate_name, $party, $admin_id);
-                $stmt_candidates->execute();
+
+                // Duplicate check for new candidate inside the backend, also in the front-end js code. I will need to seperate php code inside the PAGE into a controller.
+                $stmt_dup = $conn->prepare("SELECT COUNT(*) FROM candidates WHERE poll_id = ? AND candidate_name = ? AND party = ?");
+                $stmt_dup->bind_param("iss", $actual_poll_id_for_candidates, $candidate_name, $party);
+                $stmt_dup->execute();
+                $dup_count = $stmt_dup->get_result()->fetch_row()[0];
+                $stmt_dup->close();
+                if ($dup_count > 0) throw new Exception("Candidate '{$candidate_name}' with party '{$party}' already exists in this election.");
+
+                $stmt_new->bind_param("issi", $actual_poll_id_for_candidates, $candidate_name, $party, $admin_id);
+                $stmt_new->execute();
             }
-            $stmt_candidates->close();
+            $stmt_new->close();
         }
+        // --- End Safe Candidate Update Logic ---
 
         $conn->commit();
         sendJsonResponse(true, 'Election and candidates ' . $message_suffix . ' successfully!', ['poll_id' => $actual_poll_id_for_candidates]);
     } catch (Exception $e) {
         $conn->rollback();
-        sendJsonResponse(false, 'Failed to ' . $message_suffix . ' election: ' . $e->getMessage());
+        sendJsonResponse(false, 'Failed to ' . ($message_suffix ?? 'process') . ' election: ' . $e->getMessage());
     }
 }
 

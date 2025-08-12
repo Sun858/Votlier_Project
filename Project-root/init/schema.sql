@@ -75,7 +75,8 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (poll_id) REFERENCES election(poll_id) ON DELETE CASCADE,
-    FOREIGN KEY (admin_id) REFERENCES administration(admin_id)
+    FOREIGN KEY (admin_id) REFERENCES administration(admin_id),
+    UNIQUE KEY unique_candidate_per_poll (poll_id, candidate_name, party)
 );
 
 -- Ballot Table --
@@ -111,6 +112,18 @@ CREATE TABLE IF NOT EXISTS `tally` (
     PRIMARY KEY (poll_id, candidate_id)
 );
 
+ -- FAQs Table --
+CREATE TABLE faqs (
+faq_id int NOT NULL AUTO_INCREMENT,
+admin_id int NOT NULL,
+question text NOT NULL,
+answer text NOT NULL,
+date_created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+last_updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (faq_id),
+KEY admin_id (admin_id),
+CONSTRAINT faqs_ibfk_1 FOREIGN KEY (admin_id) REFERENCES administration (admin_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     
 /* Thoughts from Deniz - Instead of creating a whole new table to provide the results, we can use
 SELECT column.candidate_name and whatever, FROM tally JOIN both columns where the poll_ID is equal to
@@ -146,16 +159,3 @@ INSERT INTO `administration` (
   0x667e14898b4a35b0698d272fead0cace,
   '2025-06-17 12:17:17'
 );
-
- -- FAQs Table --
-CREATE TABLE faqs (
-faq_id int NOT NULL AUTO_INCREMENT,
-admin_id int NOT NULL,
-question text NOT NULL,
-answer text NOT NULL,
-date_created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-last_updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-PRIMARY KEY (faq_id),
-KEY admin_id (admin_id),
-CONSTRAINT faqs_ibfk_1 FOREIGN KEY (admin_id) REFERENCES administration (admin_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
