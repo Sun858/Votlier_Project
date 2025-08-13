@@ -137,14 +137,14 @@ $elections = $pageState['elections'];
                 <tbody>
                     <?php foreach ($results as $index => $result): ?>
                     <tr>
-                        <td><?= htmlspecialchars($result['candidate_id']) ?></td>
-                        <td><?= htmlspecialchars($result['candidate_name']) ?></td>
-                        <td><?= htmlspecialchars($result['total_votes']) ?></td>
-                        <td><?= htmlspecialchars($result['r1_votes']) ?></td>
-                        <td><?= htmlspecialchars($result['r2_votes']) ?></td>
-                        <td><?= htmlspecialchars($result['r3_votes']) ?></td>
-                        <td><?= htmlspecialchars($result['r4_votes']) ?></td>
-                        <td><?= htmlspecialchars($result['r5_votes']) ?></td>
+                        <td><?= htmlspecialchars((string)($result['candidate_id'] ?? '')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['candidate_name'] ?? '')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['total_votes'] ?? '0')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['r1_votes'] ?? '0')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['r2_votes'] ?? '0')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['r3_votes'] ?? '0')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['r4_votes'] ?? '0')) ?></td>
+                        <td><?= htmlspecialchars((string)($result['r5_votes'] ?? '0')) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

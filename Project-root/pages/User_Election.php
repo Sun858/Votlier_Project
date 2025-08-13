@@ -241,5 +241,36 @@ if ($selectedPollId) {
     <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const prefSelects = [
+            document.getElementById('candidate_id_1'),
+            document.getElementById('candidate_id_2'),
+            document.getElementById('candidate_id_3')
+        ];
+
+        function updateSelectOptions() {
+            // Get all selected candidate_ids
+            const selected = prefSelects.map(sel => sel.value).filter(val => val !== '');
+            prefSelects.forEach((select, i) => {
+                Array.from(select.options).forEach(opt => {
+                    if (opt.value === '') {
+                        opt.disabled = false; // "Select..." option always enabled
+                    } else {
+                        // Disable if selected in any other select
+                        opt.disabled = selected.includes(opt.value) && select.value !== opt.value;
+                    }
+                });
+            });
+        }
+
+        prefSelects.forEach(sel => {
+            sel.addEventListener('change', updateSelectOptions);
+        });
+
+        // Initial run
+        updateSelectOptions();
+    });
+    </script> 
 </body>
 </html>

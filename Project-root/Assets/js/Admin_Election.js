@@ -54,6 +54,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
+    function hasDuplicateCandidates(candidates) {
+        const seen = new Set();
+        for (const c of candidates) {
+            const key = (c.name || '').trim().toLowerCase() + '||' + (c.party || '').trim().toLowerCase();
+            if (seen.has(key)) return true;
+            seen.add(key);
+        }
+        return false;
+    }
+
     // Function to render the elections table dynamically via AJAX
     async function fetchAndRenderElections() {
         electionTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading elections...</td></tr>';
@@ -457,31 +467,49 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = newCandidateNameInput.value.trim();
         const party = newCandidatePartyInput.value.trim();
 
-        if (name) {
-            if (editingCandidateIndex !== null) {
-                // Update existing candidate
-                newCandidatesData[editingCandidateIndex] = { name, party };
-            } else {
-                // Add new candidate
-                newCandidatesData.push({ name, party });
-            }
-            renderNewCandidatesList(); // Re-render the list
-            
-            // Show confirmation message
-            candidateAddConfirmation.textContent = editingCandidateIndex !== null ? 'Candidate Updated!' : 'Candidate Added!';
-            candidateAddConfirmation.style.display = 'block';
-            setTimeout(() => {
-                candidateAddConfirmation.style.display = 'none';
-            }, 2000); // Hide after 2 seconds
-
-            // Clear input fields and reset editing state
-            newCandidateNameInput.value = '';
-            newCandidatePartyInput.value = '';
-            editingCandidateIndex = null; // Reset editing index
-            updateAddCandidateButtonText(); // Update button text
-        } else {
+        if (!name) {
             showNotification('Candidate Name is required.', true);
+            return;
         }
+
+        let previewCandidate;
+        let tempList;
+
+        if (editingCandidateIndex !== null) {
+            // Prepare a preview of what the list would look like after update
+            const existing = newCandidatesData[editingCandidateIndex];
+            previewCandidate = { ...existing, name, party };
+            tempList = [...newCandidatesData];
+            tempList[editingCandidateIndex] = previewCandidate;
+        } else {
+            previewCandidate = { name, party };
+            tempList = [...newCandidatesData, previewCandidate];
+        }
+
+        if (hasDuplicateCandidates(tempList)) {
+            showNotification('Duplicate candidates with the same name and party are not allowed.', true);
+            return;
+        }
+
+        if (editingCandidateIndex !== null) {
+            newCandidatesData[editingCandidateIndex] = previewCandidate;
+        } else {
+            newCandidatesData.push(previewCandidate);
+        }
+        renderNewCandidatesList();
+
+        // Show confirmation message
+        candidateAddConfirmation.textContent = editingCandidateIndex !== null ? 'Candidate Updated!' : 'Candidate Added!';
+        candidateAddConfirmation.style.display = 'block';
+        setTimeout(() => {
+            candidateAddConfirmation.style.display = 'none';
+        }, 2000);
+
+        // Clear input fields and reset editing state
+        newCandidateNameInput.value = '';
+        newCandidatePartyInput.value = '';
+        editingCandidateIndex = null;
+        updateAddCandidateButtonText();
     }
 
     // New function: Populate candidate input fields for editing
@@ -599,6 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Populate candidates
                 newCandidatesData = candidates.map(c => ({
+                    candidate_id: c.candidate_id, // keep the id!
                     name: c.candidate_name,
                     party: c.party
                 }));
@@ -672,6 +701,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listener for New Wizard Submit/Update button
     newSubmitBtn.addEventListener('click', async function() {
+        // Check for duplicates again...
+        if (hasDuplicateCandidates(newCandidatesData)) {
+            showNotification('Duplicate candidates with the same name and party are not allowed.', true);
+            return;
+        }
         // Collect all data
         const electionDetails = {
             poll_id: editPollIdInput.value || null, // Will be null for new creation
@@ -682,10 +716,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Ensure candidatesData is clean (no extra UI properties if any were added)
-        const candidatesToSend = newCandidatesData.map(c => ({
-            name: c.name,
-            party: c.party
-        }));
+    const candidatesToSend = newCandidatesData.map(c => {
+        const obj = { name: c.name, party: c.party };
+        if (c.candidate_id) obj.candidate_id = c.candidate_id;
+        return obj;
+    });   
 
         try {
             // Send AJAX request to the same Admin_Election.php file
