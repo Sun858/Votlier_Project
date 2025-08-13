@@ -62,6 +62,10 @@ $conn->close();
                     <span class="icon"><ion-icon name="help-outline"></ion-icon></span>
                     <span class="text">Manage FAQs</span>
                 </a></li>
+                <li><a href="Admin_Documentation.php">
+                    <span class="icon"><ion-icon name="document-text"></ion-icon></span>
+                    <span class="text">Manage Documentation</span>
+                </a></li>
                 <li><a href="Admin_Settings.php">
                     <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
                     <span class="text">Settings</span>
