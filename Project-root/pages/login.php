@@ -184,7 +184,7 @@
         <h3>Resources</h3>
         <ul class="footer-links">
           <li><a href="../pages/FAQs.php">FAQs</a></li>
-          <li><a href="../pages/FAQ.html">FAQ</a></li>
+          <li><a href="../pages/Documentation.html">Documentation</a></li>
         </ul>
       </div>
 

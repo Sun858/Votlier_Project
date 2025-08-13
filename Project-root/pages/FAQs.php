@@ -24,7 +24,7 @@ $conn->close();
 
     <!-- Link to Cloudflare-hosted font CSS file -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../Assets/css/Documentation.css">
+    <link rel="stylesheet" href="../Assets/css/FAQs.css">
 
 </head>
 
@@ -86,7 +86,7 @@ $conn->close();
                 <h3>Resources</h3>
                 <ul class="footer-links">
                     <li><a href="../pages/FAQs.php">FAQs</a></li>
-                    <li><a href="../pages/FAQ.html">FAQ</a></li>
+                    <li><a href="../pages/Documentation.html">Documentation</a></li>
                 </ul>
             </div>
             <div class="footer-section">
