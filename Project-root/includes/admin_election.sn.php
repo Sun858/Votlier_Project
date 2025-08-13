@@ -1,5 +1,5 @@
 <?php
-// Admin_Election_Functions.php, This page contains all the functions for Admin_Election.php and related AJAX operations.
+// admin_election.sn.php, This page contains all the functions for Admin_Election.php and related AJAX operations.
 
 // Function to send JSON response and exit
 function sendJsonResponse($success, $message, $data = [])
@@ -10,14 +10,7 @@ function sendJsonResponse($success, $message, $data = [])
     exit();
 }
 
-/**
- * Handles fetching a single election's details and its candidates.
- * Used for both viewing candidates and populating the edit form.
- *
- * mysqli $conn The database connection object.
- *  $poll_id The ID of the election to fetch.
- */
-
+// Fetches data for the election, if there is no data, it will show various prompts for those errors. One being election not found. Uses excessive javascript. I wouldn't understand it best. - Deniz
 function handleFetchElectionDetails(mysqli $conn, $poll_id)
 {
     $stmt_election = $conn->prepare("SELECT poll_id, election_name, election_type, start_datetime, end_datetime FROM election WHERE poll_id = ?");
@@ -47,13 +40,7 @@ function handleFetchElectionDetails(mysqli $conn, $poll_id)
     ]);
 }
 
-/**
- * Handles the creation or update of an election and its candidates.
- *
- *  mysqli $conn The database connection object.
- *  $data The JSON decoded data from the AJAX request.
- *  $admin_id The ID of the logged-in admin.
- */
+// Handles saving the election on creation as well as update - This is variable based on update and creation, so handle with care. It also logs actions, make it more specific in the future
 function handleSaveElection(mysqli $conn, $data, $admin_id)
 {
     if (!isset($data['election']) || !isset($data['candidates'])) {
@@ -104,8 +91,12 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             // Log the creation action
             logAdminAction($conn, $admin_id, 'Add Election', "Added new election '{$election_name}'.");
         }
+        /* This shit below is done in the case it is an update
+        This is because there was a major issue where it would delete the candidates when updating as if it was a creation. And if they had a
+        vote on the candidate, there would be an error due to the back-end validation as well as the db schema violation. Im not sure which one is first.
+        So this messed up code is done below to essentially keep the candidates in mind. I don't think this is the best way to do it, but blame time and google, not me.
+        */
 
-        // --- Begin Safe Candidate Update Logic ---
         // Fetch existing candidates for this poll
         $stmt_fetch_candidates = $conn->prepare("SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?");
         $stmt_fetch_candidates->bind_param("i", $actual_poll_id_for_candidates);
@@ -128,7 +119,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             }
         }
 
-        // 1. Update existing candidates if changed
+        // Update existing candidates if changed
         foreach ($submitted_candidates_by_id as $candidate_id => $submitted) {
             if (isset($existing_candidates[$candidate_id])) {
                 $old = $existing_candidates[$candidate_id];
@@ -138,6 +129,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
                 // Only update if changed
                 if ($old['candidate_name'] !== $new_name || $old['party'] !== $new_party) {
                     // Duplicate check for update (exclude self so it doesnt add a new candidate while ALSO updating it...)
+                    // Had to add this pre-emptively because this fix wasn't working... As updating both updated the candidates, while also adding a new one for some reason.
                     $stmt_dup = $conn->prepare("SELECT COUNT(*) FROM candidates WHERE poll_id = ? AND candidate_name = ? AND party = ? AND candidate_id != ?");
                     $stmt_dup->bind_param("issi", $actual_poll_id_for_candidates, $new_name, $new_party, $candidate_id);
                     $stmt_dup->execute();
@@ -151,12 +143,12 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
                     $stmt_update->execute();
                     $stmt_update->close();
                 }
-                // Mark as processed
+                // Mark as processed, and clean it so there are no duplicates essentially.
                 unset($existing_candidates[$candidate_id]);
             }
         }
 
-        // 2. Delete existing candidates not in submitted list, IF they have no votes
+        // Delete existing candidates not in submitted list, IF they have no votes
         foreach ($existing_candidates as $candidate_id => $candidate) {
             // Check for votes in ballot table
             $stmt_votes = $conn->prepare("SELECT COUNT(*) AS vote_count FROM ballot WHERE candidate_id = ?");
@@ -167,7 +159,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             $stmt_votes->close();
 
             if ($vote_count > 0) {
-                // Cannot delete, votes exist
+                // Cannot delete, votes exist error prompt. Hopefully jscript is the same as in login.
                 throw new Exception("Cannot remove candidate '{$candidate['candidate_name']}' as they already have votes.");
             } else {
                 // Safe to delete
@@ -179,7 +171,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             }
         }
 
-        // 3. Insert new candidates
+        // Insert new candidates when NEW.
         if (!empty($new_candidates)) {
             $stmt_new = $conn->prepare("INSERT INTO candidates (poll_id, candidate_name, party, admin_id) VALUES (?, ?, ?, ?)");
             if (!$stmt_new) throw new Exception('Prepare statement failed for new candidates: ' . $conn->error);
@@ -201,22 +193,17 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
             }
             $stmt_new->close();
         }
-        // --- End Safe Candidate Update Logic ---
-
+       
         $conn->commit();
         sendJsonResponse(true, 'Election and candidates ' . $message_suffix . ' successfully!', ['poll_id' => $actual_poll_id_for_candidates]);
+        // as above bro
     } catch (Exception $e) {
         $conn->rollback();
         sendJsonResponse(false, 'Failed to ' . ($message_suffix ?? 'process') . ' election: ' . $e->getMessage());
     }
 }
 
-/**
- * Handles the deletion of an election and its associated candidates.
- *
- *  mysqli $conn The database connection object.
- *  int $poll_id The ID of the election to delete.
- */
+// delete election, quite simple
 function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
 {
     if ($poll_id === false) {
@@ -226,7 +213,7 @@ function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
     $conn->begin_transaction();
     try {
 
-        // Step 1: Retrieve the election name before deleting it
+        // Validate
         $stmt_get_name = $conn->prepare("SELECT election_name FROM election WHERE poll_id = ?");
         $stmt_get_name->bind_param("i", $poll_id);
         $stmt_get_name->execute();
@@ -234,21 +221,21 @@ function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
         $election_name = $election_name_result['election_name'] ?? 'Unknown Election';
         $stmt_get_name->close();
 
-        // Step 2: Delete candidates and election
+        // Delete the insides, vomit the insides 
         $stmt_candidates = $conn->prepare("DELETE FROM candidates WHERE poll_id = ?");
         if (!$stmt_candidates) throw new Exception('Failed to prepare statement for candidate deletion: ' . $conn->error);
         $stmt_candidates->bind_param("i", $poll_id);
         if (!$stmt_candidates->execute()) throw new Exception('Failed to delete candidates: ' . $stmt_candidates->error);
         $stmt_candidates->close();
 
-        // Step 3: Delete the election itself
+        // Delete the election from db
         $stmt_election = $conn->prepare("DELETE FROM election WHERE poll_id = ?");
         if (!$stmt_election) throw new Exception('Failed to prepare statement for election deletion: ' . $conn->error);
         $stmt_election->bind_param("i", $poll_id);
         if (!$stmt_election->execute()) throw new Exception('Failed to delete election: ' . $stmt_election->error);
         $stmt_election->close();
 
-        // Step 4: Log the deletion action with the retrieved name
+        // Log the deletion, while still holding some data about it for future audits.
         logAdminAction($conn, $admin_id, 'Delete Election', "Deleted election '{$election_name}'.");
 
         $conn->commit();
@@ -261,11 +248,7 @@ function handleDeleteElection(mysqli $conn, $poll_id, $admin_id)
 }
 
 
-/**
- * Fetches data for the election management table, including search, filter, sort, and pagination.
- *
- * mysqli $conn The database connection object.
- */
+// Fetch data for view as well as filters.
 function handleFetchTableData(mysqli $conn)
 {
     $search_query = $_GET['search_query'] ?? '';
@@ -378,12 +361,7 @@ function handleFetchTableData(mysqli $conn)
     ]);
 }
 
-/**
- * Fetches distinct election types and possible statuses for dropdown filters.
- *
- *  mysqli $conn The database connection object.
- * An array containing 'election_types' and 'possible_statuses'.
- */
+// FETCH TYPE OF ELECTION IT IS, and provides 'possible' status as well for the elections. Status isnt in db currently, so it needs to be sorted by start and end time.
 function getFilterData(mysqli $conn)
 {
     $election_types_result = $conn->query("SELECT DISTINCT election_type FROM election ORDER BY election_type ASC");

@@ -73,6 +73,7 @@ if (!isset($_SESSION["admin_id"])) {
             <p>Explore your data and manage your business efficiently</p>
         </header>
 
+        <?php include '../includes/audit_logs_cont.php'; ?>
       
     </main>
 

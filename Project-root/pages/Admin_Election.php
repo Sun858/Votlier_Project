@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include the file with all the functions
-require_once '../includes/Admin_Election_Functions.php';
+require_once '../includes/admin_election.sn.php';
 require_once '../DatabaseConnection/config.php'; // New line to include the config file
 require_once '../includes/security.sn.php';
 
