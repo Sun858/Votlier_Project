@@ -83,7 +83,7 @@ if (!isset($_SESSION["admin_id"])) {
             <div id="message-area" class="alert-message" style="display: none;"></div>
 
             <!-- Form for creating/editing a document -->
-            <form id="doc-form">
+            <form id="doc-form" class="doc-form">
                 <input type="hidden" id="doc-id" name="document_id">
                 <div class="form-group">
                     <label for="doc-title">Document Title</label>
@@ -100,7 +100,7 @@ if (!isset($_SESSION["admin_id"])) {
                     <input type="text" id="new-category" placeholder="Enter new category name">
                 </div>
                 <div class="form-group">
-                    <label for="doc-content">Content (Markdown)</label>
+                    <label for="doc-content">Content</label>
                     <textarea id="doc-content" name="content" required></textarea>
                 </div>
                 <div class="action-buttons">
@@ -113,7 +113,7 @@ if (!isset($_SESSION["admin_id"])) {
             <hr style="margin: 2rem 0;">
 
             <div class="table-container">
-                <h3>Existing Documents</h3>
+                <h3>Current Documents</h3>
                 <table id="documents-table">
                     <thead>
                         <tr>

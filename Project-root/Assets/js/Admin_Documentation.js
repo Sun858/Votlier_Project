@@ -69,8 +69,8 @@ const fetchDocuments = async () => {
                             <td>${doc.title}</td>
                             <td>${doc.category_name}</td>
                             <td>
-                                <button class="btn btn-primary btn-sm edit-btn" data-id="${doc.document_id}">Edit</button>
-                                <button class="btn btn-danger btn-sm delete-btn" data-id="${doc.document_id}">Delete</button>
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="${doc.document_id}"><ion-icon name="create-outline"></ion-icon> Edit </button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${doc.document_id}"></i><ion-icon name="trash-outline"></ion-icon> Delete </button>
                             </td>
                         `
         documentsTableBody.appendChild(row)
