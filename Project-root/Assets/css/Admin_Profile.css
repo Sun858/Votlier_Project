@@ -1,449 +1,137 @@
 @import url('Base1.css');
 
-/* --- Main Content Area Styling --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body, html {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f9fa;
-    color: #333;
-    height: 100%;
-  }
+/* Base / layout */
+*{box-sizing:border-box;margin:0;padding:0}
+body,html{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:#f7f9fa;color:#333;height:100%}
 
-  .sidebar {
-    position: fixed;
-    top: 0; 
-    left: 0;
-    height: 100vh;
-    width: 80px;
-    background-color: #3BAE5D;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    z-index: 1000;
-    transition: width 0.3s ease;
-    overflow: hidden;
-  }
-  
-  .sidebar:hover {
-    width: 220px;
-  }
-  
-  .sidebar-top-bar {
-    display: flex;
-    align-items: center;
-    padding: 1.5rem 1rem 1.5rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    white-space: nowrap;
-  }
-  
-  .sidebar-top-bar ion-icon.voter-icon {
-    font-size: 2.5rem;
-    margin-right: 0.6rem;
-    flex-shrink: 0;
-  }
-  
-  .sidebar-top-bar h3 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    letter-spacing: 2px;
-    opacity: 0;
-    transition: opacity 0.2s ease 0.1s;
-  }
-  
-  .sidebar:hover .sidebar-top-bar h3 {
-    opacity: 1;
-  }
-  
-  .sidebar-nav {
-    flex-grow: 1;
-    padding-top: 1rem;
-  }
-  
-  .sidebar-nav ul {
-    list-style: none;
-  }
-  
-  .sidebar-nav li {
-    margin-bottom: 0.25rem;
-  }
-  
-  .sidebar-nav a {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background-color 0.25s ease;
-    white-space: nowrap;
-  }
-  
-  .sidebar-nav a:hover,
-  .sidebar-nav a.active {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .sidebar-nav a .icon {
-    margin-right: 1rem;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  
-  .sidebar-nav a .text {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  
-  .sidebar:hover .sidebar-nav a .text {
-    opacity: 1;
-  }
-  
-  .sidebar-footer {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.15);
-    white-space: nowrap;
-  }
-  
-  .footer-link {
-    display: flex;
-    align-items: center;
-    color: white;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.25s ease;
-  }
-  
-  .footer-link:hover {
-    color: #d3ffe6;
-  }
-  
-  .footer-link .icon {
-    margin-right: 0.75rem;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  
-  .footer-link .text {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-  
-  .sidebar:hover .footer-link .text {
-    opacity: 1;
-  }
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:80px;background:#3BAE5D;color:#fff;display:flex;flex-direction:column;justify-content:space-between;z-index:1000;transition:width .3s ease;overflow:hidden}
+.sidebar:hover{width:220px}
+.sidebar-top-bar{display:flex;align-items:center;padding:1.5rem 1rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.15);white-space:nowrap}
+.sidebar-top-bar ion-icon.voter-icon{font-size:2.5rem;margin-right:.6rem;flex-shrink:0}
+.sidebar-top-bar h3{font-weight:700;font-size:1.5rem;letter-spacing:2px;opacity:0;transition:opacity .2s ease .1s}
+.sidebar:hover .sidebar-top-bar h3{opacity:1}
+.sidebar-nav{flex-grow:1;padding-top:1rem}
+.sidebar-nav ul{list-style:none}
+.sidebar-nav li{margin-bottom:.25rem}
+.sidebar-nav a{display:flex;align-items:center;padding:.75rem 1.5rem;color:#fff;text-decoration:none;font-weight:600;transition:background-color .25s ease;white-space:nowrap}
+.sidebar-nav a:hover,.sidebar-nav a.active{background-color:rgba(255,255,255,.1)}
+.sidebar-nav a .icon{margin-right:1rem;font-size:1.5rem;flex-shrink:0}
+.sidebar-nav a .text{opacity:0;transition:opacity .2s ease}
+.sidebar:hover .sidebar-nav a .text{opacity:1}
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.15);white-space:nowrap}
+.footer-link{display:flex;align-items:center;color:#fff;font-weight:600;text-decoration:none;cursor:pointer;transition:color .25s ease}
+.footer-link:hover{color:#d3ffe6}
+.footer-link .icon{margin-right:.75rem;font-size:1.5rem;flex-shrink:0}
+.footer-link .text{opacity:0;transition:opacity .2s ease}
+.sidebar:hover .footer-link .text{opacity:1}
 
-  main.main-content {
-    margin-left: 80px;
-    padding: 2rem 3rem;
-    background-color: #f7f9fa;
-    min-height: 100vh;
-    transition: margin-left 0.3s ease;
-  }
-  
-  .sidebar:hover ~ .main-content {
-    margin-left: 220px;
-  }
+main.main-content{margin-left:80px;padding:2rem 3rem;background:#f7f9fa;min-height:100vh;transition:margin-left .3s ease}
+.sidebar:hover ~ .main-content{margin-left:220px}
 
-  .profile-card {
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 2rem 2.5rem;
-    max-width: 900px;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-  }
-  
-  .profile-avatar {
-    flex-shrink: 0;
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    background: url('https://www.svgrepo.com/show/510930/user-circle.svg') center/cover no-repeat;
-    border: 2px solid #3BAE5D;
-    background-color: #f0f0f0;
-  }
-  
-  .profile-info h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: #3BAE5D;
-  }
-  
-  .profile-info .role {
-    font-size: 18px;
-    color: #4a5568;
-    margin-top: 6px;
-    font-weight: 600;
-  }
-  
-  .profile-info .admin-id,
-  .profile-info .admin-email,
-  .profile-info .last-login {
-    font-size: 14px;
-    color: #718096;
-    margin-top: 4px;
-  }
+/* Profile card */
+.profile-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:2rem 2.5rem;max-width:900px;margin-bottom:2rem;display:flex;align-items:center;gap:2rem}
+.profile-avatar{
+  flex-shrink:0;
+  width:140px;
+  height:140px;
+  border-radius:50%;
+  background:url('../img/avatar.jpg') center/cover no-repeat, #f0f0f0;
+  border:3px solid #3BAE5D;
+}
+.profile-info h1{margin:0;font-size:28px;font-weight:700;color:#3BAE5D}
+.profile-info .role{font-size:18px;color:#4a5568;margin-top:6px;font-weight:600}
+.profile-info .admin-id,.profile-info .admin-email,.profile-info .last-login{font-size:14px;color:#718096;margin-top:4px}
 
-  .action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  
-  .action-buttons button {
-    border: 1px solid transparent;
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .action-buttons button.green-btn {
-    background-color: #e6f7f0;
-    border-color: #b5ead7;
-    color: #065f46;
-  }
-  
-  .action-buttons button.green-btn:hover {
-    background-color: #b5ead7;
-    border-color: #84dbb6;
-  }
-  
-  .action-buttons button.red-btn {
-    background-color: #fde8e8;
-    border-color: #f8b4b4;
-    color: #9b1c1c;
-  }
-  
-  .action-buttons button.red-btn:hover {
-    background-color: #f8b4b4;
-    border-color: #f38f8f;
-  }
+.action-buttons{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.5rem}
+.action-buttons button{border:1px solid transparent;padding:.5rem 1.25rem;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all .3s ease}
+.action-buttons button.green-btn{background:#e6f7f0;border-color:#b5ead7;color:#065f46}
+.action-buttons button.green-btn:hover{background:#b5ead7;border-color:#84dbb6}
+.action-buttons button.red-btn{background:#fde8e8;border-color:#f8b4b4;color:#9b1c1c}
+.action-buttons button.red-btn:hover{background:#f8b4b4;border-color:#f38f8f}
 
-  .employee-info,
-  .election-overview {
-    background: white;
-    max-width: 900px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 2rem 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .employee-info h2,
-  .election-overview h2 {
-    margin-top: 0;
-    color: #3BAE5D;
-    font-size: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .employee-info p {
-    font-size: 15px;
-    color: #4a5568;
-    margin: 6px 0;
-  }
-  
-  .employee-info .label {
-    font-weight: 700;
-    color: #3BAE5D;
-    display: inline-block;
-    width: 140px;
-  }
-  
-  .election-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-  }
-  
-  .election-list li {
-    border-bottom: 1px solid #e2e8f0;
-    padding: 12px 0;
-    font-size: 15px;
-    color: #2d3748;
-  }
-  
-  .election-list li:last-child {
-    border-bottom: none;
-  }
-  
-  .election-list strong {
-    color: #276749;
-  }
-  
-  .start-info {
-    font-style: italic;
-    color: #4a5568;
-    font-size: 14px;
-    display: block;
-    margin-top: 4px;
-  }
+/* Cards */
+.employee-info,.election-overview{
+  background:#fff;max-width:900px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:2rem 2.5rem;margin-bottom:2rem;position:relative
+}
 
-  .election-actions {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e2e8f0;
-  }
+/* Section titles — SAME size & color as the name near avatar */
+.section-title{
+  font-size:20px;               /* match .profile-info h1 */
+  font-weight:700;
+  color:#3BAE5D;                /* match .profile-info h1 */
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #e2e8f0;
+  padding-bottom:.75rem;
+}
+.section-title ion-icon{
+  font-size:28px;               /* icon same size as text */
+  color:#3BAE5D;                /* same green as title */
+}
 
-  /* New Modal Styles */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-  }
+/* Edit pencil (match User page: no green pill) */
+.edit-btn.employee-edit{
+  position:absolute;top:18px;right:16px;
+  background:none;border:none;color:#3BAE5D;
+  cursor:pointer;font-size:1.25rem;display:flex;align-items:center
+}
 
-  .modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
+/* Info table (match User profile feel) */
+.info-table{width:100%;border-collapse:collapse}
+.info-table td{padding:12px 16px;border-bottom:1px solid #e2e8f0;vertical-align:top;font-size:1.02rem}
+.info-table tr:last-child td{border-bottom:none}
+.info-label{font-weight:700;color:#3BAE5D;width:32%}
 
-  .form-group {
-    margin-bottom: 15px;
-  }
+/* Elections list */
+.election-list{list-style:none;padding-left:0;margin:0}
+.election-list li{border-bottom:1px solid #e2e8f0;padding:12px 0;font-size:15px;color:#2d3748}
+.election-list li:last-child{border-bottom:none}
+.election-list strong{color:#276749}
+.start-info{font-style:italic;color:#4a5568;font-size:14px;display:block;margin-top:4px}
+.election-actions{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e2e8f0}
 
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-  }
+/* Modals */
+.modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.45)}
+.modal-content{
+  background:#fff;margin:10% auto;padding:0;border-radius:12px;width:420px;box-shadow:0 16px 40px rgba(0,0,0,.18);position:relative;overflow:hidden
+}
+.modal-content.fancy .modal-header{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#e6f7f0;border-bottom:1px solid #cdeee0;padding:14px 18px
+}
+.modal-title{margin:0;color:#276749;font-weight:700}
+.form-group{margin:16px 18px}
+.form-group label{display:block;margin-bottom:6px;font-weight:600;color:#276749}
+.form-group input{width:100%;padding:10px;border:1px solid #d9e2ec;border-radius:6px;font-size:1rem}
+.modal-buttons{display:flex;justify-content:flex-end;gap:10px;margin:16px 18px 18px}
+.cancel-btn{background:#f5f5f5;border:1px solid #ddd;padding:10px 18px;border-radius:8px;cursor:pointer}
+.green-btn{background:#2e7d32;border:1px solid #2e7d32;color:#fff;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600}
+.green-btn:hover{filter:brightness(1.02)}
 
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
+/* Inline confirm overlay (inside modals) */
+.inline-confirm{position:absolute;inset:0;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;z-index:5}
+.inline-confirm-box{background:#fff;border:1px solid #dee2e6;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:18px 20px;min-width:260px;text-align:center}
+.inline-confirm-icon{font-size:1.6rem;color:#2e7d32}
+.inline-confirm-text{margin:10px 0 14px;font-weight:600;color:#2e7d32}
+.inline-confirm-actions{display:flex;gap:10px;justify-content:center}
 
-  .modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-  }
+/* Read-only inputs (ID field greyed out) */
+.modal .form-group input[readonly],
+.modal .form-group input[disabled],
+#modal-admin-id{
+  background-color:#f3f5f7;color:#6c757d;border-color:#e5e7eb;cursor:not-allowed
+}
 
-  .cancel-btn {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  /* Alert Styles */
-  .alert {
-    padding: 10px 15px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-  }
-
-  .alert-error {
-    background-color: #fde8e8;
-    color: #9b1c1c;
-    border: 1px solid #f8b4b4;
-  }
-
-  .alert-success {
-    background-color: #e6f7f0;
-    color: #065f46;
-    border: 1px solid #b5ead7;
-  }
-
-  ion-icon {
-    vertical-align: middle;
-  }
-
-  @media (max-width: 768px) {
-    .sidebar {
-      width: 220px;
-      transform: translateX(-220px);
-      transition: transform 0.3s ease;
-    }
-    
-    .sidebar.active {
-      transform: translateX(0);
-    }
-    
-    .sidebar:hover {
-      width: 220px;
-    }
-    
-    .sidebar-top-bar h3,
-    .sidebar-nav a .text,
-    .footer-link .text {
-      opacity: 1;
-    }
-    
-    main.main-content {
-      margin-left: 0;
-      padding: 1rem;
-    }
-    
-    .sidebar:hover ~ .main-content {
-      margin-left: 0;
-    }
-    
-    .profile-card,
-    .employee-info,
-    .election-overview {
-      max-width: 100%;
-      margin-bottom: 1.5rem;
-      padding: 1.5rem;
-    }
-    
-    .profile-card {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .action-buttons {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .mobile-menu-toggle {
-      display: block;
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      z-index: 1100;
-      background: #3BAE5D;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    /* Responsive Modal */
-    .modal-content {
-      width: 90%;
-      margin: 20% auto;
-    }
-  }
+/* Responsive */
+@media (max-width:768px){
+  .sidebar{width:220px;transform:translateX(-220px);transition:transform .3s ease}
+  .sidebar.active{transform:translateX(0)}
+  .sidebar:hover{width:220px}
+  .sidebar-top-bar h3,.sidebar-nav a .text,.footer-link .text{opacity:1}
+  main.main-content{margin-left:0;padding:1rem}
+  .sidebar:hover ~ .main-content{margin-left:0}
+  .profile-card,.employee-info,.election-overview{max-width:100%;margin-bottom:1.25rem;padding:1.5rem}
+  .profile-card{flex-direction:column;align-items:flex-start}
+  .action-buttons{flex-direction:column;align-items:flex-start}
+  .modal-content{width:92%;margin:18% auto}
+}
