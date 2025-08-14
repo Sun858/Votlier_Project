@@ -441,3 +441,14 @@
   background: var(--medium-gray, #e9ecef);
   color: var(--text-color, #212529);
 }
+
+/* ===== NEW: Read-only ID fields look (non-editable hint) ===== */
+.modal .form-group input[readonly],
+.modal .form-group input[disabled],
+#modal-voter-id,
+#modal-admin-id {
+  background-color: #f3f5f7;           /* soft grey */
+  color: var(--dark-gray, #6c757d);
+  border-color: #e5e7eb;
+  cursor: not-allowed;                 /* visual cue only; still selectable for copy */
+}
