@@ -32,7 +32,7 @@ foreach ($auditLogs as &$log) {
 <div class="admin-section">
     <h2>Admin Audit Logs</h2>
     <form method="get" style="margin-bottom: 18px;">
-        <select name="event_type">
+        <select name="event_type" class="styled-select">
             <option value="">All Event Types</option>
             <?php foreach ($eventTypes as $type): ?>
                 <option value="<?= htmlspecialchars($type['event_type']) ?>" <?= ($filterEventType === $type['event_type']) ? 'selected' : '' ?>>
@@ -40,7 +40,7 @@ foreach ($auditLogs as &$log) {
                 </option>
             <?php endforeach; ?>
         </select>
-        <select name="admin_id">
+        <select name="admin_id" class="styled-select">
             <option value="">All Admins</option>
             <?php foreach ($admins as $admin): ?>
                 <option value="<?= $admin['admin_id'] ?>" <?= ($filterAdminId == $admin['admin_id']) ? 'selected' : '' ?>>
@@ -48,7 +48,7 @@ foreach ($auditLogs as &$log) {
                 </option>
             <?php endforeach; ?>
         </select>
-        <button type="submit">Filter</button>
+        <button type="submit" class="btn-filter">Filter</button>
     </form>
     <div class="table-scroll-container">
         <table class="styled-table log-table">
@@ -81,6 +81,38 @@ foreach ($auditLogs as &$log) {
 </div>
 
 <style>
+
+.styled-select {
+    width: 20%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+    transition: border-color 0.3s ease-in-out;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.styled-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+
+.btn-filter { 
+    background: #4CAF50; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    margin-left: 10px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 
+    background 0.2s;
+}
+
 .table-scroll-container {
     max-height: 420px;
     overflow-y: auto;
@@ -113,7 +145,7 @@ foreach ($auditLogs as &$log) {
     background-color: #ececec;
 }
 .styled-table.log-table tbody tr:hover {
-    background: #e0fadf;
+    background-color: #a495c7; /* Highlight color for hovered rows */
 }
 @media (max-width: 1000px) {
     .styled-table.log-table {

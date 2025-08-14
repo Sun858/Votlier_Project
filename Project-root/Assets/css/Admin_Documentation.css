@@ -145,7 +145,7 @@ table {
 
 thead {
     background-color: #d1d5db;
-    color: #111827;
+    color: white;
     text-align: left;
 }
 
@@ -156,11 +156,11 @@ td {
 }
 
 th {
-    background-color: #d1d5db;
+    background-color:  rgb(108, 186, 69);
 }
 
 tbody tr:hover {
-    background-color: #f3f4f6;
+    background-color: #a495c7;
 }
 
 .alert-message {

@@ -141,19 +141,21 @@ table {
 }
 
 thead {
-    background-color: #d1d5db;
-    color: #111827;
+    background-color: rgb(108, 186, 69);
+    color: white;
     text-align: left;
 }
 
 th, td {
     padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #ddd;
 }
 
 tbody tr:hover {
-    background-color: #f3f4f6;
+    background-color: #a495c7;
 }
+
+
 
 /* Styles for the confirmation modal */
 .modal {

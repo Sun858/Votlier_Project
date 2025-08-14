@@ -42,7 +42,7 @@
 
 /*Election Picker Box */ 
 .styled-select {
-    width: 80%;
+    width: 30%;
     padding: 12px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
@@ -109,6 +109,7 @@
     table-layout: fixed;
     word-wrap: break-word;
     color: #e0e0e0; 
+
 }
 
 .results-table th,
