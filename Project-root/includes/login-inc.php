@@ -1,4 +1,6 @@
 <?php
+// This file is included in the login.php page. It handles the login process, including rate limiting and input validation.
+// It checks if the user has submitted the login form, validates the input, and attempts to log the user in.
 session_start();
 
 require_once '../DatabaseConnection/config.php';

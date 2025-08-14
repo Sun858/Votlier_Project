@@ -45,6 +45,10 @@ if (!isset($_SESSION["admin_id"])) {
                     <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                     <span class="text">Result</span>
                 </a></li>
+                <li><a href="Admin_FAQ.php">
+                    <span class="icon"><ion-icon name="help-outline"></ion-icon></span>
+                    <span class="text">Manage FAQs</span>
+                </a></li>
                 <li><a href="Admin_Settings.php">
                     <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
                     <span class="text">Settings</span>
@@ -65,6 +69,7 @@ if (!isset($_SESSION["admin_id"])) {
             <p>Explore your data and manage your business efficiently</p>
         </header>
 
+        <?php include '../includes/audit_logs_cont.php'; ?>
       
     </main>
 

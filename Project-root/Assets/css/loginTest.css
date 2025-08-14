@@ -1,81 +1,134 @@
 @import url('base.css');
-  
-  
+
 .container {
-    background-color: white;
-    padding: 2em;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 60px;
+    border-radius: 12%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
     margin: 2em auto;
     flex-grow: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-  
+
+.container:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 15px 35px rgba(76, 175, 80, 0.15);
+}
+
 h2 {
+    margin-top:-2%;
     text-align: center;
-    color: #4CAF50;
-    margin-bottom: 1em;
+    font-size: 1.8em;
+    /*Gradient text effect*/
+    background: linear-gradient(to right, #4CAF50, #2c5282);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
-  
+
+.Container {
+    color: gray;
+    font-size: 1rem;
+    margin-top:-10px;
+}
+
 .form-group {
-    margin-bottom: 1.5em;
+    margin-bottom: 1.8em;
+    position: relative;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    margin-left:-25px;
 }
-  
+
+.form-group:focus-within {
+    transform: translateY(-2px);
+}
+
 label {
-    display: block;
-    margin-bottom: 0.5em;
-    color: #333;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #120101;
+    margin-left: -5%;
+    margin
 }
-  
+
 input {
     width: 100%;
-    padding: 0.75em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 1em;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    margin-left:-5%;
+
+    padding: 0.85rem 0.85rem 0.85rem 2.2rem;
 }
-  
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+}
+
 input:focus {
     outline: none;
     border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
-  
-button[type="submit"] {
+
+button {
     width: 100%;
-    padding: 0.75em;
+    padding: 0.85em;
     border: none;
-    border-radius: 5px;
-    background-color: #4CAF50;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #4CAF50, #45a049);
     color: white;
     font-size: 1em;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-  
-button[type="submit"]:hover{
-    background-color: #45a049;
-    transform: scale(1.05);
-
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.forgot-password-link, #signupButton {
-    display: block;
-    margin-top: 10px;
-    color: #3498db;
-    text-decoration: none;
-    transition: color 0.3s ease, text-decoration 0.3s ease;
-    text-align: center;
+button:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: translateY(-4px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+
+.forgot-password-link, .signupButton {
+    display: inline-block;
+    margin-top: 12px;
     color: #419b44;
-    margin-bottom: 2px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    padding: 2px 0;
 }
 
-.forgot-password-link:hover, #signupButton:hover {
-    color: #2980b9;
-    text-decoration: underline;
+/*Hover underline effect*/
+.forgot-password-link::after, .signupButton::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #419b44;
+    transition: width 0.3s ease;
 }
-  
 
-  
+.forgot-password-link:hover::after, .signupButton:hover::after {
+    width: 100%;
+}
 
-  

@@ -1,35 +1,107 @@
 @import url('Base1.css');
 
-  /* --- Main Content Area Styling --- */
-        .main-content {
-            margin-left: var(--sidebar-closed-width);
-            flex-grow: 1;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: margin-left var(--transition-duration) ease-in-out;
-        }
+/* --- Main Content Area Styling --- */
+.main-content {
+    margin-left: var(--sidebar-closed-width);
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: margin-left var(--transition-duration) ease-in-out;
+}
 
-        .sidebar:hover ~ .main-content {
-            margin-left: var(--sidebar-open-width);
-        }
+.sidebar:hover ~ .main-content {
+    margin-left: var(--sidebar-open-width);
+}
 
-        .main-header {
-            background-color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: var(--box-shadow-light);
-        }
+.main-header {
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: var(--box-shadow-light);
+}
 
-        .main-header h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
+.main-header h1 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
 
-        .main-header p {
-            margin-bottom: 0;
-            color: #666;
-        }
+.main-header p {
+    margin-bottom: 0;
+    color: #666;
+}
 
-       
+/*Election Picker Box */ 
+.styled-select {
+    width: 80%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+    transition: border-color 0.3s ease-in-out;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.styled-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+/* View Results Button */
+.View-Results-button {
+    background: #8c8fdcff; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    margin-left: 10px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 
+    background 0.2s;
+}
+
+/* Styling for the table and its cells */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial,sans-serif;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); 
+    table-layout: fixed;
+    word-wrap: break-word;
+    color: #e0e0e0; 
+}
+
+.results-table th,
+.results-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; 
+}
+
+/* Header row styling */
+.results-table th {
+    background-color: #59af2dff; 
+    font-weight: 600;
+    color: white; 
+}
+
+/* Alternating row color styling */
+.results-table tbody tr:nth-child(even) {
+    color: black; 
+    background-color: #ffffff; 
+}
+
+.results-table tbody tr {
+    background-color: #f8f9fa; 
+    color: black; 
+}
+
+.results-table tbody tr:hover {
+    background-color: #a495c7; /* Highlight color for hovered rows */
+}
+

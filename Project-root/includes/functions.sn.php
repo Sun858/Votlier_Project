@@ -1,4 +1,5 @@
 <?php
+// This file contains functions to handle user input validation, encryption, and database interactions for user management.
 
 // Debug environment variables
 error_log("MASTER_EMAIL_ENCRYPTION_KEY from getenv: " . (getenv('MASTER_EMAIL_ENCRYPTION_KEY') ?: 'NOT SET'));
@@ -24,6 +25,7 @@ if (!defined('TRUE_BLIND_INDEX_SECRET_KEY')) {
 }
 
 // Input validation functions
+// These functions use mostly inbuild PHP features to check for verification inputted, like FILTER_VALIDATE_EMAIL, will check for valid email, and its pre-built. Needs a @.
 function emptyInputSignup($firstName, $lastName, $email, $password, $confirmPassword) {
     // Checks if any of the required signup fields are empty.
     return empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($confirmPassword);
@@ -39,11 +41,23 @@ function invalidEmail($email) {
     return !filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
+function passwordStrength($password) {
+    // At least 8 characters, one uppercase, and one number
+    return !preg_match('/^(?=.*[A-Z])(?=.*\d).{8,}$/', $password);
+}
+
+
 function pwdMatch($password, $confirmPassword) {
     // Checks if the password and confirm password fields match.
     return $password !== $confirmPassword;
 }
 
+
+/** 
+ * This checks if an email exists by comparing the blind index, which doesnst hold any PII, then decrypting the stored email using the secret keys for an exact match
+ * Returns user data with decrypted names and such if found to be used in the dashboard and is stored in the session, otherwise it remains false, 
+ * and user can either not log in, or not sign up.
+ */
 function emailExists($conn, $email) {
     // Directly use the defined constants for keys, as they are global constants.
     $blindIndexSecretKey = TRUE_BLIND_INDEX_SECRET_KEY;
@@ -100,7 +114,7 @@ function emailExists($conn, $email) {
     return false; // Email not found or decrypted email didn't match
 }
 
-
+// This function is the same as the above, refer to that comment i cbf typing it.
 function adminEmailExists($conn, $email) {
     $blindIndexSecretKey = TRUE_BLIND_INDEX_SECRET_KEY;
     $cipher = "aes-256-cbc";
@@ -143,7 +157,10 @@ function adminEmailExists($conn, $email) {
     return false;
 }
 
-
+/**
+ * Creates a new user by hashing their password and encrypting their PII. It stores it in the DB alongside a blind index for the email.
+ * This is done AFTER checking for duplicates before creating the user within the DB. This is done with the emailExists function.
+ */
 function createUser($conn, $firstName, $middleName, $lastName, $email, $password) {
     // Check for duplicate email BEFORE preparing the SQL INSERT statement.
     if (emailExists($conn, $email) !== false) {
@@ -255,6 +272,13 @@ function loginUser($conn, $email, $password) {
     exit();
 }
 
+/**
+ * This code is nearly identical to its brother above. Unless it moves later on of course.
+ * It authenticates an admin by checking first if the email exist within the adminData variable, where it is stored, if it isnt found, the user receives an error.
+ * If it goes through, it hashes the password inputted by the user, and if it matches in the DB, in which is done through the !has_equals func,
+ * it starts a session if there isnt one and they are moved to Admin_Home, with session variables admin_id, adminfirstname and adminlastname. 
+ * If passswords dont match, they would get an invalid credentials error as shown in the header.
+ */
 function loginAdmin($conn, $email, $password) {
     $adminData = adminEmailExists($conn, $email);
 

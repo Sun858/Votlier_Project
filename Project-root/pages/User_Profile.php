@@ -311,7 +311,6 @@ if (is_file($avatarFs)) {
 
     <aside class="sidebar">
         <div class="sidebar-top-bar">
-            <ion-icon class="voter-icon" name="person-circle-outline"></ion-icon>
             <h3>Votify</h3>
         </div>
         <nav class="sidebar-nav">

@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `election` (
     election_type VARCHAR(50) NOT NULL,
     election_name VARCHAR(255) NOT NULL,
     start_datetime DATETIME NOT NULL,
-    end_datetime DATETIME DEFAULT NULL
+    end_datetime DATETIME NULL DEFAULT NULL
 );
 
 -- Candidates Table --
@@ -71,10 +71,12 @@ CREATE TABLE IF NOT EXISTS `candidates` (
     poll_id INT NOT NULL,
     candidate_name VARCHAR(255) NOT NULL,
     party VARCHAR(255),
-    candidate_symbol VARCHAR(255),
     admin_id INT NOT NULL,
-    FOREIGN KEY (poll_id) REFERENCES election(poll_id),
-    FOREIGN KEY (admin_id) REFERENCES administration(admin_id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES election(poll_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES administration(admin_id),
+    UNIQUE KEY unique_candidate_per_poll (poll_id, candidate_name, party)
 );
 
 -- Ballot Table --
@@ -85,7 +87,8 @@ CREATE TABLE IF NOT EXISTS `ballot` (
     candidate_id INT NOT NULL,
     preference_rank INT NOT NULL,
     dateandtime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    encrypted_ballot TEXT NOT NULL,
+    encrypted_ballot BLOB NOT NULL,
+    iv VARBINARY(16) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (poll_id) REFERENCES election(poll_id),
     FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id),
@@ -101,12 +104,26 @@ CREATE TABLE IF NOT EXISTS `tally` (
     r1_votes INT DEFAULT 0,
     r2_votes INT DEFAULT 0,
     r3_votes INT DEFAULT 0,
+    r4_votes INT DEFAULT 0,
+    r5_votes INT DEFAULT 0,
     updatetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (poll_id) REFERENCES election(poll_id),
     FOREIGN KEY (candidate_id) REFERENCES candidates(candidate_id),
     PRIMARY KEY (poll_id, candidate_id)
 );
 
+ -- FAQs Table --
+CREATE TABLE faqs (
+faq_id int NOT NULL AUTO_INCREMENT,
+admin_id int NOT NULL,
+question text NOT NULL,
+answer text NOT NULL,
+date_created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+last_updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+PRIMARY KEY (faq_id),
+KEY admin_id (admin_id),
+CONSTRAINT faqs_ibfk_1 FOREIGN KEY (admin_id) REFERENCES administration (admin_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     
 /* Thoughts from Deniz - Instead of creating a whole new table to provide the results, we can use
 SELECT column.candidate_name and whatever, FROM tally JOIN both columns where the poll_ID is equal to

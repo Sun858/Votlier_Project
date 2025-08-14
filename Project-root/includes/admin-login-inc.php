@@ -1,4 +1,6 @@
 <?php
+// This page handles the admin login functionality
+// It checks if the admin is already logged in, and if not, it processes the login.
 session_start();
 
 require_once '../DatabaseConnection/config.php';

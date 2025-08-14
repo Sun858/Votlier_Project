@@ -1,1 +1,164 @@
 @import url('base.css');
+
+/* Top Section */
+
+.top-section h1 {
+  text-align: center;
+  font-size: 2.5rem; 
+  font-weight: 700; 
+  letter-spacing: 0.8px;
+  margin: 0 0 1rem 0; 
+  color: #2a2a2a; 
+  font-family: 'ADLaM Display', 'Poppins', sans-serif;
+  line-height: 1.2;
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  position: relative;
+  display: inline-block; 
+}
+
+/* Optional decorative underline effect */
+.top-section h1::after {
+  content: '';
+  display: block;
+  width: 160px;
+  height: 4px;
+  background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+  margin: 0.8rem auto 0;
+  border-radius: 2px;
+}
+
+.top-section p {
+  font-size: 1.25rem;
+  color: #4a4a4a; 
+  margin: 0 0 2rem 0;
+  text-align: center;
+  font-weight: 500; 
+  font-family: 'Inter', sans-serif; 
+  line-height: 1.6;
+  max-width: 700px; 
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+}
+
+/*Contact Info Section*/
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto 80px;
+  padding: 0 20px;
+}
+
+.contact-info,
+.contact-form {
+  background: rgb(230, 224, 224);
+  padding: 50px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+
+.contact-info h2 {
+  background: linear-gradient(to right, #4CAF50, #2c5282);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  font-size: 35px;
+  margin-top: -2%;
+}
+
+.contact-info p {
+  margin: 15px 0;
+  font-size: 1.15em;
+}
+
+.contact-info i {
+  color: #00ff00;
+  margin-right: 10px;
+}
+
+.contact-info strong,
+.contact-info em {
+  color: #40357d;
+}
+
+/*Send a Message Section*/
+.contact-form h2 {
+  background: linear-gradient(to right, #4CAF50, #2c5282);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  font-size: 35px;
+  margin-top: -2%;
+}
+
+
+label {
+  font-weight: 700;
+  color: #40357d;
+  margin-bottom: 12px;
+  display: block;
+  font-size: 1.1em;
+  text-shadow: 0 0 5px rgba(224, 224, 224, 0.3);
+  margin-left: -3%;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid rgba(55, 57, 55, 0.5);
+  border-radius: 12px;
+  font-size: 1.1em;
+  background: rgba(0, 0, 0, 0.2);
+  color: #1d1c1c;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  margin-bottom: 15px;
+  margin-left: -3%;
+}
+
+select option {
+  background: #1E1E1E;
+  /* Deep, neutral charcoal base */
+  color: #ffffff;
+  /* White text for options */
+  padding: 0.5em;
+  /* Optional: Add padding for better readability */
+}
+
+.contact-form select {
+  width: 108%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #3a18d4;
+  box-shadow: 0 0 20px rgba(48, 48, 48, 0.6);
+  background: rgba(0, 255, 0, 0.05);
+  outline: none;
+}
+
+.contact-form button {
+  background: linear-gradient(to right, #4CAF50, #2c5282);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.contact-form button:hover {
+  transform: scale(1.05);
+}
