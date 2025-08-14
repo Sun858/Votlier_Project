@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'chang
         $u->bind_param("ssii", $newHash, $newSalt, $newIter, $userId);
         if (!$u->execute()) { echo json_encode(['success' => false, 'message' => 'Failed to update password.']); exit; }
 
-        // Destroy session AND wipe cookie robustly
+        // Destroy session + cookies
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
@@ -181,7 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'chang
         }
         session_destroy();
 
-        // Tell client to hit Logout.php to finish and redirect to login.php
         echo json_encode([
             'success'  => true,
             'redirect' => '../includes/Logout.php?reason=pwchange'
@@ -282,13 +281,12 @@ $lastLogin = date(
 );
 
 /* ---------- Avatar URL (robust) ---------- */
-$avatarFs = ROOT_DIR . '/Assets/img/avatar.jpg';       // filesystem path
-$avatarUrl = '../Assets/img/avatar.jpg';               // web path from /pages
+$avatarFs = ROOT_DIR . '/Assets/img/avatar.jpg';
+$avatarUrl = '../Assets/img/avatar.jpg';
 if (is_file($avatarFs)) {
     $mtime = @filemtime($avatarFs) ?: time();
-    $avatarUrl .= '?v=' . $mtime;                     // cache-bust
+    $avatarUrl .= '?v=' . $mtime;
 } else {
-    // fallback placeholder (so you see *something* if file missing)
     $avatarUrl = 'https://www.svgrepo.com/show/510930/user-circle.svg';
 }
 ?>
@@ -448,41 +446,39 @@ if (is_file($avatarFs)) {
         </div>
     </main>
 
-    <!-- Password Modal -->
+    <!-- Password Modal (styled like Admin, no X) -->
     <div id="passwordModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
+        <div class="modal-content fancy">
             <div class="modal-header">
                 <h3 class="modal-title">Change Password</h3>
-                <button class="close-modal" aria-label="Close">&times;</button>
             </div>
             <form id="passwordForm" method="POST" autocomplete="off">
                 <input type="hidden" name="action" value="change_password" />
                 <div class="form-group">
-                    <label for="currentPassword">Current Password:</label>
+                    <label for="currentPassword">Current Password</label>
                     <input type="password" id="currentPassword" name="currentPassword" required autocomplete="current-password" inputmode="text">
                 </div>
                 <div class="form-group">
-                    <label for="newPassword">New Password:</label>
+                    <label for="newPassword">New Password</label>
                     <input type="password" id="newPassword" name="newPassword" required autocomplete="new-password" inputmode="text">
                 </div>
                 <div class="form-group">
-                    <label for="verifyPassword">Verify New Password:</label>
+                    <label for="verifyPassword">Verify New Password</label>
                     <input type="password" id="verifyPassword" name="verifyPassword" required autocomplete="new-password" inputmode="text">
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel">Cancel</button>
-                    <button type="submit" class="btn btn-confirm" id="apply-password">Update Password</button>
+                <div class="modal-actions modal-buttons">
+                    <button type="button" class="btn btn-cancel cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-confirm green-btn" id="apply-password">Update Password</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Edit Personal Info Modal -->
+    <!-- Edit Personal Info Modal (styled like Admin, no X) -->
     <div id="personalInfoModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
+        <div class="modal-content fancy">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Personal Information</h3>
-                <button class="close-modal" aria-label="Close">&times;</button>
             </div>
             <form id="personalInfoForm" method="POST" autocomplete="off">
                 <input type="hidden" name="action" value="update_profile" />
@@ -499,27 +495,26 @@ if (is_file($avatarFs)) {
                     <input type="text" id="modal-last-name" name="last_name" value="<?= htmlspecialchars($user['last_name'] ?? '') ?>">
                 </div>
                 <div class="form-group">
-                    <label for="modal-dob">Date of Birth</label>
+                    <label for="modal-dob">D.O.B</label>
                     <input type="text" id="modal-dob" name="dob" value="<?= htmlspecialchars($user['dob'] ?? '') ?>">
                 </div>
                 <div class="form-group">
                     <label for="modal-email">Email</label>
                     <input type="email" id="modal-email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>">
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel">Cancel</button>
-                    <button type="submit" class="btn btn-confirm" id="save-personal-info">Save Changes</button>
+                <div class="modal-actions modal-buttons">
+                    <button type="button" class="btn btn-cancel cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-confirm green-btn" id="save-personal-info">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Manage Address Modal -->
+    <!-- Manage Address Modal (styled like Admin, no X) -->
     <div id="addressModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
+        <div class="modal-content fancy">
             <div class="modal-header">
                 <h3 class="modal-title">Manage Addresses</h3>
-                <button class="close-modal" aria-label="Close">&times;</button>
             </div>
             <form id="addressForm" method="POST" autocomplete="off">
                 <div class="form-group">
@@ -530,29 +525,28 @@ if (is_file($avatarFs)) {
                     <label for="modal-postal-address">Postal Address (if different)</label>
                     <textarea id="modal-postal-address" rows="3"><?= htmlspecialchars($user['postal_address'] ?? '') ?></textarea>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel">Cancel</button>
-                    <button type="button" class="btn btn-confirm" id="save-address">Save Changes</button>
+                <div class="modal-actions modal-buttons">
+                    <button type="button" class="btn btn-cancel cancel-btn">Cancel</button>
+                    <button type="button" class="btn btn-confirm green-btn" id="save-address">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Feedback Modal -->
+    <!-- Feedback Modal (unchanged) -->
     <div id="feedbackModal" class="modal" aria-hidden="true">
-        <div class="modal-content">
+        <div class="modal-content fancy">
             <div class="modal-header">
                 <h3 class="modal-title">Provide Feedback</h3>
-                <button class="close-modal" aria-label="Close">&times;</button>
             </div>
             <form id="feedbackForm" action="../includes/submit_feedback.php" method="POST" autocomplete="off">
                 <div class="form-group">
                     <label for="feedback-text">Your Feedback</label>
                     <textarea id="feedback-text" name="feedback" rows="5" placeholder="Please share your feedback..."></textarea>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel">Cancel</button>
-                    <button type="submit" class="btn btn-confirm">Submit Feedback</button>
+                <div class="modal-actions modal-buttons">
+                    <button type="button" class="btn btn-cancel cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-confirm green-btn">Submit Feedback</button>
                 </div>
             </form>
         </div>
@@ -563,7 +557,7 @@ if (is_file($avatarFs)) {
         function openModal(id){ const el=document.getElementById(id); if(el){ el.style.display='block'; el.setAttribute('aria-hidden','false'); } }
         function closeModal(id){ const el=document.getElementById(id); if(el){ el.style.display='none'; el.setAttribute('aria-hidden','true'); } }
 
-        // Inline confirm INSIDE a modal (returns Promise<boolean>)
+        // Inline confirm (class-based; same as Admin)
         function inlineConfirm(modalId, message='Apply changes?'){
             return new Promise(resolve=>{
                 const modal = document.getElementById(modalId);
@@ -578,39 +572,23 @@ if (is_file($avatarFs)) {
                 overlay.className = 'inline-confirm';
                 overlay.setAttribute('role','dialog');
                 overlay.setAttribute('aria-modal','true');
-                overlay.style.position='absolute';
-                overlay.style.inset='0';
-                overlay.style.background='rgba(0,0,0,0.15)';
-                overlay.style.display='flex';
-                overlay.style.alignItems='center';
-                overlay.style.justifyContent='center';
-                overlay.style.zIndex='5';
 
                 const box=document.createElement('div');
-                box.style.background='#fff';
-                box.style.border='1px solid var(--border-color, #dee2e6)';
-                box.style.borderRadius='10px';
-                box.style.boxShadow='0 10px 30px rgba(0,0,0,0.2)';
-                box.style.padding='18px 20px';
-                box.style.minWidth='260px';
-                box.style.textAlign='center';
+                box.className='inline-confirm-box';
 
                 const icon=document.createElement('ion-icon');
                 icon.setAttribute('name','alert-circle-outline');
-                icon.style.fontSize='1.6rem';
-                icon.style.color='var(--primary-color, #2e7d32)';
+                icon.className='inline-confirm-icon';
 
                 const text=document.createElement('div');
+                text.className='inline-confirm-text';
                 text.textContent=message;
-                text.style.margin='10px 0 14px';
-                text.style.fontWeight='600';
-                text.style.color='var(--primary-color, #2e7d32)';
 
                 const btns=document.createElement('div');
-                btns.style.display='flex'; btns.style.gap='10px'; btns.style.justifyContent='center';
+                btns.className='inline-confirm-actions';
 
-                const noBtn=document.createElement('button'); noBtn.type='button'; noBtn.className='btn btn-cancel'; noBtn.textContent='Discard';
-                const yesBtn=document.createElement('button'); yesBtn.type='button'; yesBtn.className='btn btn-confirm'; yesBtn.textContent='Apply';
+                const noBtn=document.createElement('button'); noBtn.type='button'; noBtn.className='cancel-btn'; noBtn.textContent='Discard';
+                const yesBtn=document.createElement('button'); yesBtn.type='button'; yesBtn.className='green-btn'; yesBtn.textContent='Apply';
 
                 btns.append(noBtn, yesBtn); box.append(icon, text, btns); overlay.append(box); content.append(overlay);
 
@@ -638,7 +616,8 @@ if (is_file($avatarFs)) {
             document.getElementById('manage-address-btn')?.addEventListener('click', ()=>openModal('addressModal'));
             document.getElementById('provide-feedback')?.addEventListener('click', (e)=>{ e.preventDefault(); openModal('feedbackModal'); });
 
-            document.querySelectorAll('.close-modal, .btn-cancel').forEach(btn=>{
+            // Cancel buttons close the host modal
+            document.querySelectorAll('.cancel-btn').forEach(btn=>{
                 btn.addEventListener('click', function(){
                     const modal=this.closest('.modal');
                     if (modal) {
@@ -647,9 +626,11 @@ if (is_file($avatarFs)) {
                     }
                 });
             });
+
+            // Close when clicking outside modal
             window.addEventListener('click', (e)=>{ if (e.target.classList.contains('modal')) closeModal(e.target.id); });
 
-            // Password form -> inline confirm -> POST -> on success HARD redirect to Logout.php
+            // Password form -> confirm -> POST -> redirect
             const pwForm=document.getElementById('passwordForm');
             pwForm?.addEventListener('submit', async function(e){
                 e.preventDefault();
@@ -675,7 +656,7 @@ if (is_file($avatarFs)) {
                 .catch(err=>alert('An error occurred while updating your password. ' + (err?.message||'')));
             });
 
-            // Personal info
+            // Personal info -> confirm -> POST -> update UI
             const piForm=document.getElementById('personalInfoForm');
             piForm?.addEventListener('submit', async function(e){
                 e.preventDefault();
