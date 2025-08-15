@@ -88,4 +88,18 @@ function submitUserVote($conn, $userId, $pollId, $votes) {
     $stmt->close();
     return ['success' => true];
 }
+
+// Get all candidates for a particular poll_id
+function getCandidatesByPoll($conn, $pollId) {
+    $stmt = $conn->prepare("SELECT candidate_id, candidate_name, party FROM candidates WHERE poll_id = ?");
+    $stmt->bind_param("i", $pollId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $candidates = [];
+    while ($row = $result->fetch_assoc()) {
+        $candidates[] = $row;
+    }
+    $stmt->close();
+    return $candidates;
+}
 ?>
