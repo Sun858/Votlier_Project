@@ -7,8 +7,20 @@ require_once '../includes/admin_logs.sn.php';
 $filterEventType = $_GET['event_type'] ?? '';
 $filterAdminId = $_GET['admin_id'] ?? '';
 
+// --- CODE FOR PAGINATION ---
+// 1. Define pagination variables
+$limit = 5; // Number of logs per page
+$currentPage = $_GET['page'] ?? 1;
+// 2. Get the total number of logs
+$totalLogs = getTotalAdminAuditLogsCount($conn, $filterEventType, $filterAdminId);
+// 3. Calculate the total number of pages
+$totalPages = ceil($totalLogs / $limit);
+// 4. Calculate the offset for the SQL query
+$offset = ($currentPage - 1) * $limit;
+// --- END OF PAGINATION CODE ---
+
 // Fetch logs (encrypted names & IV)
-$auditLogs = getAdminAuditLogs($conn, $filterEventType, $filterAdminId);
+$auditLogs = getAdminAuditLogs($conn, $filterEventType, $filterAdminId, $limit, $offset);
 
 // Fetch event types
 $eventTypes = getAuditLogEventTypes($conn);
@@ -26,7 +38,6 @@ foreach ($adminsRaw as $admin) {
 foreach ($auditLogs as &$log) {
     $log['display_name'] = decryptAdminNameForLog($log['first_name'], $log['last_name'], $log['admin_iv']);
 }
-// Pass $auditLogs, $eventTypes, $admins, $filterEventType, $filterAdminId to view:
 ?>
 
 <div class="admin-section">
@@ -78,10 +89,25 @@ foreach ($auditLogs as &$log) {
             </tbody>
         </table>
     </div>
+
+    <?php if ($totalPages > 1): ?>
+        <div class="pagination-buttons">
+            <?php if ($currentPage > 1): ?>
+                <a href="?page=<?= $currentPage - 1; ?>&event_type=<?= urlencode($filterEventType) ?>&admin_id=<?= urlencode($filterAdminId) ?>" class="pagination-btn prev-btn">Previous</a>
+            <?php endif; ?>
+
+            <span class="pagination-info">Page <?= $currentPage; ?> of <?= $totalPages; ?></span>
+
+            <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?= $currentPage + 1; ?>&event_type=<?= urlencode($filterEventType) ?>&admin_id=<?= urlencode($filterAdminId) ?>" class="pagination-btn next-btn">Next</a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
 </div>
 
 <style>
-
+/* Your existing styles are here. The new styles for pagination are added below. */
 .styled-select {
     width: 20%;
     padding: 12px;
@@ -152,5 +178,43 @@ foreach ($auditLogs as &$log) {
         font-size: 0.91rem;
         min-width: 650px;
     }
+}
+/*  CSS for pagination */
+.pagination-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+/* Style for the 'Previous' button */
+.pagination-btn.prev-btn {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Style for the 'Next' button */
+.pagination-btn.next-btn {
+    background-color: #8b5cf6;
+    color: white;
+}
+
+/* Page info text */
+.pagination-info {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
 }
 </style>

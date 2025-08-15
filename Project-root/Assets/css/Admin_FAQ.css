@@ -32,7 +32,9 @@
     color: #666;
 }
 
-.span{text-align: center;}
+.span {
+    text-align: center;
+}
 
 
 .admin-faq-container {
@@ -68,11 +70,13 @@
     outline: none;
     border-color: #4f46e5;
 }
+
 .form-group textarea {
     min-height: 200px;
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
 }
+
 .form-actions {
     display: flex;
     gap: 1rem;
@@ -146,7 +150,8 @@ thead {
     text-align: left;
 }
 
-th, td {
+th,
+td {
     padding: 1rem;
     border-bottom: 1px solid #ddd;
 }
@@ -188,4 +193,45 @@ tbody tr:hover {
     justify-content: center;
     gap: 1rem;
     margin-top: 20px;
+}
+
+/* CSS for the Pagination Buttons */
+/* Container for the buttons and page info */
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Style for the pagination buttons */
+.pagination-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+/* Style for the 'Previous' button */
+.pagination-btn.prev-btn {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Style for the 'Next' button */
+.pagination-btn.next-btn {
+    background-color: #8b5cf6;
+    color: white;
+}
+
+/* Page info text */
+.pagination-info {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
 }
