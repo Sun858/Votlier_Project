@@ -3,8 +3,8 @@ session_start();
 // This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/security.sn.php';
 require_once '../DatabaseConnection/config.php';
-require_once '../includes/election_stats.php';
-checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
+require_once '../includes/election_stats.php'; // This is where we'll modify the function
+checkSessionTimeout();
 
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
@@ -16,12 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once '../includes/faq_handler.php';
 }
 
+// ---  CODE FOR PAGINATION ---
+// 1. Define pagination variables
+$items_per_page = 5; // Number of FAQs per page
+$current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+// 2. Get the total number of FAQs
+$total_faqs_count = getTotalFAQsCount($conn); 
+// 3. Calculate the total number of pages
+$total_pages = ceil($total_faqs_count / $items_per_page);
+// 4. Calculate the offset for the SQL query
+$offset = ($current_page - 1) * $items_per_page;
+// --- END OF PAGINATION CODE ---
+
+
 // Fetch all FAQs from the database to display in the table
-//This function is written in the includes/election_stats.php file
-$faqs = getAllFAQs($conn);
+$faqs = getAllFAQs($conn, $items_per_page, $offset);
 
 $conn->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -142,6 +153,21 @@ $conn->close();
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination-buttons">
+                    <?php if ($current_page > 1): ?>
+                        <a href="?page=<?php echo $current_page - 1; ?>" class="pagination-btn prev-btn">Previous</a>
+                    <?php endif; ?>
+
+                    <span class="pagination-info">Page <?php echo $current_page; ?> of <?php echo $total_pages; ?></span>
+
+                    <?php if ($current_page < $total_pages): ?>
+                        <a href="?page=<?php echo $current_page + 1; ?>" class="pagination-btn next-btn">Next</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </section>
     </main>
 
