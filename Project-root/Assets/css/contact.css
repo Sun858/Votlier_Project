@@ -4,16 +4,16 @@
 
 .top-section h1 {
   text-align: center;
-  font-size: 2.5rem; 
-  font-weight: 700; 
+  font-size: 2.5rem;
+  font-weight: 700;
   letter-spacing: 0.8px;
-  margin: 0 0 1rem 0; 
-  color: #2a2a2a; 
+  margin: 0 0 1rem 0;
+  color: #2a2a2a;
   font-family: 'ADLaM Display', 'Poppins', sans-serif;
   line-height: 1.2;
-  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-  display: inline-block; 
+  display: inline-block;
 }
 
 /* Optional decorative underline effect */
@@ -29,13 +29,13 @@
 
 .top-section p {
   font-size: 1.25rem;
-  color: #4a4a4a; 
+  color: #4a4a4a;
   margin: 0 0 2rem 0;
   text-align: center;
-  font-weight: 500; 
-  font-family: 'Inter', sans-serif; 
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
-  max-width: 700px; 
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 1rem;
@@ -161,4 +161,43 @@ textarea:focus {
 
 .contact-form button:hover {
   transform: scale(1.05);
+}
+
+/* Basic spinner styling */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #007bff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Basic styling for the status message */
+#status-message {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  display: none;
+  /* Hidden by default */
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }

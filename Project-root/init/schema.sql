@@ -159,3 +159,34 @@ INSERT INTO `administration` (
   0x667e14898b4a35b0698d272fead0cace,
   '2025-06-17 12:17:17'
 );
+
+/* Two-table schema for a documentation system. The 'documents' table stores the content, and the 'categories' table
+ provides a way to organize the documents.*/
+
+--  'Categories' Table --
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--  'documents' table.
+CREATE TABLE documents (
+    document_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content LONGTEXT,
+    category_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- Define the foreign key constraint to link documents to categories.
+    -- If a category is deleted, all documents in that category will also be deleted.
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+);
+
+/*  Optional: Created some initial categories to get started. so that the documentation system has some structure.
+    These categories can be used to organize documents effectively. */
+INSERT INTO categories (category_name) VALUES ('Getting Started');
+INSERT INTO categories (category_name) VALUES ('API Reference');
+INSERT INTO categories (category_name) VALUES ('User Guides');
+INSERT INTO categories (category_name) VALUES ('Troubleshooting');

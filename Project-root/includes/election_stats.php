@@ -153,12 +153,28 @@ function getOngoingElectionsCount($conn) {
     }
     return 0; // Return 0 on failure or no ongoing elections
 }
-// This function retrieves all FAQs from the database
-// This function is for the FAQ management in the admin settings page.
-function getAllFAQs($conn) {
-    $faqs = [];
-    $sql = "SELECT faq_id, question, answer, date_created FROM faqs ORDER BY date_created DESC";
+
+// --- FUNCTION FOR PAGINATION ---
+// This function counts the total number of FAQs in the database.
+function getTotalFAQsCount($conn) {
+    $sql = "SELECT COUNT(*) FROM faqs";
     $result = $conn->query($sql);
+    if ($result) {
+        return $result->fetch_row()[0]; // We use fetch_row()[0] to get the single number from the count query
+    }
+    return 0;                           // Return 0 on error or no FAQs found
+}
+
+// This function retrieves a specific number of FAQs for a pagination.
+function getAllFAQs($conn, $limit, $offset) {
+    $faqs = [];
+    // The LIMIT clause with a prepared statement protects against SQL injection
+    $sql = "SELECT faq_id, question, answer, date_created FROM faqs ORDER BY date_created DESC LIMIT ?, ?";
+    $stmt = $conn->prepare($sql);
+    // 'ii' means we are binding two integer variables
+    $stmt->bind_param("ii", $offset, $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -168,6 +184,7 @@ function getAllFAQs($conn) {
     
     return $faqs;
 }
+
 
 ?>
 

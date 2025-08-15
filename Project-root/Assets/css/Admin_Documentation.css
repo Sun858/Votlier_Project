@@ -36,15 +36,17 @@
     text-align: center;
 }
 
-
-.admin-faq-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* --- Documentation Manager Styles --- */
+.main-content {
+    padding: 20px;
 }
 
-/* FAQ Form Styles */
+.documentation-manager {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 .form-group {
     margin-bottom: 1rem;
@@ -57,7 +59,8 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #ccc;
@@ -71,13 +74,14 @@
     border-color: #4f46e5;
 }
 
+
 .form-group textarea {
     min-height: 200px;
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
 }
 
-.form-actions {
+.action-buttons {
     display: flex;
     gap: 1rem;
 }
@@ -99,6 +103,14 @@
     background-color: #4338ca;
 }
 
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+}
+
 .btn-secondary {
     background-color: #6b7280;
 }
@@ -107,30 +119,17 @@
     background-color: #4b5563;
 }
 
-.btn-edit {
-    background-color: #2563eb;
-    padding: 0.5rem 1rem;
+.btn:hover {
+    opacity: 0.9;
 }
 
-.btn-edit:hover {
-    background-color: #1d4ed8;
+/* Documentation Table Styles */
+.table-container {
+    margin-top: 2rem;
+    overflow-x: auto;
 }
 
-.btn-delete {
-    background-color: #dc3545;
-    padding: 0.5rem 1rem;
-}
-
-.btn-delete:hover {
-    background-color: #b91c1c;
-}
-
-/* FAQ List Table Styles */
-.faq-list {
-    margin-top: 2rem 0;
-}
-
-.faq-list h3 {
+.table-container h3 {
     font-size: 1.5rem;
     color: #111827;
     margin-bottom: 1rem;
@@ -145,7 +144,7 @@ table {
 }
 
 thead {
-    background-color: rgb(108, 186, 69);
+    background-color: #d1d5db;
     color: white;
     text-align: left;
 }
@@ -153,14 +152,32 @@ thead {
 th,
 td {
     padding: 1rem;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background-color:  rgb(108, 186, 69);
 }
 
 tbody tr:hover {
     background-color: #a495c7;
 }
 
+.alert-message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
 
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
 
 /* Styles for the confirmation modal */
 .modal {
@@ -193,45 +210,4 @@ tbody tr:hover {
     justify-content: center;
     gap: 1rem;
     margin-top: 20px;
-}
-
-/* CSS for the Pagination Buttons */
-/* Container for the buttons and page info */
-.pagination-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-/* Style for the pagination buttons */
-.pagination-btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.85rem;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s ease;
-}
-
-/* Style for the 'Previous' button */
-.pagination-btn.prev-btn {
-    background-color: #e5e7eb;
-    color: #6b7280;
-}
-
-/* Style for the 'Next' button */
-.pagination-btn.next-btn {
-    background-color: #8b5cf6;
-    color: white;
-}
-
-/* Page info text */
-.pagination-info {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #4b5563;
 }

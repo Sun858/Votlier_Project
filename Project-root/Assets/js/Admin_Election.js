@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSortDirection = 'asc'; // Default sort direction
 
     // Pagination elements
+    //Note: client-side pagination. This means browser loads all the data at once,
+    // and the JavaScript then shows and hides the rows for each page.
     const prevPageBtn = document.getElementById('prevPageBtn');
     const nextPageBtn = document.getElementById('nextPageBtn');
     const currentPageSpan = document.getElementById('currentPage');

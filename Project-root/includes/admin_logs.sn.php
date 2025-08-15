@@ -1,7 +1,8 @@
 <?php
-// Fetches admin audit logs, optionally filtered by event_type or admin_id.
+// Fetches admin audit logs with pagination, optionally filtered by event_type or admin_id.
 // Now fetches encrypted names & IV for later decryption
-function getAdminAuditLogs($conn, $filterEventType = '', $filterAdminId = '') {
+// Added a limit and offset for pagination.
+function getAdminAuditLogs($conn, $filterEventType = '', $filterAdminId = '', $limit = null, $offset = 0) {
     $sql = "SELECT l.log_id, l.admin_id, a.first_name, a.last_name, a.iv as admin_iv, l.event_type, l.details, l.event_time, l.ip_address
             FROM admin_audit_logs l
             JOIN administration a ON l.admin_id = a.admin_id
@@ -21,6 +22,14 @@ function getAdminAuditLogs($conn, $filterEventType = '', $filterAdminId = '') {
     }
     $sql .= " ORDER BY l.event_time DESC";
 
+    // Add LIMIT and OFFSET for pagination
+    if ($limit !== null) {
+        $sql .= " LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= 'ii';
+    }
+
     $stmt = $conn->prepare($sql);
     if ($types) {
         $stmt->bind_param($types, ...$params);
@@ -30,6 +39,35 @@ function getAdminAuditLogs($conn, $filterEventType = '', $filterAdminId = '') {
     $logs = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
     return $logs;
+}
+
+// Counts total admin audit logs, optionally filtered.
+// Added for pagination in compare to previously saved code.
+function getTotalAdminAuditLogsCount($conn, $filterEventType = '', $filterAdminId = '') {
+    $sql = "SELECT COUNT(*) FROM admin_audit_logs l WHERE 1";
+    $params = [];
+    $types = '';
+
+    if ($filterEventType) {
+        $sql .= " AND l.event_type = ?";
+        $params[] = $filterEventType;
+        $types .= 's';
+    }
+    if ($filterAdminId) {
+        $sql .= " AND l.admin_id = ?";
+        $params[] = $filterAdminId;
+        $types .= 'i';
+    }
+
+    $stmt = $conn->prepare($sql);
+    if ($types) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $count = $result->fetch_row()[0];
+    $stmt->close();
+    return $count;
 }
 
 // Get all unique event types for filter dropdown.

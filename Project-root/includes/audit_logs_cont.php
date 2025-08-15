@@ -7,8 +7,20 @@ require_once '../includes/admin_logs.sn.php';
 $filterEventType = $_GET['event_type'] ?? '';
 $filterAdminId = $_GET['admin_id'] ?? '';
 
+// --- CODE FOR PAGINATION ---
+// 1. Define pagination variables
+$limit = 5; // Number of logs per page
+$currentPage = $_GET['page'] ?? 1;
+// 2. Get the total number of logs
+$totalLogs = getTotalAdminAuditLogsCount($conn, $filterEventType, $filterAdminId);
+// 3. Calculate the total number of pages
+$totalPages = ceil($totalLogs / $limit);
+// 4. Calculate the offset for the SQL query
+$offset = ($currentPage - 1) * $limit;
+// --- END OF PAGINATION CODE ---
+
 // Fetch logs (encrypted names & IV)
-$auditLogs = getAdminAuditLogs($conn, $filterEventType, $filterAdminId);
+$auditLogs = getAdminAuditLogs($conn, $filterEventType, $filterAdminId, $limit, $offset);
 
 // Fetch event types
 $eventTypes = getAuditLogEventTypes($conn);
@@ -26,13 +38,12 @@ foreach ($adminsRaw as $admin) {
 foreach ($auditLogs as &$log) {
     $log['display_name'] = decryptAdminNameForLog($log['first_name'], $log['last_name'], $log['admin_iv']);
 }
-// Pass $auditLogs, $eventTypes, $admins, $filterEventType, $filterAdminId to view:
 ?>
 
 <div class="admin-section">
     <h2>Admin Audit Logs</h2>
     <form method="get" style="margin-bottom: 18px;">
-        <select name="event_type">
+        <select name="event_type" class="styled-select">
             <option value="">All Event Types</option>
             <?php foreach ($eventTypes as $type): ?>
                 <option value="<?= htmlspecialchars($type['event_type']) ?>" <?= ($filterEventType === $type['event_type']) ? 'selected' : '' ?>>
@@ -40,7 +51,7 @@ foreach ($auditLogs as &$log) {
                 </option>
             <?php endforeach; ?>
         </select>
-        <select name="admin_id">
+        <select name="admin_id" class="styled-select">
             <option value="">All Admins</option>
             <?php foreach ($admins as $admin): ?>
                 <option value="<?= $admin['admin_id'] ?>" <?= ($filterAdminId == $admin['admin_id']) ? 'selected' : '' ?>>
@@ -48,7 +59,7 @@ foreach ($auditLogs as &$log) {
                 </option>
             <?php endforeach; ?>
         </select>
-        <button type="submit">Filter</button>
+        <button type="submit" class="btn-filter">Filter</button>
     </form>
     <div class="table-scroll-container">
         <table class="styled-table log-table">
@@ -78,9 +89,56 @@ foreach ($auditLogs as &$log) {
             </tbody>
         </table>
     </div>
+
+    <?php if ($totalPages > 1): ?>
+        <div class="pagination-buttons">
+            <?php if ($currentPage > 1): ?>
+                <a href="?page=<?= $currentPage - 1; ?>&event_type=<?= urlencode($filterEventType) ?>&admin_id=<?= urlencode($filterAdminId) ?>" class="pagination-btn prev-btn">Previous</a>
+            <?php endif; ?>
+
+            <span class="pagination-info">Page <?= $currentPage; ?> of <?= $totalPages; ?></span>
+
+            <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?= $currentPage + 1; ?>&event_type=<?= urlencode($filterEventType) ?>&admin_id=<?= urlencode($filterAdminId) ?>" class="pagination-btn next-btn">Next</a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
 </div>
 
 <style>
+/* Your existing styles are here. The new styles for pagination are added below. */
+.styled-select {
+    width: 20%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    font-size: 1rem;
+    transition: border-color 0.3s ease-in-out;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.styled-select:focus {
+    border-color: #5542ab;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(85, 66, 171, 0.1);
+}
+
+.btn-filter { 
+    background: #4CAF50; 
+    color: #fff; 
+    border: none; 
+    padding: 8px 18px; 
+    border-radius: 4px; 
+    margin-left: 10px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 
+    background 0.2s;
+}
+
 .table-scroll-container {
     max-height: 420px;
     overflow-y: auto;
@@ -113,12 +171,50 @@ foreach ($auditLogs as &$log) {
     background-color: #ececec;
 }
 .styled-table.log-table tbody tr:hover {
-    background: #e0fadf;
+    background-color: #a495c7; /* Highlight color for hovered rows */
 }
 @media (max-width: 1000px) {
     .styled-table.log-table {
         font-size: 0.91rem;
         min-width: 650px;
     }
+}
+/*  CSS for pagination */
+.pagination-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+/* Style for the 'Previous' button */
+.pagination-btn.prev-btn {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+/* Style for the 'Next' button */
+.pagination-btn.next-btn {
+    background-color: #8b5cf6;
+    color: white;
+}
+
+/* Page info text */
+.pagination-info {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
 }
 </style>
