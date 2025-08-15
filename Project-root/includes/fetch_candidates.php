@@ -1,7 +1,7 @@
 <?php
 // This file fetches candidates for a specific election poll.
 require_once '../DatabaseConnection/config.php';
-require_once 'election.sn.php';
+require_once 'admin_election.sn.php';
 
 header('Content-Type: application/json');
 

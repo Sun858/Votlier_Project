@@ -2,7 +2,7 @@
 session_start();
 require_once '../DatabaseConnection/config.php';
 require_once '../includes/security.sn.php';
-require_once '../includes/election.sn.php';
+require_once '../includes/admin_election.sn.php';
 require_once '../includes/vote.sn.php';
 checkSessionTimeout();
 

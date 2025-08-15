@@ -4,7 +4,7 @@
 
 session_start();
 require_once '../DatabaseConnection/config.php';
-require_once 'election.sn.php';
+require_once 'admin_election.sn.php';
 require_once 'security.sn.php';
 
 checkSessionTimeout();
