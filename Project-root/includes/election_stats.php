@@ -165,7 +165,7 @@ function getTotalFAQsCount($conn) {
     return 0;                           // Return 0 on error or no FAQs found
 }
 
-// This function retrieves a specific number of FAQs for a page.
+// This function retrieves a specific number of FAQs for a pagination.
 function getAllFAQs($conn, $limit, $offset) {
     $faqs = [];
     // The LIMIT clause with a prepared statement protects against SQL injection

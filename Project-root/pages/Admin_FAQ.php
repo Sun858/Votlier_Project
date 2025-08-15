@@ -18,15 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ---  CODE FOR PAGINATION ---
 // 1. Define pagination variables
-$items_per_page = 5;
+$items_per_page = 5; // Number of FAQs per page
 $current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-
 // 2. Get the total number of FAQs
 $total_faqs_count = getTotalFAQsCount($conn); 
-
 // 3. Calculate the total number of pages
 $total_pages = ceil($total_faqs_count / $items_per_page);
-
 // 4. Calculate the offset for the SQL query
 $offset = ($current_page - 1) * $items_per_page;
 // --- END OF PAGINATION CODE ---
