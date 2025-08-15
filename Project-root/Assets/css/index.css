@@ -1,1 +1,204 @@
+/* Keep your footer/base theme */
 @import url('base.css');
+
+:root{
+  --page-bg: #ecf9f1;            /* page background (light green) */
+  --faint-green: #eefaf1;        /* card/hero tint */
+  --ink: #0f172a;
+  --muted: #334155;
+  --accent: #1aa857;
+}
+
+/* ------- Page background: light green ------- */
+body{
+  margin:0;
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background-color:var(--page-bg) !important;  /* override any base.css white */
+}
+
+/* ------- Header ------- */
+.site-header{
+  position:relative;
+  background:linear-gradient(135deg,#2cc36b,#1aa857);
+  color:#fff;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:0 0 28px 28px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+.site-header h1{
+  margin:0;
+  letter-spacing:2px;
+  font-weight:800;
+  font-size:24px;
+}
+
+/* ------- Secure pill bar (message + pill buttons) ------- */
+.secure-bar{
+  max-width:1080px;
+  margin:16px auto 0;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  background:rgba(24,119,68,0.08);
+  border:1px solid rgba(24,119,68,0.25);
+  color:#0b3d2b;
+  padding:12px 18px;
+  border-radius:999px;
+  box-shadow:0 12px 28px rgba(0,0,0,0.12);
+}
+.secure-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1;
+  padding-left:6px;
+}
+.secure-left i{ color:#15803d; }
+
+.secure-right{
+  display:flex;
+  gap:12px;
+}
+.pill-link{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(21,128,61,0.12);
+  color:#0b3d2b;
+  text-decoration:none;
+  font-weight:700;
+  border:1px solid rgba(21,128,61,0.25);
+}
+.pill-link:hover{ filter:brightness(1.05); }
+
+/* ------- Hero (also uses faint green so nothing looks white) ------- */
+.hero{
+  max-width:960px;
+  margin:26px auto 10px;
+  text-align:center;
+  padding:22px 16px;
+  background-color:var(--faint-green); /* <- added so it’s light green too */
+  background-image: radial-gradient(1200px 400px at 50% -20%, rgba(16,185,129,0.08), transparent);
+  border-radius:16px;
+}
+.hero h2{
+  font-size:clamp(36px,6vw,64px);
+  line-height:1.06;
+  margin:10px 0 14px;
+  font-weight:800;
+}
+.subhead{
+  font-size:18px;
+  color:var(--muted);
+}
+.cta-row{
+  margin-top:24px;
+  display:flex;
+  justify-content:center;
+}
+.btn{
+  display:inline-block;
+  padding:14px 22px;
+  border-radius:12px;
+  font-weight:800;
+  text-decoration:none;
+  transition:transform .08s ease, box-shadow .2s ease, background .2s ease, filter .2s ease;
+}
+.btn:active{ transform:translateY(1px); }
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(26,168,87,.25);
+}
+.btn-primary:hover{ filter:brightness(1.05); }
+
+/* ------- Info grid ------- */
+.info-grid{
+  max-width:1080px;
+  margin:30px auto 0;
+  padding:0 16px 28px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:32px;
+}
+.info-grid h3{
+  font-size:28px;
+  margin:0 0 16px;
+  font-weight:800;
+}
+
+/* Cards (faint green background to avoid white) */
+.card{
+  background:var(--faint-green);
+  border:2px solid rgba(2,104,54,0.18);
+  border-radius:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,0.06);
+  padding:22px;
+}
+
+/* Steps */
+.steps{
+  display:grid;
+  grid-template-columns:1fr 40px 1fr 40px 1fr;
+  align-items:center;
+}
+.step{
+  display:grid;
+  place-items:center;
+  gap:8px;
+  padding:10px 8px;
+  text-align:center;
+}
+.step-icon{
+  width:52px; height:52px;
+  border-radius:12px;
+  display:grid; place-items:center;
+  background:rgba(26,168,87,0.12);
+  color:#15803d;
+  font-size:22px;
+}
+.step-title{ font-weight:800; }
+.step-desc{
+  font-size:13px;
+  color:#64748b;
+  max-width:220px;
+}
+.arrow{
+  text-align:center;
+  color:#64748b;
+  font-size:28px;
+}
+
+/* Trust list — ticks on the RIGHT */
+.trust-list{ list-style:none; padding:0; margin:0; }
+.trust-list li{
+  margin:16px 0;
+  position:relative;
+  padding-right:28px;
+  font-weight:600;
+  color:#1f2937;
+}
+.trust-list li::after{
+  content:"\f00c";
+  font-family:"Font Awesome 6 Free";
+  font-weight:900;
+  color:#15803d;
+  position:absolute;
+  right:0; top:50%;
+  transform:translateY(-50%);
+}
+
+/* Footer spacing */
+footer{ margin-top:34px; }
+
+/* ------- Responsive ------- */
+@media (max-width:960px){
+  .info-grid{ grid-template-columns:1fr; }
+  .steps{ grid-template-columns:1fr 32px 1fr 32px 1fr; }
+}
