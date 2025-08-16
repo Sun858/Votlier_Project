@@ -1,5 +1,13 @@
 <?php
 require_once '../controllers/admin_profile-cont.php'; // Controller sets $admin, $lastLogin, etc.
+require_once '../includes/security.sn.php'; //Security Functions
+
+// Check session timeout and admin login
+checkSessionTimeout();
+if (!isset($_SESSION["admin_id"])) {
+    header("location: ../pages/login.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

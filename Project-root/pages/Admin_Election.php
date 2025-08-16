@@ -11,6 +11,7 @@ error_reporting(E_ALL);
 require_once '../includes/admin_election.sn.php';
 require_once '../DatabaseConnection/config.php'; // New line to include the config file
 require_once '../includes/security.sn.php';
+checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
 // Check session timeout and admin login
 if (!isset($_SESSION["admin_id"])) {
