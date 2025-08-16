@@ -82,7 +82,42 @@ require_once '../controllers/admin_profile-cont.php'; // Controller sets $admin,
             </table>
         </section>
 
-        <!-- Add election overview section here if required as in your old layout -->
+        <section class="election-overview" aria-label="Election Overview">
+        <div class="section-title">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>Election Overview</span>
+        </div>
+        <?php if (count($elections) > 0): ?>
+            <ul class="election-list">
+                <li><strong>Total Elections:</strong> <?= count($elections) ?></li>
+                <?php
+                $now = new DateTime();
+                foreach ($elections as $election):
+                    $start = $election['start_datetime'] ? new DateTime($election['start_datetime']) : null;
+                    $timeUntilStart = 'Schedule TBA';
+                    if ($start) {
+                        $interval = $now->diff($start);
+                        $timeUntilStart = ($start > $now) ? $interval->format('%a days, %h hours') : 'Already started';
+                    }
+                ?>
+                <li>
+                    <strong><?= htmlspecialchars($election['election_name']) ?></strong>
+                    <span class="start-info">Starts in: <?= htmlspecialchars($timeUntilStart) ?></span>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+            <div class="election-actions">
+                <div class="action-buttons">
+                    <button class="green-btn" onclick="window.location.href='../pages/Admin_Election.php'">Election Details</button>
+                </div>
+            </div>
+        <?php else: ?>
+            <p>No elections found.</p>
+            <div class="action-buttons">
+                <button class="green-btn" onclick="window.location.href='../pages/Admin_Election.php'">Election Details</button>
+            </div>
+        <?php endif; ?>
+    </section>
 
     </main>
 
