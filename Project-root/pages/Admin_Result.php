@@ -125,7 +125,7 @@ $topCandidates = (!empty($results)) ? calculateTopCandidatesAdmin($results, 3) :
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/logout.php" class="footer-link signout-link">
+            <a href="../controllers/logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>
@@ -140,7 +140,7 @@ $topCandidates = (!empty($results)) ? calculateTopCandidatesAdmin($results, 3) :
 
         <h2>Election Results</h2>
 
-        <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
+        <form action="../controllers/submit_tally.php" method="POST" style="margin-bottom: 20px;">
             <label for="poll_id" class="Title">
                 Select Election:
             </label>

@@ -110,7 +110,7 @@ if ($selectedPollId) {
 
             <!-- Voting Form: Only show if a poll is selected and candidates exist -->
             <?php if ($selectedPollId && count($candidates) > 0): ?>
-                <form action="../includes/submit_vote.php" method="POST" class="voting-form">
+                <form action="../controllers/submit_vote.php" method="POST" class="voting-form">
                     <input type="hidden" name="poll_id" value="<?php echo htmlspecialchars($selectedPollId); ?>">
                     <div class="preferences-container">
                         <?php 

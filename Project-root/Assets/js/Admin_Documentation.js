@@ -1,7 +1,7 @@
 // NOTE: The PHP session check and includes at the top are assumed to be handled correctly on the server side.
 // This JavaScript focuses on the client-side logic.
 
-const API_URL = '../includes/api.php'
+const API_URL = '../controllers/api.php'
 const docForm = document.getElementById('doc-form')
 const docIdInput = document.getElementById('doc-id')
 const docTitleInput = document.getElementById('doc-title')

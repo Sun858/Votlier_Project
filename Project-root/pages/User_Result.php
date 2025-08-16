@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once '../includes/security.sn.php';
-require_once '../includes/view_results_user.php';
+require_once '../controllers/view_results_user.php';
 checkSessionTimeout();
 
 if (!isset($_SESSION["user_id"])) {
