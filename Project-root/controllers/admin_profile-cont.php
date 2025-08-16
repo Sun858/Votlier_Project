@@ -11,7 +11,7 @@ if (!isset($_SESSION["admin_id"])) {
     exit();
 }
 $adminId = (int)$_SESSION["admin_id"];
-$admin = getAdminProfile($conn, $adminId);
+$admin = getProfile($conn, $adminId);
 if (!$admin) die("Admin not found");
 $lastLogin = getLastAdminLogin($conn);
 

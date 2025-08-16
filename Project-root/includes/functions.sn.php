@@ -308,3 +308,27 @@ function loginAdmin($conn, $email, $password) {
     header("location: ../pages/Admin_Home.php");
     exit();
 }
+
+
+
+// Adding universal encryption for other files in project
+function dec_cbc(?string $ciphertext, string $iv): string {
+    if ($ciphertext === null || $ciphertext === '') return '';
+    if (!defined('TRUE_MASTER_EMAIL_ENCRYPTION_KEY')) {
+        error_log('Decryption key not defined!');
+        return '';
+    }
+    $key = TRUE_MASTER_EMAIL_ENCRYPTION_KEY;
+    $plain = openssl_decrypt($ciphertext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+    return ($plain === false) ? '' : $plain;
+}
+
+function enc_cbc(string $plaintext, string $iv): string {
+    if (!defined('TRUE_MASTER_EMAIL_ENCRYPTION_KEY')) {
+        throw new RuntimeException('Encryption key not defined.');
+    }
+    $key = TRUE_MASTER_EMAIL_ENCRYPTION_KEY;
+    $ct = openssl_encrypt($plaintext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+    if ($ct === false) throw new RuntimeException('Encryption failed');
+    return $ct;
+}

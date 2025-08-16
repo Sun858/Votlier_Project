@@ -11,7 +11,7 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 $userId = (int)$_SESSION["user_id"];
-$user = getUserProfile($conn, $userId);
+$user = getProfile($conn, $userId);
 if (!$user) die("User not found");
 $user['elections'] = getUserElectionsOverview($conn, $userId);
 $lastLogin = getLastUserLogin($conn);
