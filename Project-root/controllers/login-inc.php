@@ -4,8 +4,8 @@
 session_start();
 
 require_once '../DatabaseConnection/config.php';
-require_once 'security.sn.php';
-require_once 'functions.sn.php';
+require_once '../includes/security.sn.php';
+require_once '../includes/functions.sn.php';
 
 
 $ip = $_SERVER['REMOTE_ADDR'];
