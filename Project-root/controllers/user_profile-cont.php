@@ -22,20 +22,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
     try {
         switch ($_POST['action']) {
             case 'update_profile':
-                updateUserProfile(
+                $dob = trim($_POST['date_of_birth']);
+                if ($dob === '') $dob = null;
+                updateProfile(
                     $conn,
                     $userId,
                     trim($_POST['first_name']),
                     trim($_POST['last_name']),
                     trim($_POST['email']),
-                    trim($_POST['date_of_birth'])
+                    $dob,      // <-- Now uses null if blank
+                    'user'
                 );
                 echo json_encode(['success' => true]);
                 exit;
-            case 'update_address':
-                updateUserAddress($conn, $userId, trim($_POST['address']));
-                echo json_encode(['success' => true]);
-                exit;
+                break; // <-- Optional, since you exit, but keeps it tidy
+            // (other cases here)
         }
     } catch (Throwable $e) {
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);

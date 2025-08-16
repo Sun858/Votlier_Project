@@ -1,5 +1,5 @@
 <?php
-require_once '../includes/user_profile-cont.php'; // Controller sets $user, $lastLogin, etc.
+require_once '../controllers/user_profile-cont.php'; // Controller sets $user, $lastLogin, etc.
 $avatarFs = '../Assets/img/avatar.jpg';
 $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime($avatarFs) ?: time()) : 'https://www.svgrepo.com/show/510930/user-circle.svg';
 ?>
