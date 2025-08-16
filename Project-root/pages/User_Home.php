@@ -61,7 +61,7 @@ if (!isset($_SESSION["user_id"])) {
     <main class="main-content">
         <header class="main-header">
             <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <p>Explore your data and manage your account efficiently</p>
         </header>
 
     </main>

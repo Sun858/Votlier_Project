@@ -81,8 +81,8 @@ $elections = $pageState['elections'];
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Welcome to Results & Tally Page</h1>
+            <p>View and tally votes with precision.</p>
         </header>
 
         <h2>Election Results</h2>

@@ -61,7 +61,7 @@ if (!isset($_SESSION["user_id"])) {
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Election Results</h1>
+            <h1>Welcome to Election Results</h1>
             <p>Select an election to view results.</p>
         </header>
 

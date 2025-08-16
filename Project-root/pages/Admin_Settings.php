@@ -68,8 +68,8 @@ if (!isset($_SESSION["admin_id"])) {
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Welcome to Admin Settings Page</h1>
+            <p>Oversee platform settings and ensure secure system operations.</p>
         </header>
 
         <?php include '../includes/audit_logs_cont.php'; ?>
