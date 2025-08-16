@@ -1,6 +1,14 @@
 <?php
 // admin_election.sn.php, This page contains all the functions for Admin_Election.php and related AJAX operations.
 
+// This is a function to help adjust time formats to Melbourne Time AEST.
+function normalizeDatetimeLocal($datetimeLocal) {
+    $dt = str_replace('T', ' ', $datetimeLocal);
+    if (strlen($dt) === 16) $dt .= ':00';
+    return $dt;
+}
+
+
 // Function to send JSON response and exit
 function sendJsonResponse($success, $message, $data = [])
 {
@@ -56,39 +64,56 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
     $start_datetime_str = trim($election['start_datetime'] ?? '');
     $end_datetime_str = trim($election['end_datetime'] ?? '');
 
+    $start_datetime_str = normalizeDatetimeLocal($start_datetime_str);
+    if (!empty($end_datetime_str)) {
+        $end_datetime_str = normalizeDatetimeLocal($end_datetime_str);
+    }
+
     if (empty($election_name) || empty($election_type) || empty($start_datetime_str)) {
         sendJsonResponse(false, 'Election name, type, and start date are required.');
     }
+    try {
+        $start_dt = new DateTime($start_datetime_str, new DateTimeZone('Australia/Melbourne'));
+        $start_dt->setTimezone(new DateTimeZone('UTC'));
+        $start_datetime_utc = $start_dt->format('Y-m-d H:i:s');
+    } catch (Exception $e) {
+        sendJsonResponse(false, 'Invalid start date format.');
+    }
 
-    $start_datetime = new DateTime($start_datetime_str);
-    if (!empty($end_datetime_str) && new DateTime($end_datetime_str) < $start_datetime) {
-        sendJsonResponse(false, 'End Date & Time cannot be before Start Date & Time.');
+    $end_datetime_utc = null;
+    if (!empty($end_datetime_str)) {
+        try {
+            $end_dt = new DateTime($end_datetime_str, new DateTimeZone('Australia/Melbourne'));
+            $end_dt->setTimezone(new DateTimeZone('UTC'));
+            $end_datetime_utc = $end_dt->format('Y-m-d H:i:s');
+        } catch (Exception $e) {
+            sendJsonResponse(false, 'Invalid end date format.');
+        }
+        if ($end_dt < $start_dt) {
+            sendJsonResponse(false, 'End Date & Time cannot be before Start Date & Time.');
+        }
     }
 
     $conn->begin_transaction();
     try {
         if ($poll_id_to_update) {
-            // Update existing election
             $stmt = $conn->prepare("UPDATE election SET election_type = ?, election_name = ?, start_datetime = ?, end_datetime = ? WHERE poll_id = ?");
             if (!$stmt) throw new Exception('Prepare statement failed for election update: ' . $conn->error);
-            $stmt->bind_param("ssssi", $election_type, $election_name, $start_datetime_str, $end_datetime_str, $poll_id_to_update);
+            $stmt->bind_param("ssssi", $election_type, $election_name, $start_datetime_utc, $end_datetime_utc, $poll_id_to_update);
             $stmt->execute();
             $stmt->close();
 
             $actual_poll_id_for_candidates = $poll_id_to_update;
             $message_suffix = 'updated';
-            // Log the update action
             logAdminAction($conn, $admin_id, 'Edit Election', "Updated election '{$election_name}'.");
         } else {
-            // Insert new election
             $stmt = $conn->prepare("INSERT INTO election (election_type, election_name, start_datetime, end_datetime) VALUES (?, ?, ?, ?)");
             if (!$stmt) throw new Exception('Prepare statement failed for new election: ' . $conn->error);
-            $stmt->bind_param("ssss", $election_type, $election_name, $start_datetime_str, $end_datetime_str);
+            $stmt->bind_param("ssss", $election_type, $election_name, $start_datetime_utc, $end_datetime_utc);
             $stmt->execute();
             $actual_poll_id_for_candidates = $conn->insert_id;
             $stmt->close();
             $message_suffix = 'added';
-            // Log the creation action
             logAdminAction($conn, $admin_id, 'Add Election', "Added new election '{$election_name}'.");
         }
         /* This shit below is done in the case it is an update
@@ -342,12 +367,28 @@ function handleFetchTableData(mysqli $conn)
     $now = new DateTime('now', $timezone);
     $current_time = $now->getTimestamp();
     foreach ($elections_data as &$row) {
-        $start_timestamp = strtotime($row['start_datetime'] ?? '');
-        $end_timestamp = strtotime($row['end_datetime'] ?? '');
+        // --- PATCH: Show start/end datetimes in local time ---
+        if (!empty($row['start_datetime'])) {
+            $start_dt = new DateTime($row['start_datetime'], new DateTimeZone('UTC'));
+            $start_dt->setTimezone($timezone);
+            $row['start_datetime'] = $start_dt->format('Y-m-d H:i:s');
+            $start_timestamp = $start_dt->getTimestamp();
+        } else {
+            $start_timestamp = null;
+        }
+        if (!empty($row['end_datetime'])) {
+            $end_dt = new DateTime($row['end_datetime'], new DateTimeZone('UTC'));
+            $end_dt->setTimezone($timezone);
+            $row['end_datetime'] = $end_dt->format('Y-m-d H:i:s');
+            $end_timestamp = $end_dt->getTimestamp();
+        } else {
+            $end_timestamp = null;
+        }
         $display_status = 'Unknown';
         if ($end_timestamp && $end_timestamp < $current_time) $display_status = 'Completed';
         elseif ($start_timestamp && $start_timestamp > $current_time) $display_status = 'Upcoming';
         elseif ($start_timestamp && $end_timestamp && $start_timestamp <= $current_time && $end_timestamp >= $current_time) $display_status = 'Ongoing';
+        elseif ($start_timestamp && !$end_timestamp && $start_timestamp <= $current_time) $display_status = 'Ongoing'; // Add this for open-ended
         $row['status'] = $display_status;
     }
     unset($row);

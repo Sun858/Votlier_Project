@@ -1,9 +1,8 @@
 <?php
 session_start();
-// This is the security page for rate limiting and timeout. 15Min is currently set
 require_once '../includes/security.sn.php';
 require_once '../includes/view_results_user.php';
-checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
+checkSessionTimeout();
 
 if (!isset($_SESSION["user_id"])) {
     header("location: ../pages/login.php");
@@ -19,7 +18,60 @@ if (!isset($_SESSION["user_id"])) {
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/User_Result.css">
-
+    <style>
+        /* --- PATCH: Top Candidates styling to match table --- */
+        .top-candidates-section {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            background: #f8fafa;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(60,60,60,.08);
+            padding: 18px 18px 0 18px;
+            border: 1px solid #e0e0e0;
+        }
+        .top-candidates-section h2 {
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .top-candidates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.5rem;
+            box-shadow: none;
+        }
+        .top-candidates-table th {
+            background-color: #5cb030;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px 14px;
+            border: none;
+            text-align: left;
+        }
+        .top-candidates-table td {
+            background: #fafbfb;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #222;
+        }
+        .top-candidates-table tr:last-child td {
+            border-bottom: none;
+        }
+        .points-badge {
+            color: #169c3f;
+            font-weight: 600;
+        }
+        @media (max-width: 700px) {
+            .top-candidates-section h2 {
+                font-size: 1.25rem;
+            }
+            .top-candidates-table th, .top-candidates-table td {
+                padding: 6px 6px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -81,6 +133,32 @@ if (!isset($_SESSION["user_id"])) {
 
             <?php if ($selectedPollId && empty($results)): ?>
                 <div class="no-results-msg">No results found for this election.</div>
+            <?php endif; ?>
+
+            <?php if (!empty($topCandidates)): ?>
+            <div class="top-candidates-section">
+                <h2>Top 3 Candidates (Weighted by Rank)</h2>
+                <table class="top-candidates-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th>Candidate</th>
+                            <th>Party</th>
+                            <th style="width: 15%;">Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($topCandidates as $index => $row): ?>
+                        <tr>
+                            <td><?= $index+1 ?></td>
+                            <td><strong><?= htmlspecialchars($row['candidate_name']) ?></strong></td>
+                            <td><?= htmlspecialchars($row['party']) ?></td>
+                            <td><span class="points-badge"><?= intval($row['points']) ?></span></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
             <?php endif; ?>
 
             <?php if (!empty($results)): ?>

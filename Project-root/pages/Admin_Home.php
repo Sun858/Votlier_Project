@@ -126,7 +126,13 @@ $upcomingElectionsCount = getUpcomingElectionsCount($conn);
                             <li>
                                 <strong><?php echo htmlspecialchars($activity['event_type']); ?>:</strong>
                                 <?php echo htmlspecialchars($activity['details']); ?>
-                                <small>(<?php echo htmlspecialchars(date('M d, Y H:i', strtotime($activity['event_time']))); ?>)</small>
+                                <?php
+                                    $eventTimeUtc = $activity['event_time'];
+                                    $eventDateTime = new DateTime($eventTimeUtc, new DateTimeZone('UTC'));
+                                    $eventDateTime->setTimezone(new DateTimeZone('Australia/Melbourne'));
+                                    $eventTimeMel = $eventDateTime->format('M d, Y H:i');
+                                ?>
+                                <small>(<?php echo htmlspecialchars($eventTimeMel); ?>)</small>
                             </li>
                         <?php endforeach; ?>
                     <?php else: ?>
