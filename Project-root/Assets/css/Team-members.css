@@ -96,7 +96,7 @@ body {
 /* Team Section */
 .team-section {
     padding: 160px 6%;
-    max-width: 1500px;
+    width: 100%;
     position: relative;
     background: url('https://png.pngtree.com/background/20230610/original/pngtree-an-ancient-man-has-a-group-of-people-sitting-around-a-picture-image_3020650.jpg') no-repeat center center fixed;
     background-size: cover;
