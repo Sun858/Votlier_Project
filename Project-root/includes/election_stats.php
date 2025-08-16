@@ -213,8 +213,3 @@ function getAllFAQs($conn, $limit, $offset) {
 
 
 ?>
-
-
-
-
-
