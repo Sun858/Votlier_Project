@@ -1,339 +1,10 @@
 <?php
-session_start();
-
-define('ROOT_DIR', dirname(__DIR__));
-
-// Load .env so functions.sn.php can read keys via getenv()
-(function () {
-    $env = ROOT_DIR . '/.env';
-    if (is_file($env) && is_readable($env)) {
-        $pairs = parse_ini_file($env, false, INI_SCANNER_RAW) ?: [];
-        foreach ($pairs as $k => $v) {
-            if (is_string($v) && strlen($v) >= 2) {
-                $q = $v[0];
-                $r = substr($v, -1);
-                if (($q === '"' && $r === '"') || ($q === "'" && $r === "'")) $v = substr($v, 1, -1);
-            }
-            $_ENV[$k] = $v;
-            putenv("$k=$v");
-        }
-    }
-})();
-
-require_once ROOT_DIR . '/includes/security.sn.php';
-checkSessionTimeout();
-require_once ROOT_DIR . '/DatabaseConnection/config.php';
-require_once '../includes/election_stats.php';
-
-$lastLogin = getLastUserLogin($conn);
-
-if (!isset($_SESSION["user_id"])) {
-    header("location: ../pages/login.php");
-    exit();
-}
-
-// DB connect
-require_once ROOT_DIR . '/DatabaseConnection/config.php';
-
-// Fallback connect if config.php didn't instantiate $conn
-if (!isset($conn) || !($conn instanceof mysqli)) {
-    if (isset($host, $username, $password, $database)) {
-        $conn = @mysqli_connect($host, $username, $password, $database);
-        if (!$conn) {
-            die("Failed to connect to Database: " . mysqli_connect_error());
-        }
-    } else {
-        die("Database configuration not available.");
-    }
-}
-mysqli_set_charset($conn, 'utf8mb4');
-date_default_timezone_set('Australia/Melbourne');
-
-// Crypto/bootstrap used by your existing code
-require_once ROOT_DIR . '/includes/functions.sn.php';
-
-/* ---------- Helpers ---------- */
-function tableExists(mysqli $conn, string $name): bool
-{
-    $q = $conn->prepare("SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1");
-    $q->bind_param("s", $name);
-    $q->execute();
-    $q->store_result();
-    $ok = $q->num_rows > 0;
-    $q->free_result();
-    return $ok;
-}
-
-function dec_cbc(?string $ciphertext, string $iv): string
-{
-    if ($ciphertext === null || $ciphertext === '') return '';
-    if (!defined('TRUE_MASTER_EMAIL_ENCRYPTION_KEY')) return '';
-    $key = TRUE_MASTER_EMAIL_ENCRYPTION_KEY;
-    $plain = openssl_decrypt($ciphertext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
-    return ($plain === false) ? '' : $plain;
-}
-
-function enc_cbc(string $plaintext, string $iv): string
-{
-    $key = TRUE_MASTER_EMAIL_ENCRYPTION_KEY;
-    $ct  = openssl_encrypt($plaintext, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
-    if ($ct === false) throw new RuntimeException('Encryption failed');
-    return $ct;
-}
-
-/* ---------- AJAX Handlers ---------- */
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json');
-    
-    try {
-        if (!isset($_SESSION['user_id'])) {
-            throw new RuntimeException('Session expired. Please log in again.');
-        }
-
-        $userId = (int)$_SESSION['user_id'];
-        $action = $_POST['action'] ?? '';
-
-        switch ($action) {
-            case 'update_profile':
-                $rs = $conn->prepare("SELECT iv FROM users WHERE user_id = ? LIMIT 1");
-                $rs->bind_param("i", $userId);
-                $rs->execute();
-                $ivRes = $rs->get_result();
-                if ($ivRes->num_rows === 0) {
-                    throw new RuntimeException('User not found');
-                }
-                $iv = ($ivRes->fetch_assoc())['iv'];
-
-                $first_name = trim((string)($_POST['first_name'] ?? ''));
-                $last_name  = trim((string)($_POST['last_name'] ?? ''));
-                $email      = trim((string)($_POST['email'] ?? ''));
-                $dob        = trim((string)($_POST['date_of_birth'] ?? ''));
-
-                if ($first_name === '' || $last_name === '' || $email === '') {
-                    throw new RuntimeException('First name, Last name and Email are required.');
-                }
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    throw new RuntimeException('Invalid email address.');
-                }
-                if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
-                    throw new RuntimeException('Invalid date format for Date of Birth (YYYY-MM-DD).');
-                }
-
-                $encFirst = enc_cbc($first_name, $iv);
-                $encLast  = enc_cbc($last_name, $iv);
-                $encEmail = enc_cbc($email, $iv);
-
-                $emailBlindIndex = hash_hmac('sha256', $email, TRUE_BLIND_INDEX_SECRET_KEY, true);
-
-                $upd = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, email_blind_index = ?, date_of_birth = ? WHERE user_id = ?");
-                $upd->bind_param("sssssi", $encFirst, $encLast, $encEmail, $emailBlindIndex, $dob, $userId);
-                if (!$upd->execute()) {
-                    throw new RuntimeException('Database update failed.');
-                }
-
-                echo json_encode([
-                    'success'     => true,
-                    'first_name'  => $first_name,
-                    'last_name'   => $last_name,
-                    'email'       => $email,
-                    'dob'         => $dob,
-                    'message'     => 'Profile updated successfully.'
-                ]);
-                exit;
-
-            case 'update_address':
-                $address = trim((string)($_POST['address'] ?? ''));
-
-                if (empty($address)) {
-                    throw new RuntimeException('Address cannot be empty.');
-                }
-
-                $upd = $conn->prepare("UPDATE users SET address = ? WHERE user_id = ?");
-                $upd->bind_param("si", $address, $userId);
-                
-                if (!$upd->execute()) {
-                    throw new RuntimeException('Database update failed.');
-                }
-
-                echo json_encode([
-                    'success' => true,
-                    'address' => $address,
-                    'message' => 'Address updated successfully.'
-                ]);
-                exit;
-
-            case 'change_password':
-                $current = (string)($_POST['currentPassword'] ?? '');
-                $new     = (string)($_POST['newPassword'] ?? '');
-                $verify  = (string)($_POST['verifyPassword'] ?? '');
-
-                if ($current === '' || $new === '' || $verify === '') {
-                    throw new RuntimeException('All password fields are required.');
-                }
-                if ($new !== $verify) {
-                    throw new RuntimeException('New passwords do not match.');
-                }
-                if (strlen($new) < 8) {
-                    throw new RuntimeException('Password must be at least 8 characters.');
-                }
-
-                $q = $conn->prepare("SELECT hash_password, salt, iterations FROM users WHERE user_id = ? LIMIT 1");
-                $q->bind_param("i", $userId);
-                $q->execute();
-                $res = $q->get_result();
-                if ($res->num_rows === 0) {
-                    throw new RuntimeException('User not found.');
-                }
-                $row = $res->fetch_assoc();
-
-                $calc = hash_pbkdf2("sha256", $current, $row['salt'], (int)$row['iterations'], 32, true);
-                if (!hash_equals($row['hash_password'], $calc)) {
-                    throw new RuntimeException('Current password is incorrect.');
-                }
-
-                $newSalt = random_bytes(16);
-                $newIter = 100000;
-                $newHash = hash_pbkdf2("sha256", $new, $newSalt, $newIter, 32, true);
-
-                $u = $conn->prepare("UPDATE users SET hash_password = ?, salt = ?, iterations = ? WHERE user_id = ?");
-                $u->bind_param("ssii", $newHash, $newSalt, $newIter, $userId);
-                if (!$u->execute()) {
-                    throw new RuntimeException('Failed to update password.');
-                }
-
-                // Destroy session + cookies
-                $_SESSION = [];
-                if (ini_get('session.use_cookies')) {
-                    $params = session_get_cookie_params();
-                    if (PHP_VERSION_ID >= 70300) {
-                        setcookie(session_name(), '', [
-                            'expires'  => time() - 42000,
-                            'path'     => $params['path'],
-                            'domain'   => $params['domain'],
-                            'secure'   => $params['secure'],
-                            'httponly' => $params['httponly'],
-                            'samesite' => 'Lax',
-                        ]);
-                    } else {
-                        setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-                    }
-                }
-                session_destroy();
-
-                echo json_encode([
-                    'success'  => true,
-                    'redirect' => '../controllers/Logout.php?reason=pwchange'
-                ]);
-                exit;
-
-            default:
-                throw new RuntimeException('Invalid action');
-        }
-    } catch (Throwable $e) {
-        echo json_encode([
-            'success' => false,
-            'message' => $e->getMessage()
-        ]);
-        exit;
-    }
-}
-
-/* ---------- Build $user for the view ---------- */
-$userId = (int)$_SESSION["user_id"];
-$user = [
-    'first_name' => '',
-    'middle_name' => '',
-    'last_name' => '',
-    'email' => '',
-    'voter_id' => $userId,
-    'dob' => '',
-    'address' => '',
-    'elections' => []
-];
-
-$userQuery = "SELECT user_id, first_name, middle_name, last_name, email, iv, date_created, date_of_birth, address 
-              FROM users WHERE user_id = ?";
-$stmt = $conn->prepare($userQuery);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result->num_rows === 0) {
-    die("User not found");
-}
-$row = $result->fetch_assoc();
-
-$iv = $row['iv'] ?? '';
-$user['first_name']  = dec_cbc($row['first_name'] ?? null, $iv);
-$user['middle_name'] = dec_cbc($row['middle_name'] ?? null, $iv);
-$user['last_name']   = dec_cbc($row['last_name'] ?? null, $iv);
-$user['email']       = dec_cbc($row['email'] ?? null, $iv);
-$user['dob']         = $row['date_of_birth'] ?? '';
-$user['address']     = $row['address'] ?? '';
-
-/* ---------- Elections ---------- */
-$hasElection = tableExists($conn, 'election');
-$hasBallot   = tableExists($conn, 'ballot'); // Fix: ballot is the real vote table
-
-if ($hasElection) {
-    $now = new DateTime();
-    if ($hasBallot) {
-        $sql = "
-          SELECT e.poll_id, e.election_name, e.start_datetime, e.end_datetime,
-                 EXISTS(SELECT 1 FROM ballot b WHERE b.user_id = ? AND b.poll_id = e.poll_id) AS has_voted
-          FROM election e
-          WHERE (e.start_datetime IS NOT NULL OR e.end_datetime IS NOT NULL)
-          ORDER BY e.start_datetime ASC
-        ";
-        $est = $conn->prepare($sql);
-        $est->bind_param("i", $userId);
-    } else {
-        $sql = "
-          SELECT e.poll_id, e.election_name, e.start_datetime, e.end_datetime,
-                 0 AS has_voted
-          FROM election e
-          WHERE (e.start_datetime IS NOT NULL OR e.end_datetime IS NOT NULL)
-          ORDER BY e.start_datetime ASC
-        ";
-        $est = $conn->prepare($sql);
-    }
-    $est->execute();
-    $res = $est->get_result();
-
-    while ($e = $res->fetch_assoc()) {
-        $start = $e['start_datetime'] ? new DateTime($e['start_datetime']) : null;
-        $end   = $e['end_datetime']   ? new DateTime($e['end_datetime'])   : null;
-
-        if ($start && $now < $start) {
-            $status = 'Starts in ' . $now->diff($start)->format('%a days %h hours');
-        } elseif ($end && $now > $end) {
-            $status = 'Election Expired';
-        } elseif ($start && $end && $now >= $start && $now <= $end) {
-            $status = 'Ends in ' . $now->diff($end)->format('%a days %h hours');
-        } else {
-            $status = 'Schedule TBA';
-        }
-
-        $user['elections'][] = [
-            'name'       => $e['election_name'],
-            'enrolled'   => true,
-            'voted'      => (bool)$e['has_voted'],
-            'status'     => $status,
-            'start_time' => $e['start_datetime'],
-            'end_time'   => $e['end_datetime']
-        ];
-    }
-}
-
-/* ---------- Avatar URL ---------- */
-$avatarFs = ROOT_DIR . '/Assets/img/avatar.jpg';
-$avatarUrl = '../Assets/img/avatar.jpg';
-if (is_file($avatarFs)) {
-    $mtime = @filemtime($avatarFs) ?: time();
-    $avatarUrl .= '?v=' . $mtime;
-} else {
-    $avatarUrl = 'https://www.svgrepo.com/show/510930/user-circle.svg';
-}
+require_once '../controllers/user_profile-cont.php'; // Controller sets $user, $lastLogin, etc.
+$avatarFs = '../Assets/img/avatar.jpg';
+$avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime($avatarFs) ?: time()) : 'https://www.svgrepo.com/show/510930/user-circle.svg';
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -341,11 +12,9 @@ if (is_file($avatarFs)) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Votify - User Profile</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
     <link rel="stylesheet" href="../Assets/css/User_Profile.css" />
     <link rel="preload" as="image" href="../Assets/img/avatar.jpg" />
 </head>
@@ -354,7 +23,6 @@ if (is_file($avatarFs)) {
     <button class="mobile-menu-toggle" aria-label="Toggle menu">
         <ion-icon name="menu-outline"></ion-icon>
     </button>
-
     <aside class="sidebar">
         <div class="sidebar-top-bar">
             <h3>Votify</h3>
@@ -397,7 +65,7 @@ if (is_file($avatarFs)) {
                 <table class="personal-info-table">
                     <tr>
                         <td class="info-label">Voter ID</td>
-                        <td id="voter-id-value"><?= htmlspecialchars($user['voter_id'] ?? '') ?></td>
+                        <td id="voter-id-value"><?= htmlspecialchars($user['id'] ?? '') ?></td>
                     </tr>
                     <tr>
                         <td class="info-label">First Name</td>
@@ -522,7 +190,7 @@ if (is_file($avatarFs)) {
                 <input type="hidden" name="action" value="update_profile" />
                 <div class="form-group">
                     <label for="modal-voter-id">Voter ID</label>
-                    <input type="text" id="modal-voter-id" value="<?= htmlspecialchars($user['voter_id'] ?? '') ?>" readonly>
+                    <input type="text" id="modal-voter-id" value="<?= htmlspecialchars($user['id'] ?? '') ?>" readonly>
                 </div>
                 <div class="form-group">
                     <label for="modal-first-name">First Name</label>
