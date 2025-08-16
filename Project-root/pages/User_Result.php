@@ -104,7 +104,7 @@ if (!isset($_SESSION["user_id"])) {
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/Logout.php" class="footer-link signout-link">
+            <a href="../controllers/Logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>

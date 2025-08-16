@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 echo json_encode([
                     'success'  => true,
-                    'redirect' => '../includes/Logout.php?reason=pwchange'
+                    'redirect' => '../controllers/Logout.php?reason=pwchange'
                 ]);
                 exit;
 
@@ -369,7 +369,7 @@ if (is_file($avatarFs)) {
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/Logout.php" class="footer-link signout-link"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="text">Sign Out</span></a>
+            <a href="../controllers/Logout.php" class="footer-link signout-link"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="text">Sign Out</span></a>
         </div>
     </aside>
 
