@@ -59,7 +59,7 @@ if (!isset($_SESSION["admin_id"])) {
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/logout.php" class="footer-link signout-link">
+            <a href="../controllers/logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>
@@ -72,7 +72,7 @@ if (!isset($_SESSION["admin_id"])) {
             <p>Oversee platform settings and ensure secure system operations.</p>
         </header>
 
-        <?php include '../includes/audit_logs_cont.php'; ?>
+        <?php include '../controllers/audit_logs_cont.php'; ?>
       
     </main>
 

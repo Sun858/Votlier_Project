@@ -28,7 +28,7 @@ function initAccordions () {
 //Function for documentation page
 function documentationPage () {
   initSocialIcons() // Assuming this function is in Functions.js
-  const API_URL = '../includes/api.php'
+  const API_URL = '../controllers/api.php'
   const categoryListEl = document.getElementById('category-list')
   const documentListEl = document.getElementById('document-list')
   const documentViewerEl = document.getElementById('document-viewer')

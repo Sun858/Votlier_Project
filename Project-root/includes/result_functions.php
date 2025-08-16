@@ -128,4 +128,25 @@ function loadAdminResultPageState($conn) {
 
     return $state;
 }
+
+// Returns the top N candidates by weighted points (Rank 1=5, Rank 2=4, ..., Rank 5=1)
+function calculateTopCandidatesAdmin($results, $limit = 3) {
+    $weights = [ 'r1_votes' => 5, 'r2_votes' => 4, 'r3_votes' => 3, 'r4_votes' => 2, 'r5_votes' => 1 ];
+    foreach ($results as &$row) {
+        $row['points'] =
+            intval($row['r1_votes']) * $weights['r1_votes'] +
+            intval($row['r2_votes']) * $weights['r2_votes'] +
+            intval($row['r3_votes']) * $weights['r3_votes'] +
+            intval($row['r4_votes']) * $weights['r4_votes'] +
+            intval($row['r5_votes']) * $weights['r5_votes'];
+    }
+    unset($row);
+    usort($results, function($a, $b) {
+        if ($b['points'] === $a['points']) {
+            return strcmp($a['candidate_name'], $b['candidate_name']);
+        }
+        return $b['points'] - $a['points'];
+    });
+    return array_slice($results, 0, $limit);
+}
 ?>

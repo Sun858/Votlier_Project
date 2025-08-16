@@ -1,8 +1,8 @@
 <?php
 // Controller for User_Result page (user-facing election results)
-require_once '../includes/security.sn.php'; // Security functions
-require '../DatabaseConnection/config.php'; // This is the database connection including the authentication details
-require_once '../includes/userres.sn.php'; // User results viewing functions
+require_once '../includes/security.sn.php';
+require '../DatabaseConnection/config.php';
+require_once '../includes/userres.sn.php';
 
 checkSessionTimeout();
 
@@ -14,4 +14,5 @@ if (!isset($_SESSION["user_id"])) {
 $selectedPollId = isset($_POST['poll_id']) ? intval($_POST['poll_id']) : null;
 $elections = getElectionsWithTally($conn);
 $results = ($selectedPollId) ? getUserElectionResults($conn, $selectedPollId) : [];
+$topCandidates = (!empty($results)) ? calculateTopCandidates($results, 3) : [];
 ?>

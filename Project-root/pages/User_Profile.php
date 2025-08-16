@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 echo json_encode([
                     'success'  => true,
-                    'redirect' => '../includes/Logout.php?reason=pwchange'
+                    'redirect' => '../controllers/Logout.php?reason=pwchange'
                 ]);
                 exit;
 
@@ -272,14 +272,14 @@ $user['address']     = $row['address'] ?? '';
 
 /* ---------- Elections ---------- */
 $hasElection = tableExists($conn, 'election');
-$hasVotes    = tableExists($conn, 'user_votes');
+$hasBallot   = tableExists($conn, 'ballot'); // Fix: ballot is the real vote table
 
 if ($hasElection) {
     $now = new DateTime();
-    if ($hasVotes) {
+    if ($hasBallot) {
         $sql = "
           SELECT e.poll_id, e.election_name, e.start_datetime, e.end_datetime,
-                 EXISTS(SELECT 1 FROM user_votes uv WHERE uv.user_id = ? AND uv.poll_id = e.poll_id) AS has_voted
+                 EXISTS(SELECT 1 FROM ballot b WHERE b.user_id = ? AND b.poll_id = e.poll_id) AS has_voted
           FROM election e
           WHERE (e.start_datetime IS NOT NULL OR e.end_datetime IS NOT NULL)
           ORDER BY e.start_datetime ASC
@@ -365,11 +365,10 @@ if (is_file($avatarFs)) {
                 <li><a href="User_Profile.php" class="active"><span class="icon"><ion-icon name="people-outline"></ion-icon></span><span class="text">Profile</span></a></li>
                 <li><a href="User_Election.php"><span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span><span class="text">Election</span></a></li>
                 <li><a href="User_Result.php"><span class="icon"><ion-icon name="eye-outline"></ion-icon></span><span class="text">Result</span></a></li>
-                <li><a href="User_Settings.php"><span class="icon"><ion-icon name="settings-outline"></ion-icon></span><span class="text">Settings</span></a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/Logout.php" class="footer-link signout-link"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="text">Sign Out</span></a>
+            <a href="../controllers/Logout.php" class="footer-link signout-link"><span class="icon"><ion-icon name="log-out-outline"></ion-icon></span><span class="text">Sign Out</span></a>
         </div>
     </aside>
 

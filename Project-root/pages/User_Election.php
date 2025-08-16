@@ -60,14 +60,10 @@ if ($selectedPollId) {
                     <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                     <span class="text">Result</span>
                 </a></li>
-                <li><a href="User_Settings.php">
-                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
-                    <span class="text">Settings</span>
-                </a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/Logout.php" class="footer-link signout-link">
+            <a href="../controllers/Logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>
@@ -110,7 +106,7 @@ if ($selectedPollId) {
 
             <!-- Voting Form: Only show if a poll is selected and candidates exist -->
             <?php if ($selectedPollId && count($candidates) > 0): ?>
-                <form action="../includes/submit_vote.php" method="POST" class="voting-form">
+                <form action="../controllers/submit_vote.php" method="POST" class="voting-form">
                     <input type="hidden" name="poll_id" value="<?php echo htmlspecialchars($selectedPollId); ?>">
                     <div class="preferences-container">
                         <?php 
