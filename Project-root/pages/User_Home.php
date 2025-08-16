@@ -43,11 +43,7 @@ if (!isset($_SESSION["user_id"])) {
                 <li><a href="User_Result.php">
                     <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                     <span class="text">Result</span>
-                </a></li>
-                <li><a href="User_Settings.php">
-                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
-                    <span class="text">Settings</span>
-                </a></li>
+                </a></li>  
             </ul>
         </nav>
         <div class="sidebar-footer">

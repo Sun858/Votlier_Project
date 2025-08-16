@@ -60,10 +60,6 @@ if ($selectedPollId) {
                     <span class="icon"><ion-icon name="eye-outline"></ion-icon></span>
                     <span class="text">Result</span>
                 </a></li>
-                <li><a href="User_Settings.php">
-                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
-                    <span class="text">Settings</span>
-                </a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
