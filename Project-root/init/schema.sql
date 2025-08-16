@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     first_name BLOB NOT NULL,
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
+    date_of_birth date DEFAULT NULL,
+    address varchar(255) DEFAULT NULL,
     email BLOB NOT NULL,
     email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
     hash_password VARBINARY(32) NOT NULL,
@@ -20,12 +22,14 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE KEY unique_email_blind_index (email_blind_index)
 );
 
+
 -- Administration Table --
 CREATE TABLE IF NOT EXISTS administration (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name BLOB NOT NULL,
     middle_name BLOB NOT NULL,
     last_name BLOB NOT NULL,
+    date_of_birth date DEFAULT NULL,
     email BLOB NOT NULL,
     email_blind_index BINARY(32) NOT NULL, -- Blind Index for secure lookup
     hash_password VARBINARY(32) NOT NULL,

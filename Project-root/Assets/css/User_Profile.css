@@ -18,7 +18,7 @@
 
 /* Main Content Styles */
 .main-content {
-    margin-left: var(--sidebar-closed-width);
+    margin-left: 10px;
     padding: 2rem 4rem;
     background-color: var(--light-gray);
     min-height: 100vh;
@@ -26,7 +26,7 @@
     width: calc(100% - var(--sidebar-closed-width) - 8rem);
 }
 
-.sidebar:hover ~ .main-content {
+.sidebar:hover~.main-content {
     margin-left: var(--sidebar-open-width);
     width: calc(100% - var(--sidebar-open-width) - 8rem);
 }
@@ -53,7 +53,8 @@
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    background: url('/Assets/img/avatar.jpg') center/cover no-repeat; /* <- absolute, case-correct path */
+    background: url('/Assets/img/avatar.jpg') center/cover no-repeat;
+    /* <- absolute, case-correct path */
     background-color: #f0f0f0;
     border: 2px solid var(--primary-color);
 }
@@ -247,20 +248,25 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,.45);               /* match Admin */
+    background: rgba(0, 0, 0, .45);
+    /* match Admin */
 }
 
 /* Container same size/feel as Admin */
 .modal-content {
     background: #fff;
     margin: 10% auto;
-    padding: 0;                                 /* Admin: header owns its padding */
+    padding: 0;
+    /* Admin: header owns its padding */
     border-radius: 12px;
-    width: 420px;                               /* Admin width */
+    width: 420px;
+    /* Admin width */
     max-width: 90%;
-    box-shadow: 0 16px 40px rgba(0,0,0,.18);    /* Admin shadow */
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .18);
+    /* Admin shadow */
     position: relative;
-    overflow: hidden;                           /* Admin overflow */
+    overflow: hidden;
+    /* Admin overflow */
 }
 
 /* Light green header bar like Admin */
@@ -268,14 +274,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #e6f7f0;                       /* Admin light green */
-    border-bottom: 1px solid #cdeee0;           /* Admin divider */
-    padding: 14px 18px;                         /* Admin spacing */
+    background: #e6f7f0;
+    /* Admin light green */
+    border-bottom: 1px solid #cdeee0;
+    /* Admin divider */
+    padding: 14px 18px;
+    /* Admin spacing */
 }
 
 .modal-title {
     margin: 0;
-    color: #276749;                             /* Admin title green */
+    color: #276749;
+    /* Admin title green */
     font-weight: 700;
     font-size: 1.25rem;
 }
@@ -284,18 +294,23 @@
 .form-group {
     margin: 16px 18px;
 }
+
 .form-group label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
-    color: #276749;                             /* Admin label green */
+    color: #276749;
+    /* Admin label green */
 }
+
 .form-group input,
 .form-group textarea {
-    width: 100%;
+    width: 95%;
     padding: 10px;
-    border: 1px solid #d9e2ec;                  /* Admin field border */
-    border-radius: 6px;                         /* Admin radius */
+    border: 1px solid #d9e2ec;
+    /* Admin field border */
+    border-radius: 6px;
+    /* Admin radius */
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
 }
@@ -329,36 +344,62 @@
     cursor: pointer;
     font-weight: 600;
 }
-.green-btn:hover { filter: brightness(1.02); }
+
+.green-btn:hover {
+    filter: brightness(1.02);
+}
 
 /* Keep legacy btn-* classes working but align to Admin colors */
-.btn-cancel { background: #f5f5f5; color: #212529; border: 1px solid #ddd; }
-.btn-confirm { background: #2e7d32; color: #fff; }
+.btn-cancel {
+    background: #f5f5f5;
+    color: #212529;
+    border: 1px solid #ddd;
+}
+
+.btn-confirm {
+    background: #2e7d32;
+    color: #fff;
+}
 
 /* ================================
    INLINE CONFIRM OVERLAY — ADMIN
    ================================ */
-.inline-confirm{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.15);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:5;
+.inline-confirm {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
 }
-.inline-confirm-box{
-  background:#fff;
-  border:1px solid #dee2e6;
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-  padding:18px 20px;
-  min-width:260px;
-  text-align:center;
+
+.inline-confirm-box {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    padding: 18px 20px;
+    min-width: 260px;
+    text-align: center;
 }
-.inline-confirm-icon{ font-size:1.6rem; color:#2e7d32; }
-.inline-confirm-text{ margin:10px 0 14px; font-weight:600; color:#2e7d32; }
-.inline-confirm-actions{ display:flex; gap:10px; justify-content:center; }
+
+.inline-confirm-icon {
+    font-size: 1.6rem;
+    color: #2e7d32;
+}
+
+.inline-confirm-text {
+    margin: 10px 0 14px;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
+.inline-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1200px) {
@@ -366,9 +407,11 @@
         padding: 2rem 3rem;
         width: calc(100% - var(--sidebar-closed-width) - 6rem);
     }
-    .sidebar:hover ~ .main-content {
+
+    .sidebar:hover~.main-content {
         width: calc(100% - var(--sidebar-open-width) - 6rem);
     }
+
     .profile-container {
         max-width: 1000px;
     }
@@ -379,9 +422,11 @@
         padding: 2rem;
         width: calc(100% - var(--sidebar-closed-width) - 4rem);
     }
-    .sidebar:hover ~ .main-content {
+
+    .sidebar:hover~.main-content {
         width: calc(100% - var(--sidebar-open-width) - 4rem);
     }
+
     .profile-container {
         max-width: 100%;
         padding: 2rem;
@@ -394,59 +439,98 @@
         padding: 1.5rem;
         width: 100%;
     }
-    .profile-container { padding: 1.5rem; }
-    .profile-header { flex-direction: column; text-align: center; }
-    .profile-avatar { margin-bottom: 1.5rem; }
+
+    .profile-container {
+        padding: 1.5rem;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        margin-bottom: 1.5rem;
+    }
+
     .personal-info-table td,
     .elections-table th,
-    .elections-table td { padding: 12px 15px; }
+    .elections-table td {
+        padding: 12px 15px;
+    }
 
     /* Admin’s modal scales down on mobile too */
-    .modal-content { width: 92%; margin: 18% auto; }
+    .modal-content {
+        width: 92%;
+        margin: 18% auto;
+    }
 }
 
 /* Confirm Modal (legacy block kept for compatibility, aligned to Admin palette) */
 .confirm-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 1100;
-  display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1100;
+    display: none;
 }
-.confirm-modal[aria-hidden="false"] { display: block; }
+
+.confirm-modal[aria-hidden="false"] {
+    display: block;
+}
+
 .confirm-content {
-  width: 92%;
-  max-width: 420px;
-  margin: 14vh auto 0;
-  background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  padding: 20px 22px;
+    width: 92%;
+    max-width: 420px;
+    margin: 14vh auto 0;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    padding: 20px 22px;
 }
+
 .confirm-body {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
 }
-.confirm-icon { font-size: 1.6rem; color: #2e7d32; }
-#confirmMessage { margin: 0; font-weight: 600; color: #2e7d32; }
+
+.confirm-icon {
+    font-size: 1.6rem;
+    color: #2e7d32;
+}
+
+#confirmMessage {
+    margin: 0;
+    font-weight: 600;
+    color: #2e7d32;
+}
+
 .confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
-.confirm-actions .btn-confirm { background: #2e7d32; color: #fff; }
-.confirm-actions .btn-cancel  { background: #e9ecef; color: #212529; }
+
+.confirm-actions .btn-confirm {
+    background: #2e7d32;
+    color: #fff;
+}
+
+.confirm-actions .btn-cancel {
+    background: #e9ecef;
+    color: #212529;
+}
 
 /* Read-only ID fields look (non-editable hint) */
 .modal .form-group input[readonly],
 .modal .form-group input[disabled],
 #modal-voter-id,
 #modal-admin-id {
-  background-color: #f3f5f7;
-  color: var(--dark-gray, #6c757d);
-  border-color: #e5e7eb;
-  cursor: not-allowed;
+    background-color: #f3f5f7;
+    color: var(--dark-gray, #6c757d);
+    border-color: #e5e7eb;
+    cursor: not-allowed;
 }

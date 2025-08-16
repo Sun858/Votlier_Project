@@ -92,7 +92,6 @@ function getElectionActivities($conn, $limit = 5)
 
 /* Retrieves the most recent admin login time from the database. */
 
-
 function getLastAdminLogin($conn) {
     $sql = "SELECT attempt_time FROM login_attempts WHERE resource = 'admin_login' ORDER BY attempt_time DESC LIMIT 1";
 
@@ -118,6 +117,31 @@ function getLastAdminLogin($conn) {
     return 'No recent login recorded';
 }
 
+// This function retrieves the last user login time from the database
+function getLastUserLogin($conn) {
+    $sql = "SELECT attempt_time FROM login_attempts WHERE resource = 'user_signup' ORDER BY attempt_time DESC LIMIT 1";
+
+    // Prepare and execute the statement
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Check if a result was found
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $lastLoginTimestamp = $row['attempt_time'];
+
+            // Format the time into a more readable string
+            return date('F j, Y, g:i a', strtotime($lastLoginTimestamp));
+        }
+
+        // Close the statement
+        $stmt->close();
+    }
+
+    // Return a default message if no login attempts are found or on error
+    return 'No recent login recorded';
+}
 
 //   This function executes a MySQL query to select elections that start within the next 7 days
 
