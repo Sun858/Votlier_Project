@@ -7,11 +7,9 @@ if (!isset($_SESSION["user_id"])) {
     exit();
 }
 
-
 $avatarFs = '../Assets/img/avatar.jpg';
 $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime($avatarFs) ?: time()) : 'https://www.svgrepo.com/show/510930/user-circle.svg';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -94,40 +92,7 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
                 </table>
             </div>
 
-            <div class="profile-section">
-                <div class="section-title">
-                    <ion-icon name="document-text-outline"></ion-icon>
-                    <span>Election Overview</span>
-                </div>
-                <?php if (empty($user['elections'])): ?>
-                    <p>There are no current elections available.</p>
-                <?php else: ?>
-                    <table class="elections-table">
-                        <thead>
-                            <tr>
-                                <th>Election</th>
-                                <th>Enrolment Status</th>
-                                <th>Vote Status</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($user['elections'] as $election): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($election['name']) ?></td>
-                                    <td><span class="status-badge enrolled">Enrolled</span></td>
-                                    <td>
-                                        <span class="status-badge <?= $election['voted'] ? 'voted' : 'not-voted' ?>">
-                                            <?= $election['voted'] ? 'Voted' : 'Not Voted' ?>
-                                        </span>
-                                    </td>
-                                    <td><?= htmlspecialchars($election['status']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
-            </div>
+            <!-- Election Overview section removed by request -->
 
             <div class="profile-section">
                 <div class="section-title">
@@ -194,7 +159,7 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
             <div class="modal-header">
                 <h3 class="modal-title">Edit Personal Information</h3>
             </div>
-            <form id="personalInfoForm" method="POST" autocomplete="off">
+        <form id="personalInfoForm" method="POST" autocomplete="off">
                 <input type="hidden" name="action" value="update_profile" />
                 <div class="form-group">
                     <label for="modal-voter-id">Voter ID</label>
@@ -313,12 +278,8 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
                     overlay.remove();
                     resolve(v);
                 };
-                noBtn.addEventListener('click', () => cleanup(false), {
-                    once: true
-                });
-                yesBtn.addEventListener('click', () => cleanup(true), {
-                    once: true
-                });
+                noBtn.addEventListener('click', () => cleanup(false), { once: true });
+                yesBtn.addEventListener('click', () => cleanup(true), { once: true });
             });
         }
 
@@ -352,7 +313,7 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
 
                 const text = await response.text();
                 let data = null;
-                
+
                 try {
                     data = JSON.parse(text);
                 } catch (e) {
