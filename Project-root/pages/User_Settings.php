@@ -60,8 +60,7 @@ if (!isset($_SESSION["user_id"])) {
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Welcome to Voter Setting page</h1>
         </header>
 
     </main>
