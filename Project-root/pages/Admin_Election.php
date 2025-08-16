@@ -112,8 +112,8 @@ ob_end_flush();
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Admin Election Control Pane</h1>
+            <p>Manage elections—add, edit, delete, and review details efficiently</p>
         </header>
 
         <div class="New-Election">

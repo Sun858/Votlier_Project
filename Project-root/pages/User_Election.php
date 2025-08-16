@@ -76,8 +76,8 @@ if ($selectedPollId) {
 
     <main class="main-content">
         <header class="main-header">
-            <h1>Welcome to Voter Dashboard</h1>
-            <p>Explore your data and manage your business efficiently</p>
+            <h1>Welcome to Voter Election Page</h1>
+            <p>Explore active elections, submit your vote, and track results.</p>
         </header>
 
         <section class="vote-section">
