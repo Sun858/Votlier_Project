@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require '../DatabaseConnection/config.php'; // This is the database connection including the authentication details
-require 'security.sn.php'; // Security based functions, includes rate limiting.
-require 'functions.sn.php'; // This has most of the functions that are called within this file
+require '../includes/security.sn.php'; // Security based functions, includes rate limiting.
+require '../includes/functions.sn.php'; // This has most of the functions that are called within this file
 
 // Get the user's IP address
 $ip = $_SERVER['REMOTE_ADDR'];
