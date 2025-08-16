@@ -272,14 +272,14 @@ $user['address']     = $row['address'] ?? '';
 
 /* ---------- Elections ---------- */
 $hasElection = tableExists($conn, 'election');
-$hasVotes    = tableExists($conn, 'user_votes');
+$hasBallot   = tableExists($conn, 'ballot'); // Fix: ballot is the real vote table
 
 if ($hasElection) {
     $now = new DateTime();
-    if ($hasVotes) {
+    if ($hasBallot) {
         $sql = "
           SELECT e.poll_id, e.election_name, e.start_datetime, e.end_datetime,
-                 EXISTS(SELECT 1 FROM user_votes uv WHERE uv.user_id = ? AND uv.poll_id = e.poll_id) AS has_voted
+                 EXISTS(SELECT 1 FROM ballot b WHERE b.user_id = ? AND b.poll_id = e.poll_id) AS has_voted
           FROM election e
           WHERE (e.start_datetime IS NOT NULL OR e.end_datetime IS NOT NULL)
           ORDER BY e.start_datetime ASC
