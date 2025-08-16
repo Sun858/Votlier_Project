@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 require '../DatabaseConnection/config.php';     // DB connection
 require 'security.sn.php';                      // Security functions
 require 'functions.sn.php';                     // Encryption keys, shared funcs
-require 'vote.sn.php';                          // Voting functions (directly connected to this controller file)
+require 'vote.sn.php';                          // Voting functions (directly connected to this controllers file)
 
 session_start();
 checkSessionTimeout();

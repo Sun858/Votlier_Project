@@ -13,7 +13,7 @@ if (!isset($_SESSION["admin_id"])) {
 
 // Handle FAQ form submissions (Add, Edit, Delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once '../includes/faq_handler.php';
+    require_once '../controllers/faq_handler.php';
 }
 
 // ---  CODE FOR PAGINATION ---
@@ -85,7 +85,7 @@ $conn->close();
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/logout.php" class="footer-link signout-link">
+            <a href="../controllers/logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>

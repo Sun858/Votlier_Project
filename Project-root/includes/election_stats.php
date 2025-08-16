@@ -105,8 +105,10 @@ function getLastAdminLogin($conn) {
             $row = $result->fetch_assoc();
             $lastLoginTimestamp = $row['attempt_time'];
 
-            // Format the time into a more readable string
-            return date('F j, Y, g:i a', strtotime($lastLoginTimestamp));
+            // Convert to Australia/Melbourne timezone
+            $date = new DateTime($lastLoginTimestamp, new DateTimeZone('UTC'));
+            $date->setTimezone(new DateTimeZone('Australia/Melbourne'));
+            return $date->format('F j, Y, g:i a');
         }
 
         // Close the statement
@@ -211,8 +213,3 @@ function getAllFAQs($conn, $limit, $offset) {
 
 
 ?>
-
-
-
-
-

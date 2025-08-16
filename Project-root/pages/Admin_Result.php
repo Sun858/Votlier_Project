@@ -7,7 +7,6 @@ require_once '../includes/result_functions.php';
 
 checkSessionTimeout(); // Calling the function for the timeout, it redirects to login page and ends the session.
 
-
 // Redirect if not logged in as an admin
 if (!isset($_SESSION["admin_id"])) {
     header("location: ../pages/login.php");
@@ -19,7 +18,10 @@ $pageState = loadAdminResultPageState($conn);
 $pollId = $pageState['pollId'];
 $results = $pageState['results'];
 $tallyMsg = $pageState['tallyMsg'];
-$elections = $pageState['elections']; 
+$elections = $pageState['elections'];
+
+// Calculate Top 3 Candidates (Weighted) if results exist
+$topCandidates = (!empty($results)) ? calculateTopCandidatesAdmin($results, 3) : [];
 ?>
 
 <!DOCTYPE html>
@@ -30,8 +32,59 @@ $elections = $pageState['elections'];
     <title>Ionicon Sidebar Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/css/Admin_Result.css">
-
-
+    <style>
+        .top-candidates-section {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            background: #f8fafa;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(60,60,60,.08);
+            padding: 18px 18px 0 18px;
+            border: 1px solid #e0e0e0;
+        }
+        .top-candidates-section h2 {
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        .top-candidates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.5rem;
+            box-shadow: none;
+        }
+        .top-candidates-table th {
+            background-color: #5cb030;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px 14px;
+            border: none;
+            text-align: left;
+        }
+        .top-candidates-table td {
+            background: #fafbfb;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #222;
+        }
+        .top-candidates-table tr:last-child td {
+            border-bottom: none;
+        }
+        .points-badge {
+            color: #169c3f;
+            font-weight: 600;
+        }
+        @media (max-width: 700px) {
+            .top-candidates-section h2 {
+                font-size: 1.25rem;
+            }
+            .top-candidates-table th, .top-candidates-table td {
+                padding: 6px 6px;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -72,7 +125,7 @@ $elections = $pageState['elections'];
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <a href="../includes/logout.php" class="footer-link signout-link">
+            <a href="../controllers/logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
             </a>
@@ -87,7 +140,7 @@ $elections = $pageState['elections'];
 
         <h2>Election Results</h2>
 
-        <form action="../includes/submit_tally.php" method="POST" style="margin-bottom: 20px;">
+        <form action="../controllers/submit_tally.php" method="POST" style="margin-bottom: 20px;">
             <label for="poll_id" class="Title">
                 Select Election:
             </label>
@@ -114,13 +167,39 @@ $elections = $pageState['elections'];
             </div>
         <?php endif; ?>
 
+        <!-- Display Top 3 Candidates if results are available -->
+        <?php if (!empty($topCandidates)): ?>
+        <div class="top-candidates-section">
+            <h2>Top 3 Candidates (Weighted by Rank)</h2>
+            <table class="top-candidates-table">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">#</th>
+                        <th>Candidate Name</th>
+                        <th>Party</th>
+                        <th style="width: 15%;">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($topCandidates as $index => $row): ?>
+                    <tr>
+                        <td><?= $index + 1 ?></td>
+                        <td><strong><?= htmlspecialchars($row['candidate_name']) ?></strong></td>
+                        <td><?= htmlspecialchars($row['party'] ?? '') ?></td>
+                        <td><span class="points-badge"><?= intval($row['points']) ?></span></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
         <!--Display Results table if results are available-->
         <?php if (!empty($results)): ?>
             <!-- Table Header -->
             <h3 class ="Result-banner">
                  Results for Selected Election (Poll ID: <?= htmlspecialchars($pollId) ?>)
             </h3>
-            <!-- Table to display candidate voting results. -->
            <table class ="results-table">
                 <thead>
                     <tr class="results-table-header-row">
@@ -149,15 +228,13 @@ $elections = $pageState['elections'];
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            
-            <?php elseif ($pollId && empty($tallyMsg) && empty($results)): ?>
-                <p class ="Result-banner">No results found for the selected election, or votes have not yet been tallied.</p>
-            <?php endif; ?>
+        <?php elseif ($pollId && empty($tallyMsg) && empty($results)): ?>
+            <p class ="Result-banner">No results found for the selected election, or votes have not yet been tallied.</p>
+        <?php endif; ?>
 
     </main>
 
-        <!-- Ionicon scripts -->
-
+    <!-- Ionicon scripts -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>

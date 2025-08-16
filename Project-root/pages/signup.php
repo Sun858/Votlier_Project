@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <h1>Let's create an Account</h1>
-        <form action="../includes/submit-form.php" method="POST">
+        <form action="../controllers/submit-form.php" method="POST">
 
         <div class="form-group">
             <label for="first-name">First Name:</label>

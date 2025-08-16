@@ -27,7 +27,7 @@
 
     <!-- Login Form -->
     <!-- The action attribute of the form points to the login.php file -->
-    <form id="loginForm" action="../includes/admin-login-inc.php" method="POST">
+    <form id="loginForm" action="../controllers/admin-login-inc.php" method="POST">
       <div class="form-group">
         <label for="loginEmail">Email:</label>
         <div class="input-wrapper">
