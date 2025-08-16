@@ -5,9 +5,9 @@ ini_set('display_errors', 1);
 
 session_start(); // Start the session. This doesnt create a new session just resumes.
 
-require '../DatabaseConnection/config.php'; // Database connection
-require 'security.sn.php'; // Security functions
-require_once '../includes/result_functions.php'; // Include result functions
+require_once    '../DatabaseConnection/config.php'; // Database connection
+require_once    '../includes/security.sn.php'; // Security functions
+require_once    '../includes/result_functions.php'; // Include result functions
 
 // Check if admin is logged in
 if (!isset($_SESSION["admin_id"])) {
