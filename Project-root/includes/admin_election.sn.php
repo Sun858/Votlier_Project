@@ -205,7 +205,7 @@ function handleSaveElection(mysqli $conn, $data, $admin_id)
                 $party = trim($candidate['party'] ?? '');
                 if (empty($candidate_name)) throw new Exception('Candidate name cannot be empty for an election.');
 
-                // Duplicate check for new candidate inside the backend, also in the front-end js code. I will need to seperate php code inside the PAGE into a controller.
+                // Duplicate check for new candidate inside the backend, also in the front-end js code. I will need to seperate php code inside the PAGE into a controllers.
                 $stmt_dup = $conn->prepare("SELECT COUNT(*) FROM candidates WHERE poll_id = ? AND candidate_name = ? AND party = ?");
                 $stmt_dup->bind_param("iss", $actual_poll_id_for_candidates, $candidate_name, $party);
                 $stmt_dup->execute();
