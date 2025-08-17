@@ -1,13 +1,13 @@
 @import url('Base1.css');
 
-/* Keep ALL icons in main content green (doesn't affect sidebar) */
+/* Making main content area is green */
 .main-content ion-icon,
 .title-icon,
 .help-card ion-icon{
     color: var(--grass-green, #388e3c);
 }
 
-/* --- Main Content Area Styling --- */
+/* more deatiled styling for Main Content area */
 .main-content{
     margin-left: var(--sidebar-closed-width);
     flex-grow: 1;
@@ -19,7 +19,7 @@
 }
 .sidebar:hover ~ .main-content{ margin-left: var(--sidebar-open-width); }
 
-/* Cards: thicker border, larger radius */
+/* Cards / boardered sections */
 .card{
     background: var(--white);
     border: 1.5px solid var(--border-color, #dee2e6);
@@ -31,11 +31,11 @@
 .card-title{
     font-size: 1.35rem;
     font-weight: 800;
-    color: #000; /* titles black */
+    color: #000; 
     margin: 0;
 }
 
-/* Title row + icons */
+/* Title row and its icons */
 .title-row{
     display:flex;
     align-items:center;
@@ -46,14 +46,13 @@
     font-size: 2rem;
     font-weight: 900;
     margin: 0;
-    color:#000; /* 'Welcome back,' stays black */
+    color:#000;
 }
 .name-accent{
-    color: var(--grass-green, #388e3c); /* first name in green */
+    color: var(--grass-green, #388e3c); 
 }
 .title-icon{
-    font-size: 1.8rem;          /* proportional to title */
-    /* color inherited from .main-content ion-icon rule */
+    font-size: 1.8rem;          
 }
 
 /* Subtext */
@@ -63,7 +62,7 @@
     margin-top: 6px;
 }
 
-/* Table (bigger) */
+/* Table size */
 .table-wrap{ overflow-x:auto; }
 .table{
     width:100%;
@@ -76,7 +75,6 @@
     padding: 14px 18px;
     border-bottom: 1.5px solid var(--border-color, #dee2e6);
 }
-/* Force the Elections Overview header row to match profile table */
 .table.elections-table thead th,
 .elections-table thead th{
     background-color: var(--light-gray) !important;
@@ -98,7 +96,7 @@
 .badge-voted   { background:#e8f5e9; color: var(--primary-dark, #005005); }
 .badge-notvoted{ background:#ffebee; color:#d32f2f; }
 
-/* Notifications preview */
+/* Design for the Notifications preview */
 .notif-list{
     list-style:none;
     padding:0; margin:0;
@@ -124,10 +122,10 @@
 }
 .btn.view-all:hover{ background:#e8f5e9; }
 
-/* Help & Support: stacked buttons with bordered cards */
+/* Help & Support Section */
 .help-stack{
     display:flex;
-    flex-direction:column; /* stack */
+    flex-direction:column; 
     gap:16px;
     margin-top:6px;
 }
@@ -142,10 +140,9 @@
     background:#fff;
     transition: background .15s ease;
 }
-/* icon color inherited from .main-content ion-icon rule */
 .help-card:hover{ background:#e8f5e9; }
 
-/* Two-column area under elections */
+/* The column area under elections */
 .grid-2{
     display:grid;
     grid-template-columns: 1fr 1fr;
@@ -203,7 +200,7 @@
 .chkrow .text{ color:#222; }
 .chkrow .meta{ font-size:.85rem; color:var(--dark-gray, #6c757d); }
 
-/* Responsive */
+
 @media (max-width: 900px){
     .grid-2{ grid-template-columns:1fr; }
 }

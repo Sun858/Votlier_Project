@@ -92,7 +92,6 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
                 </table>
             </div>
 
-            <!-- Election Overview section removed by request -->
 
             <div class="profile-section">
                 <div class="section-title">
@@ -153,7 +152,7 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
         </div>
     </div>
 
-    <!-- Edit Personal Info Modal -->
+    <!-- Edit Personal Inforomation Modal -->
     <div id="personalInfoModal" class="modal" aria-hidden="true">
         <div class="modal-content fancy">
             <div class="modal-header">
@@ -397,7 +396,7 @@ $avatarUrl = (is_file($avatarFs)) ? '../Assets/img/avatar.jpg?v=' . (@filemtime(
                 }
             });
 
-            // Personal info form submission
+            // Personal information form submission
             const piForm = document.getElementById('personalInfoForm');
             piForm?.addEventListener('submit', async function(e) {
                 e.preventDefault();

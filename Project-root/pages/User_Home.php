@@ -10,7 +10,7 @@ if (!isset($_SESSION["user_id"])) {
 
 define('ROOT_DIR', dirname(__DIR__));
 
-/* Load .env so decrypt keys work */
+/* This Loads .env so User details decryption keys work */
 (function () {
     $env = ROOT_DIR . '/.env';
     if (is_file($env) && is_readable($env)) {
@@ -40,7 +40,7 @@ mysqli_set_charset($conn, 'utf8mb4');
 date_default_timezone_set('Australia/Melbourne');
 
 /* Helpers */
-if (!function_exists('dec_cbc')) { // avoid redeclare if functions.sn.php already defines it
+if (!function_exists('dec_cbc')) { // This avoids redeclare if functions.sn.php already defines it
     function dec_cbc(?string $ct, string $iv): string {
         if ($ct === null || $ct === '' || !defined('TRUE_MASTER_EMAIL_ENCRYPTION_KEY')) return '';
         $p = openssl_decrypt($ct, 'aes-256-cbc', TRUE_MASTER_EMAIL_ENCRYPTION_KEY, OPENSSL_RAW_DATA, $iv);
@@ -69,7 +69,7 @@ function days_left_only(?string $end): ?int {
     if (!$end) return null;
     $now = new DateTime(); $endDt = new DateTime($end);
     if ($endDt <= $now) return 0;
-    return (int)$now->diff($endDt)->days; // whole days
+    return (int)$now->diff($endDt)->days; // Made sure the notifcation only uses whole days and not hours.
 }
 function dtfmt(?string $dt): string {
     if (!$dt) return '';
@@ -109,7 +109,7 @@ if ($row = $res->fetch_assoc()) {
 }
 $displayName = trim($first !== '' ? $first : 'User');
 
-/* --- Elections (dynamic + real-time vote status) --- */
+/* Elections ( we made it dynamic so it updates vote status in real-time) */
 $elections = [];
 $hasElection  = tableExists($conn, 'election');
 
@@ -165,15 +165,10 @@ if ($hasElection) {
     }
 }
 
-/* ===== Notifications (session-backed) =====
-   Keep only:
-   - 🚨 start notice when ongoing (unvoted)
-   - daily countdown (days only) while ongoing (unvoted)
-   - ended notice when an election disappears or ends
-*/
+/* Notifications Section - we made it dyncamic so it recieves real time notications from data e.g. Elelction started*/
 $_SESSION['notif_unread']        = $_SESSION['notif_unread']        ?? [];
 $_SESSION['notif_read']          = $_SESSION['notif_read']          ?? [];
-$_SESSION['elections_snapshot']  = $_SESSION['elections_snapshot']  ?? []; // prev state
+$_SESSION['elections_snapshot']  = $_SESSION['elections_snapshot']  ?? []; 
 
 function notif_add_session(string $idKey, string $title, string $htmlMsg, bool $unread = true) {
     if (!isset($_SESSION['notif_unread'][$idKey]) && !isset($_SESSION['notif_read'][$idKey])) {
@@ -206,7 +201,7 @@ function notif_mark_session(array $ids, bool $toRead) {
     }
 }
 
-/* ---- Seed "start" & "daily countdown" notices ---- */
+/* Announcmenet notification of election start & daily countdown notices */
 $now = new DateTime();
 foreach ($elections as $e) {
     if ($e['state'] === 'ongoing' && !$e['voted']) {
@@ -223,16 +218,16 @@ foreach ($elections as $e) {
     }
 }
 
-/* ---- Ended notice: detect elections that vanished since last view ---- */
-$prev = $_SESSION['elections_snapshot']; // previous snapshot
-$curr = []; // build new snapshot
+/* Election End notice */
+$prev = $_SESSION['elections_snapshot'];
+$curr = [];
 foreach ($elections as $e) {
     $curr[$e['poll_id']] = [
         'name'  => (string)$e['name'],
         'state' => (string)$e['state']
     ];
 }
-// disappeared elections
+
 foreach ($prev as $pid => $snap) {
     if (!isset($curr[$pid])) {
         $nk = "end_{$pid}";
@@ -240,7 +235,7 @@ foreach ($prev as $pid => $snap) {
         notif_add_session($nk, 'Election ended', "<strong>{$ename}</strong> has ended.");
     }
 }
-// state became ended
+
 foreach ($curr as $pid => $snap) {
     if (($prev[$pid]['state'] ?? '') !== 'ended' && $snap['state'] === 'ended') {
         $nk = "ended_{$pid}";
@@ -251,7 +246,7 @@ foreach ($curr as $pid => $snap) {
 // Save snapshot for next diff
 $_SESSION['elections_snapshot'] = $curr;
 
-/* ---- AJAX for the modal ---- */
+/* AJAX for the modal */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
     header('Content-Type: application/json');
     $act = $_POST['notif_action'];
@@ -293,7 +288,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
             </ul>
         </nav>
         <div class="sidebar-footer">
-            <!-- Fixed logout path to controllers (matches other pages) -->
             <a href="../controllers/Logout.php" class="footer-link signout-link">
                 <span class="icon"><ion-icon name="log-out-outline"></ion-icon></span>
                 <span class="text">Sign Out</span>
@@ -302,7 +296,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
     </aside>
 
     <main class="main-content">
-        <!-- welcome -->
         <section class="welcome-header card">
             <div class="title-row">
                 <ion-icon class="title-icon" name="person-circle-outline" aria-hidden="true"></ion-icon>
@@ -311,10 +304,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
             <div class="subtext">Last login: <?= htmlspecialchars($lastLogin) ?></div>
         </section>
 
-        <!-- elections -->
         <section class="card">
             <div class="title-row">
-                <!-- ballot-like paper icon -->
                 <ion-icon class="title-icon" name="document-text-outline" aria-hidden="true"></ion-icon>
                 <h2 class="card-title">Elections Overview</h2>
             </div>
@@ -351,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
             <?php endif; ?>
         </section>
 
-        <!-- notifications + help -->
+        <!-- Notifications + help section-->
         <section class="grid-2">
             <div class="card">
                 <div class="title-row">
@@ -380,7 +371,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notif_action'])) {
                     <ion-icon class="title-icon" name="hand-left-outline" aria-hidden="true"></ion-icon>
                     <h2 class="card-title">Help &amp; Support</h2>
                 </div>
-                <!-- stacked buttons -->
                 <div class="help-stack">
                     <a class="help-card" href="../pages/contact.html">
                         <span>Help</span>

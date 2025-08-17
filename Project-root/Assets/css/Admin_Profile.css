@@ -12,7 +12,7 @@ main.main-content {
   margin-left: 200px
 }
 
-/* Profile card */
+/* Top Profile Section */
 .profile-card {
   background: #fff;
   border-radius: 12px;
@@ -107,13 +107,11 @@ main.main-content {
   position: relative
 }
 
-/* Section titles — SAME size & color as the name near avatar */
+/* Design for Section titles  */
 .section-title {
   font-size: 20px;
-  /* match .profile-info h1 */
   font-weight: 700;
   color: #3BAE5D;
-  /* match .profile-info h1 */
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -124,12 +122,10 @@ main.main-content {
 
 .section-title ion-icon {
   font-size: 28px;
-  /* icon same size as text */
   color: #3BAE5D;
-  /* same green as title */
 }
 
-/* Edit pencil (match User page: no green pill) */
+/* Edit pen/pencil button for Employee Informartion section */
 .edit-btn.employee-edit {
   position: absolute;
   top: 18px;
@@ -143,7 +139,7 @@ main.main-content {
   align-items: center
 }
 
-/* Info table (match User profile feel) */
+/* Information  table */
 .info-table {
   width: 100%;
   border-collapse: collapse
@@ -202,7 +198,7 @@ main.main-content {
   border-top: 1px solid #e2e8f0
 }
 
-/* Modals */
+/* AJAX pop-up Modals for the action buttons */
 .modal {
   display: none;
   position: fixed;
@@ -288,7 +284,7 @@ main.main-content {
   filter: brightness(1.02)
 }
 
-/* Inline confirm overlay (inside modals) */
+/* Another modal inside the AJAX, this one is foor change confirmations */
 .inline-confirm {
   position: absolute;
   inset: 0;
@@ -326,7 +322,7 @@ main.main-content {
   justify-content: center
 }
 
-/* Read-only inputs (ID field greyed out) */
+/* Read-only inputs in the Admin_id row  */
 .modal .form-group input[readonly],
 .modal .form-group input[disabled],
 #modal-admin-id {
@@ -336,7 +332,6 @@ main.main-content {
   cursor: not-allowed
 }
 
-/* Responsive */
 @media (max-width:768px) {
   .sidebar {
     width: 220px;

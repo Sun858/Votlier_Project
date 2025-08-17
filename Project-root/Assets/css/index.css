@@ -1,22 +1,21 @@
-/* Keep your footer/base theme */
 @import url('base.css');
 
 :root{
-  --page-bg: #ecf9f1;            /* page background (light green) */
-  --faint-green: #eefaf1;        /* card/hero tint */
+  --page-bg: #ecf9f1;            
+  --faint-green: #eefaf1;        
   --ink: #0f172a;
   --muted: #334155;
   --accent: #1aa857;
 }
 
 
-/* ------- Hero (also uses faint green so nothing looks white) ------- */
+/* Hero */
 .hero{
   max-width:960px;
   margin:26px auto 10px;
   text-align:center;
   padding:22px 16px;
-  background-color:var(--faint-green); /* <- added so it’s light green too */
+  background-color:var(--faint-green); 
   background-image: radial-gradient(1200px 400px at 50% -20%, rgba(16,185,129,0.08), transparent);
   border-radius:16px;
 }
@@ -51,7 +50,7 @@
 }
 .btn-primary:hover{ filter:brightness(1.05); }
 
-/* ------- Info grid ------- */
+/* Information grid  */
 .info-grid{
   max-width:1080px;
   margin:30px auto 0;
@@ -66,7 +65,7 @@
   font-weight:800;
 }
 
-/* Cards (faint green background to avoid white) */
+/* Design of the Cards */
 .card{
   background:var(--faint-green);
   border:2px solid rgba(2,104,54,0.18);
@@ -108,7 +107,7 @@
   font-size:28px;
 }
 
-/* Trust list — ticks on the RIGHT */
+/* Trust list */
 .trust-list{ list-style:none; padding:0; margin:0; }
 .trust-list li{
   margin:16px 0;
@@ -130,7 +129,6 @@
 /* Footer spacing */
 footer{ margin-top:34px; }
 
-/* ------- Responsive ------- */
 @media (max-width:960px){
   .info-grid{ grid-template-columns:1fr; }
   .steps{ grid-template-columns:1fr 32px 1fr 32px 1fr; }
