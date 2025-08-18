@@ -25,7 +25,8 @@ if (!defined('TRUE_BLIND_INDEX_SECRET_KEY')) {
 }
 
 // Input validation functions
-// These functions use mostly inbuild PHP features to check for verification inputted, like FILTER_VALIDATE_EMAIL, will check for valid email, and its pre-built. Needs a @.
+// These functions use mostly inbuild PHP features to check for verification inputted, 
+// like FILTER_VALIDATE_EMAIL, will check for valid email, and its pre-built. Needs a @.
 function emptyInputSignup($firstName, $lastName, $email, $password, $confirmPassword) {
     // Checks if any of the required signup fields are empty.
     return empty($firstName) || empty($lastName) || empty($email) || empty($password) || empty($confirmPassword);
@@ -50,6 +51,12 @@ function passwordStrength($password) {
 function pwdMatch($password, $confirmPassword) {
     // Checks if the password and confirm password fields match.
     return $password !== $confirmPassword;
+}
+
+// Login functions
+function emptyInputLogin($email, $password) {
+    // Checks if email or password fields are empty during login.
+    return empty($email) || empty($password);
 }
 
 
@@ -227,11 +234,6 @@ function createUser($conn, $firstName, $middleName, $lastName, $email, $password
     exit();
 }
 
-// Login functions
-function emptyInputLogin($email, $password) {
-    // Checks if email or password fields are empty during login.
-    return empty($email) || empty($password);
-}
 
 function loginUser($conn, $email, $password) {
     // Attempt to find the user by email using the emailExists function.
