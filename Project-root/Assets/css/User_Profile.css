@@ -1,7 +1,5 @@
-/* User_Profile.css */
 @import url('Base1.css');
 
-/* Override or extend Base1.css variables if needed */
 :root {
     --primary-color: #2e7d32;
     --primary-light: #60ad5e;
@@ -16,7 +14,7 @@
     --light-red: #fde8e8;
 }
 
-/* Main Content Styles */
+/* Style of Main Content  */
 .main-content {
     margin-left: 10px;
     padding: 2rem 4rem;
@@ -54,7 +52,6 @@
     height: 110px;
     border-radius: 50%;
     background: url('/Assets/img/avatar.jpg') center/cover no-repeat;
-    /* <- absolute, case-correct path */
     background-color: #f0f0f0;
     border: 2px solid var(--primary-color);
 }
@@ -201,7 +198,7 @@
     display: inline-block;
 }
 
-/* Action Links */
+/* Action Links button */
 .action-section {
     margin-bottom: 1.5rem;
     padding: 1.5rem;
@@ -237,9 +234,7 @@
     align-items: center;
 }
 
-/* ===========================
-   MODALS — MATCH ADMIN THEME
-   =========================== */
+/* Design for AJAX modals */
 .modal {
     display: none;
     position: fixed;
@@ -252,12 +247,10 @@
     /* match Admin */
 }
 
-/* Container same size/feel as Admin */
 .modal-content {
     background: #fff;
     margin: 10% auto;
     padding: 0;
-    /* Admin: header owns its padding */
     border-radius: 12px;
     width: 420px;
     /* Admin width */
@@ -269,23 +262,19 @@
     /* Admin overflow */
 }
 
-/* Light green header bar like Admin */
+/* Light green header bar like for the Admin */
 .modal-content.fancy .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #e6f7f0;
-    /* Admin light green */
     border-bottom: 1px solid #cdeee0;
-    /* Admin divider */
     padding: 14px 18px;
-    /* Admin spacing */
 }
 
 .modal-title {
     margin: 0;
     color: #276749;
-    /* Admin title green */
     font-weight: 700;
     font-size: 1.25rem;
 }
@@ -300,7 +289,6 @@
     margin-bottom: 6px;
     font-weight: 600;
     color: #276749;
-    /* Admin label green */
 }
 
 .form-group input,
@@ -308,14 +296,12 @@
     width: 95%;
     padding: 10px;
     border: 1px solid #d9e2ec;
-    /* Admin field border */
     border-radius: 6px;
-    /* Admin radius */
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
 }
 
-/* Footer buttons row — same spacing as Admin */
+/* Footer buttons row */
 .modal-actions,
 .modal-buttons {
     display: flex;
@@ -324,7 +310,7 @@
     margin: 16px 18px 18px;
 }
 
-/* Button look — EXACTLY like Admin */
+/* Button Design */
 .cancel-btn {
     background: #f5f5f5;
     border: 1px solid #ddd;
@@ -349,7 +335,6 @@
     filter: brightness(1.02);
 }
 
-/* Keep legacy btn-* classes working but align to Admin colors */
 .btn-cancel {
     background: #f5f5f5;
     color: #212529;
@@ -361,9 +346,7 @@
     color: #fff;
 }
 
-/* ================================
-   INLINE CONFIRM OVERLAY — ADMIN
-   ================================ */
+/* Inlinde Modal*/
 .inline-confirm {
     position: absolute;
     inset: 0;
@@ -459,14 +442,13 @@
         padding: 12px 15px;
     }
 
-    /* Admin’s modal scales down on mobile too */
     .modal-content {
         width: 92%;
         margin: 18% auto;
     }
 }
 
-/* Confirm Modal (legacy block kept for compatibility, aligned to Admin palette) */
+/* Confirm Modal */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -524,7 +506,7 @@
     color: #212529;
 }
 
-/* Read-only ID fields look (non-editable hint) */
+/* Read-only for the user_id row so it cant be edited) */
 .modal .form-group input[readonly],
 .modal .form-group input[disabled],
 #modal-voter-id,
