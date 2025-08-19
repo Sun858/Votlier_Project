@@ -14,6 +14,7 @@ This is a Online Voting System built by Deniz Ismail, Sanjay Sapkota and Sharmar
     📁DatabaseConnection # Database connection scripts and configs
     📁Docker            # Contains base docker file for the project
     📁includes          # Reusable PHP components and functions
+    📁controllers          # Contains the controllers of the various pages
     📁pages             # Individual page files (PHP or HTML)
     📄index.html        # Main entry point of our website
     📄README.md         # Project documentation
