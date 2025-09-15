@@ -62,17 +62,3 @@ docker volume rm [volume_name]
 Email: bigadmin@live.com.au
 Password: administrator
 
-```
-       ______
-                  \     \.
-                  |`\_____\
-                  |` |    |
-     __-====-__   |  |    |
-    (~<       >~>_|  |    |
-    {~~-====--~~:  \ |    |
-    !~~------~~/----`+----/
-     \         \___     /
-      >------\     \  <    Yay
-     <_________________>
-```
-
